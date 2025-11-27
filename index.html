@@ -125,70 +125,77 @@
     };
 
     var DMOs = {
+      // ==================== SERVICE CLOUD ====================
       'EmailMessage__dlm': {
         cloud: 'service', name: 'Email Message', icon: '📧',
         records: [
-          { EmailId: 'EMAIL-001', Subject: 'Error uploading files', Body: 'Hi Support,\n\nI keep getting error code E-5502 when uploading files larger than 25MB. My account is john.smith@acmecorp.com.\n\nThis is blocking our quarterly report. Please help!\n\n- John Smith', FromAddress: 'john.smith@acmecorp.com' },
-          { EmailId: 'EMAIL-002', Subject: 'Love your product!', Body: 'Just wanted to say your new dashboard is amazing! Saved our team 5 hours per week.\n\nCould you add PDF export?\n\nThanks!\nSarah', FromAddress: 'sarah@happycustomer.com' }
+          { EmailId: 'EMAIL-001', Subject: 'Error uploading files', Body: 'Hi Support,\n\nI keep getting error code E-5502 when uploading files larger than 25MB. My account is john.smith@acmecorp.com.\n\nThis is blocking our quarterly report. Please help!\n\n- John Smith', FromAddress: 'john.smith@acmecorp.com', ToAddress: 'support@company.com', CcAddress: 'manager@acmecorp.com', SentDate: '2024-01-15 09:32:00', HasAttachment: true, ThreadId: 'THR-8821', CaseId: 'CASE-004', AccountId: 'ACC-1001', ContactId: 'CON-501', Channel: 'Email', Status: 'New' },
+          { EmailId: 'EMAIL-002', Subject: 'Love your product!', Body: 'Just wanted to say your new dashboard is amazing! Saved our team 5 hours per week.\n\nCould you add PDF export?\n\nThanks!\nSarah', FromAddress: 'sarah@happycustomer.com', ToAddress: 'support@company.com', CcAddress: '', SentDate: '2024-01-16 14:22:00', HasAttachment: false, ThreadId: 'THR-8834', CaseId: 'CASE-005', AccountId: 'ACC-1002', ContactId: 'CON-502', Channel: 'Email', Status: 'New' }
         ]
       },
       'ResolvedCase__dlm': {
         cloud: 'service', name: 'Resolved Case', icon: '✅',
         records: [
-          { CaseId: 'CASE-R001', Subject: 'Cannot connect API to Salesforce', Resolution: 'Resolved - OAuth token expired', Comments: 'Steps:\n1. Setup > Connected Apps\n2. Generate new key\n3. Update credentials\n4. Test connection' },
-          { CaseId: 'CASE-R002', Subject: 'Reports wrong timezone', Resolution: 'Updated timezone settings', Comments: 'Changed from UTC to America/New_York in Settings > Time & Language' }
+          { CaseId: 'CASE-R001', Subject: 'Cannot connect API to Salesforce', Resolution: 'Resolved - OAuth token expired', Comments: 'Steps:\n1. Setup > Connected Apps\n2. Generate new key\n3. Update credentials\n4. Test connection', Category: 'Technical', Priority: 'High', CreatedDate: '2024-01-10', ClosedDate: '2024-01-11', AgentId: 'AGT-101', AgentName: 'Mike Thompson', CustomerSatisfactionScore: 5, FirstResponseTime: '2 hours', ResolutionTime: '18 hours', AccountId: 'ACC-1001', ProductArea: 'API Integration', RootCause: 'Expired credentials' },
+          { CaseId: 'CASE-R002', Subject: 'Reports wrong timezone', Resolution: 'Updated timezone settings', Comments: 'Changed from UTC to America/New_York in Settings > Time & Language', Category: 'Configuration', Priority: 'Medium', CreatedDate: '2024-01-12', ClosedDate: '2024-01-12', AgentId: 'AGT-102', AgentName: 'Lisa Park', CustomerSatisfactionScore: 4, FirstResponseTime: '30 mins', ResolutionTime: '2 hours', AccountId: 'ACC-1002', ProductArea: 'Reporting', RootCause: 'User settings misconfiguration' }
         ]
       },
+
+      // ==================== SALES CLOUD ====================
       'VoiceCall__dlm': {
         cloud: 'sales', name: 'Voice Call', icon: '📞',
         records: [
-          { CallId: 'CALL-001', Duration: '32:15', ContactName: 'John Smith, VP Engineering', Transcript: 'Sales Rep: Thanks for the time today.\n\nJohn: Your price is higher than Competitor X - they quoted $100k.\n\nSales Rep: We include 24/7 support and 99.9% uptime.\n\nJohn: That matters. When could we go live?\n\nSales Rep: 6 weeks with full deployment.', OpportunityId: 'OPP-001' },
-          { CallId: 'CALL-002', Duration: '18:45', ContactName: 'Sarah Jones, CTO', Transcript: 'Sarah: We love the demo. The API flexibility is huge.\n\nSales Rep: Do you need AWS and Azure integration?\n\nSarah: Yes! Can we schedule procurement next week?', OpportunityId: 'OPP-002' }
+          { CallId: 'CALL-001', Duration: '32:15', ContactName: 'John Smith, VP Engineering', Transcript: 'Sales Rep: Thanks for the time today.\n\nJohn: Your price is higher than Competitor X - they quoted $100k.\n\nSales Rep: We include 24/7 support and 99.9% uptime.\n\nJohn: That matters. When could we go live?\n\nSales Rep: 6 weeks with full deployment.', OpportunityId: 'OPP-001', Direction: 'Outbound', CallDate: '2024-01-18 10:00:00', CallType: 'Discovery', Sentiment: 'Positive', AgentId: 'REP-201', AgentName: 'Alex Johnson', RecordingUrl: '/recordings/CALL-001.mp3', AccountId: 'ACC-1001', ContactId: 'CON-601', NextSteps: 'Send proposal', DispositionCode: 'Interested' },
+          { CallId: 'CALL-002', Duration: '18:45', ContactName: 'Sarah Jones, CTO', Transcript: 'Sarah: We love the demo. The API flexibility is huge.\n\nSales Rep: Do you need AWS and Azure integration?\n\nSarah: Yes! Can we schedule procurement next week?', OpportunityId: 'OPP-002', Direction: 'Outbound', CallDate: '2024-01-19 14:30:00', CallType: 'Follow-up', Sentiment: 'Very Positive', AgentId: 'REP-202', AgentName: 'Maria Garcia', RecordingUrl: '/recordings/CALL-002.mp3', AccountId: 'ACC-1002', ContactId: 'CON-602', NextSteps: 'Schedule procurement', DispositionCode: 'Ready to Buy' }
         ]
       },
       'Account__dlm': {
         cloud: 'sales', name: 'Account', icon: '🏢',
         records: [
-          { AccountId: 'ACC-1001', Name: 'Acme Corporation', Industry: 'Manufacturing', AnnualRevenue: '$2.4B' },
-          { AccountId: 'ACC-1002', Name: 'TechStart Inc', Industry: 'Technology', AnnualRevenue: '$180M' }
+          { AccountId: 'ACC-1001', Name: 'Acme Corporation', Industry: 'Manufacturing', AnnualRevenue: '$2.4B', Website: 'www.acmecorp.com', Phone: '(555) 100-1001', BillingCity: 'Chicago', BillingState: 'IL', BillingCountry: 'USA', EmployeeCount: 12000, SupportTier: 'Premium', CustomerSince: '2019-03-15', AccountOwner: 'Alex Johnson', AccountType: 'Enterprise', ParentAccountId: '', HealthScore: 85, LastActivityDate: '2024-01-18', OpenOpportunities: 2, TotalContractValue: '$450,000' },
+          { AccountId: 'ACC-1002', Name: 'TechStart Inc', Industry: 'Technology', AnnualRevenue: '$180M', Website: 'www.techstart.io', Phone: '(555) 200-2002', BillingCity: 'San Francisco', BillingState: 'CA', BillingCountry: 'USA', EmployeeCount: 450, SupportTier: 'Standard', CustomerSince: '2022-08-01', AccountOwner: 'Maria Garcia', AccountType: 'Mid-Market', ParentAccountId: '', HealthScore: 92, LastActivityDate: '2024-01-19', OpenOpportunities: 1, TotalContractValue: '$75,000' }
         ]
       },
       'Opportunity__dlm': {
         cloud: 'sales', name: 'Opportunity', icon: '💰',
         records: [
-          { OpportunityId: 'OPP-001', Name: 'Acme - Enterprise License', Amount: 150000, Stage: 'Negotiation', AccountId: 'ACC-1001' },
-          { OpportunityId: 'OPP-002', Name: 'TechStart - Expansion', Amount: 75000, Stage: 'Proposal', AccountId: 'ACC-1002' }
+          { OpportunityId: 'OPP-001', Name: 'Acme - Enterprise License', Amount: 150000, Stage: 'Negotiation', AccountId: 'ACC-1001', CloseDate: '2024-03-15', Probability: 65, NextStep: 'Send revised proposal', LeadSource: 'Partner Referral', ForecastCategory: 'Pipeline', Type: 'New Business', ProductInterest: 'Enterprise Suite', CompetitorPresence: 'Competitor X', DecisionMaker: 'John Smith', BudgetConfirmed: true, CreatedDate: '2023-11-01', LastStageChangeDate: '2024-01-10', DaysInStage: 8 },
+          { OpportunityId: 'OPP-002', Name: 'TechStart - Expansion', Amount: 75000, Stage: 'Proposal', AccountId: 'ACC-1002', CloseDate: '2024-02-28', Probability: 80, NextStep: 'Procurement call', LeadSource: 'Inbound', ForecastCategory: 'Commit', Type: 'Expansion', ProductInterest: 'Platform + API', CompetitorPresence: 'None', DecisionMaker: 'Sarah Jones', BudgetConfirmed: true, CreatedDate: '2023-12-15', LastStageChangeDate: '2024-01-15', DaysInStage: 4 }
         ]
       },
+
+      // ==================== MARKETING CLOUD ====================
       'SurveyResponse__dlm': {
         cloud: 'marketing', name: 'Survey Response', icon: '📊',
         records: [
-          { ResponseId: 'SURV-001', SurveyName: 'Q4 NPS', Rating: 2, OpenEndedFeedback: 'Website redesign is terrible. Customer service took 3 days to respond. Very disappointed.' },
-          { ResponseId: 'SURV-002', SurveyName: 'Q4 NPS', Rating: 9, OpenEndedFeedback: 'Love the new product! Shipping is fast. Customer service went above and beyond!' },
-          { ResponseId: 'SURV-003', SurveyName: 'Product Feedback', Rating: 6, OpenEndedFeedback: 'Works fine but battery life is poor. App is slow to load.' }
+          { ResponseId: 'SURV-001', SurveyName: 'Q4 NPS', Rating: 2, OpenEndedFeedback: 'Website redesign is terrible. Customer service took 3 days to respond. Very disappointed.', ContactId: 'CON-101', SubmittedDate: '2024-01-10 15:32:00', Channel: 'Email', ProductPurchased: 'Premium Plan', ResponseTime: '3 days', CustomerSegment: 'At Risk', Region: 'Northeast', DeviceType: 'Mobile', CompletionRate: 100, PreviousNPS: 7, NPSChange: -5, FollowUpStatus: 'Pending' },
+          { ResponseId: 'SURV-002', SurveyName: 'Q4 NPS', Rating: 9, OpenEndedFeedback: 'Love the new product! Shipping is fast. Customer service went above and beyond!', ContactId: 'CON-102', SubmittedDate: '2024-01-11 09:15:00', Channel: 'In-App', ProductPurchased: 'Standard Plan', ResponseTime: '1 day', CustomerSegment: 'Promoter', Region: 'West', DeviceType: 'Desktop', CompletionRate: 100, PreviousNPS: 8, NPSChange: 1, FollowUpStatus: 'None Needed' },
+          { ResponseId: 'SURV-003', SurveyName: 'Product Feedback', Rating: 6, OpenEndedFeedback: 'Works fine but battery life is poor. App is slow to load.', ContactId: 'CON-103', SubmittedDate: '2024-01-12 11:45:00', Channel: 'SMS', ProductPurchased: 'Smart Device', ResponseTime: '2 days', CustomerSegment: 'Passive', Region: 'South', DeviceType: 'Mobile', CompletionRate: 75, PreviousNPS: 6, NPSChange: 0, FollowUpStatus: 'Scheduled' }
         ]
       },
       'UnifiedProfile__dlm': {
         cloud: 'marketing', name: 'Unified Profile', icon: '👤',
         records: [
-          { ProfileId: 'UP-001', Name: 'Jennifer Martinez', LoyaltyStatus: 'Gold', LTV: '$4,250', LastInteraction: '1-star review (shipping delay)', Preferences: 'Eco-friendly, Fast shipping' },
-          { ProfileId: 'UP-002', Name: 'Robert Chen', LoyaltyStatus: 'Platinum', LTV: '$12,800', LastInteraction: 'Purchased Premium Bundle', Preferences: 'Tech gadgets, Early access' }
+          { ProfileId: 'UP-001', Name: 'Jennifer Martinez', Email: 'j.martinez@email.com', Phone: '(555) 301-3001', LoyaltyStatus: 'Gold', LTV: '$4,250', LastInteraction: '1-star review (shipping delay)', Preferences: 'Eco-friendly, Fast shipping', Segment: 'High Value At Risk', ChurnScore: 72, EngagementScore: 45, FirstPurchaseDate: '2021-06-15', TotalOrders: 28, AverageOrderValue: '$152', LastPurchaseDate: '2024-01-05', PreferredChannel: 'Email', BirthMonth: 'March', City: 'Austin', State: 'TX', OptInEmail: true, OptInSMS: false },
+          { ProfileId: 'UP-002', Name: 'Robert Chen', Email: 'rchen@business.com', Phone: '(555) 302-3002', LoyaltyStatus: 'Platinum', LTV: '$12,800', LastInteraction: 'Purchased Premium Bundle', Preferences: 'Tech gadgets, Early access', Segment: 'VIP', ChurnScore: 8, EngagementScore: 95, FirstPurchaseDate: '2019-02-20', TotalOrders: 67, AverageOrderValue: '$191', LastPurchaseDate: '2024-01-18', PreferredChannel: 'App', BirthMonth: 'September', City: 'Seattle', State: 'WA', OptInEmail: true, OptInSMS: true }
         ]
       },
+
+      // ==================== HEALTH CLOUD ====================
       'ClinicalNote__dlm': {
         cloud: 'health', name: 'Clinical Note', icon: '📋',
         records: [
-          { NoteId: 'CN-001', NoteType: 'Progress Note', Provider: 'Dr. Sarah Johnson', ClinicalText: 'Patient: John Smith, DOB 03/15/1965, MRN 78432\nAddress: 123 Oak St, Springfield\n\nDiabetes and Hypertension follow-up.\n\nMedications:\n- Metformin 1000mg BID\n- Lisinopril 20mg daily\n\nVitals: BP 138/82, Weight 198 lbs\n\nAssessment: DM improving, HTN at goal\nPlan: Continue meds, follow up 3 months' },
-          { NoteId: 'CN-002', NoteType: 'Visit Summary', Provider: 'Dr. Michael Lee', ClinicalText: 'Patient: Mary Johnson, DOB 07/22/1978\nPhone: (555) 876-5432\n\nAnxiety management - new patient\n\n45 y/o with worsening anxiety, difficulty sleeping.\n\nAssessment: GAD, Insomnia\nPlan: Start Sertraline 25mg, refer to behavioral health' }
+          { NoteId: 'CN-001', NoteType: 'Progress Note', Provider: 'Dr. Sarah Johnson', ProviderId: 'NPI-1234567', Specialty: 'Internal Medicine', Department: 'Primary Care', FacilityName: 'Springfield Medical Center', EncounterDate: '2024-01-15', EncounterType: 'Office Visit', ChiefComplaint: 'Diabetes/HTN follow-up', ClinicalText: 'Patient: John Smith, DOB 03/15/1965, MRN 78432\nAddress: 123 Oak St, Springfield\n\nDiabetes and Hypertension follow-up.\n\nMedications:\n- Metformin 1000mg BID\n- Lisinopril 20mg daily\n\nVitals: BP 138/82, Weight 198 lbs\n\nAssessment: DM improving, HTN at goal\nPlan: Continue meds, follow up 3 months', VitalSigns: 'BP 138/82, HR 76, Temp 98.6, Weight 198 lbs', PrimaryDiagnosis: 'E11.9 - Type 2 Diabetes', SecondaryDiagnosis: 'I10 - Hypertension', BillingCodes: 'CPT 99214', SignedDate: '2024-01-15', CoSignRequired: false },
+          { NoteId: 'CN-002', NoteType: 'Visit Summary', Provider: 'Dr. Michael Lee', ProviderId: 'NPI-2345678', Specialty: 'Psychiatry', Department: 'Behavioral Health', FacilityName: 'Wellness Clinic', EncounterDate: '2024-01-18', EncounterType: 'New Patient', ChiefComplaint: 'Anxiety', ClinicalText: 'Patient: Mary Johnson, DOB 07/22/1978\nPhone: (555) 876-5432\n\nAnxiety management - new patient\n\n45 y/o with worsening anxiety, difficulty sleeping.\n\nAssessment: GAD, Insomnia\nPlan: Start Sertraline 25mg, refer to behavioral health', VitalSigns: 'BP 122/78, HR 88, Temp 98.4, Weight 145 lbs', PrimaryDiagnosis: 'F41.1 - Generalized Anxiety', SecondaryDiagnosis: 'G47.00 - Insomnia', BillingCodes: 'CPT 99205', SignedDate: '2024-01-18', CoSignRequired: false }
         ]
       },
       'PatientMessage__dlm': {
         cloud: 'health', name: 'Patient Message', icon: '💬',
         records: [
-          { MessageId: 'PM-001', PatientName: 'Robert Garcia', MessageText: 'Need to refill Lisinopril 10mg. 5 pills left. CVS on Main St. Also having dizziness when standing - is that from the medication?', Timestamp: '2024-01-20 09:15 AM' },
-          { MessageId: 'PM-002', PatientName: 'Susan Miller', MessageText: 'Got a bill for $450 but thought preventive care was covered. I have BlueCross PPO. Can someone explain?', Timestamp: '2024-01-20 11:30 AM' },
-          { MessageId: 'PM-003', PatientName: 'James Wilson', MessageText: 'URGENT - Severe chest pain for 1 hour, spreading to left arm. Sweating and nauseous. Should I go to ER? I am 62 with high cholesterol.', Timestamp: '2024-01-20 02:45 PM' },
-          { MessageId: 'PM-004', PatientName: 'Emily Brown', MessageText: 'Can I schedule my annual physical? Available mornings next week except Wednesday. Do I need to fast for bloodwork?', Timestamp: '2024-01-20 04:00 PM' }
+          { MessageId: 'PM-001', PatientName: 'Robert Garcia', PatientMRN: 'MRN-45231', PatientDOB: '1958-05-12', MessageText: 'Need to refill Lisinopril 10mg. 5 pills left. CVS on Main St. Also having dizziness when standing - is that from the medication?', Timestamp: '2024-01-20 09:15 AM', Source: 'Patient Portal', Department: 'Primary Care', AssignedProvider: 'Dr. Sarah Johnson', Priority: 'Medium', Category: 'Medication', HasAttachment: false, ResponseRequired: true, ResponseDeadline: '2024-01-22', PreviousMessageId: '', InsuranceId: 'BCBS-12345', PharmacyName: 'CVS Main St', PharmacyPhone: '(555) 400-4001' },
+          { MessageId: 'PM-002', PatientName: 'Susan Miller', PatientMRN: 'MRN-45232', PatientDOB: '1975-11-03', MessageText: 'Got a bill for $450 but thought preventive care was covered. I have BlueCross PPO. Can someone explain?', Timestamp: '2024-01-20 11:30 AM', Source: 'Patient Portal', Department: 'Billing', AssignedProvider: '', Priority: 'Low', Category: 'Billing', HasAttachment: true, ResponseRequired: true, ResponseDeadline: '2024-01-25', PreviousMessageId: '', InsuranceId: 'BCBS-PPO-67890', PharmacyName: '', PharmacyPhone: '' },
+          { MessageId: 'PM-003', PatientName: 'James Wilson', PatientMRN: 'MRN-45233', PatientDOB: '1962-08-28', MessageText: 'URGENT - Severe chest pain for 1 hour, spreading to left arm. Sweating and nauseous. Should I go to ER? I am 62 with high cholesterol.', Timestamp: '2024-01-20 02:45 PM', Source: 'Patient Portal', Department: 'Cardiology', AssignedProvider: 'Dr. Williams', Priority: 'STAT', Category: 'Urgent Clinical', HasAttachment: false, ResponseRequired: true, ResponseDeadline: '2024-01-20', PreviousMessageId: '', InsuranceId: 'Medicare-A-11111', PharmacyName: 'Walgreens', PharmacyPhone: '(555) 500-5001' },
+          { MessageId: 'PM-004', PatientName: 'Emily Brown', PatientMRN: 'MRN-45234', PatientDOB: '1990-04-17', MessageText: 'Can I schedule my annual physical? Available mornings next week except Wednesday. Do I need to fast for bloodwork?', Timestamp: '2024-01-20 04:00 PM', Source: 'Patient Portal', Department: 'Primary Care', AssignedProvider: 'Dr. Sarah Johnson', Priority: 'Low', Category: 'Scheduling', HasAttachment: false, ResponseRequired: true, ResponseDeadline: '2024-01-25', PreviousMessageId: '', InsuranceId: 'Aetna-HMO-22222', PharmacyName: 'CVS Pharmacy', PharmacyPhone: '(555) 400-4002' }
         ]
       }
     };
