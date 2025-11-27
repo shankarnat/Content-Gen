@@ -458,11 +458,11 @@
 
     function builderNext() {
       if (builder.step < 5) {
-        if (builder.step === 2 && builder.sourceDMO) {
-          // Auto-generate prompt template when moving from step 2
+        builder.step++;
+        // Regenerate prompt template when entering step 5
+        if (builder.step === 5 && builder.sourceDMO) {
           generatePromptTemplate();
         }
-        builder.step++;
         render();
       }
     }
@@ -509,16 +509,37 @@
     function generatePromptTemplate() {
       if (!builder.sourceDMO) return;
       var dmoName = builder.sourceDMO.replace('__dlm', '');
+      var dmo = DMOs[builder.sourceDMO];
+      var sampleRecord = dmo.records[0] || {};
+
       var prompt = '=== INPUT FIELDS (from ' + builder.sourceDMO + ') ===\n';
       builder.inputFields.forEach(function(f) {
         prompt += f + ': {{' + dmoName + '.' + f + '}}\n';
       });
+
+      prompt += '\n=== SAMPLE RECORD ===\n';
+      builder.inputFields.forEach(function(f) {
+        var val = sampleRecord[f];
+        if (val !== undefined) {
+          var displayVal = String(val).length > 100 ? String(val).substring(0, 100) + '...' : String(val);
+          prompt += f + ': ' + displayVal + '\n';
+        }
+      });
+
       prompt += '\n=== INSTRUCTIONS ===\n[Describe what the LLM should do with this data]\n\n';
+
       prompt += '=== OUTPUT FIELDS (to generate) ===\n';
-      builder.outputFields.filter(function(f) { return f.trim(); }).forEach(function(f, i) {
+      var validOutputFields = builder.outputFields.filter(function(f) { return f.trim(); });
+      validOutputFields.forEach(function(f, i) {
         prompt += (i + 1) + '. ' + f + ': (description)\n';
       });
-      prompt += '\nRespond in JSON format.';
+
+      prompt += '\nRespond in JSON format with these fields:\n{\n';
+      validOutputFields.forEach(function(f, i) {
+        prompt += '  "' + f + '": ...' + (i < validOutputFields.length - 1 ? ',' : '') + '\n';
+      });
+      prompt += '}';
+
       builder.prompt = prompt;
     }
 
