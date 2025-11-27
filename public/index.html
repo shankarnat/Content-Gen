@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Foundry - Playground</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+    .animate-pulse-slow { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes typing { from { width: 0 } to { width: 100% } }
+    .typing-effect { overflow: hidden; white-space: nowrap; animation: typing 1.5s steps(40, end); }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    // API Base URL
+    const API_BASE = window.location.origin + '/api';
+
+    // Sample Data - DMO Records (fallback for demo mode)
+    const sampleDMOs = {
+      'Case__dlm': {
+        name: 'Case',
+        icon: '📋',
+        fields: ['CaseId', 'Subject', 'Description', 'Priority', 'Status', 'AccountId', 'ContactEmail'],
+        records: [
+          {
+            CaseId: 'CASE-001',
+            Subject: 'Urgent: System outage affecting production',
+            Description: 'Our production environment has been down for 2 hours. We are losing approximately $50,000 per hour in revenue. Multiple teams are blocked. We need immediate escalation to your engineering team. This is completely unacceptable for the premium support tier we are paying for. I expect a call back within 15 minutes.',
+            Priority: 'High',
+            Status: 'New',
+            AccountId: 'ACC-1001',
+            ContactEmail: 'john.smith@acmecorp.com'
+          },
+          {
+            CaseId: 'CASE-002',
+            Subject: 'Question about API rate limits',
+            Description: 'Hi team, I was wondering if you could clarify the API rate limits for the Enterprise plan. We are planning to scale our integration and want to make sure we stay within bounds. Also, is there a way to request higher limits if needed? Thanks for your help!',
+            Priority: 'Medium',
+            Status: 'New',
+            AccountId: 'ACC-1002',
+            ContactEmail: 'sarah.jones@techstart.io'
+          },
+          {
+            CaseId: 'CASE-003',
+            Subject: 'Billing discrepancy on invoice #INV-2024-0892',
+            Description: 'I noticed we were charged $2,400 instead of $1,800 on our latest invoice. Looking at our contract, we should be on the Growth plan at $150/user for 12 users. Can you please review and issue a credit for the difference? Attached is our signed contract for reference.',
+            Priority: 'Medium',
+            Status: 'New',
+            AccountId: 'ACC-1003',
+            ContactEmail: 'mike.chen@globallogistics.com'
+          }
+        ]
+      },
+      'Account__dlm': {
+        name: 'Account',
+        icon: '🏢',
+        fields: ['AccountId', 'Name', 'Industry', 'AnnualRevenue', 'SupportTier', 'CustomerSince'],
+        records: [
+          { AccountId: 'ACC-1001', Name: 'Acme Corporation', Industry: 'Manufacturing', AnnualRevenue: '$2.4B', SupportTier: 'Premium', CustomerSince: '2019-03-15' },
+          { AccountId: 'ACC-1002', Name: 'TechStart Inc', Industry: 'Software', AnnualRevenue: '$180M', SupportTier: 'Standard', CustomerSince: '2022-08-01' },
+          { AccountId: 'ACC-1003', Name: 'Global Logistics Partners', Industry: 'Transportation', AnnualRevenue: '$5.1B', SupportTier: 'Premium', CustomerSince: '2020-01-10' }
+        ]
+      },
+      'Contact__dlm': {
+        name: 'Contact',
+        icon: '👤',
+        fields: ['ContactId', 'Email', 'Name', 'Title', 'AccountId'],
+        records: [
+          { ContactId: 'CON-001', Email: 'john.smith@acmecorp.com', Name: 'John Smith', Title: 'VP of Engineering', AccountId: 'ACC-1001' },
+          { ContactId: 'CON-002', Email: 'sarah.jones@techstart.io', Name: 'Sarah Jones', Title: 'Lead Developer', AccountId: 'ACC-1002' },
+          { ContactId: 'CON-003', Email: 'mike.chen@globallogistics.com', Name: 'Mike Chen', Title: 'Finance Manager', AccountId: 'ACC-1003' }
+        ]
+      }
+    };
+
+    // Sample Prompt Templates
+    const promptTemplates = [
+      {
+        id: 'triage',
+        name: 'Case Triage & Categorization',
+        description: 'Analyze case content to extract category, sentiment, urgency, and recommended routing',
+        template: `Analyze the following support case and extract structured metadata.
+
+**Case Subject:** {{Case.Subject}}
+**Case Description:** {{Case.Description}}
+**Account:** {{Account.Name}} ({{Account.SupportTier}} Support)
+**Contact:** {{Contact.Name}}, {{Contact.Title}}
+
+Extract the following:
+1. Category (Billing, Technical, Feature Request, Complaint, General Inquiry)
+2. Sentiment (Positive, Neutral, Negative, Angry)
+3. Urgency Score (1-10)
+4. Recommended Team (Billing, Engineering, Support L1, Support L2, Account Management)
+5. Key Issues (list up to 3)
+6. Suggested Response Tone
+
+Respond in JSON format with these exact keys: Category, Sentiment, UrgencyScore, RecommendedTeam, KeyIssues, ResponseTone`,
+        outputFields: ['Category', 'Sentiment', 'UrgencyScore', 'RecommendedTeam', 'KeyIssues', 'ResponseTone']
+      },
+      {
+        id: 'draft-response',
+        name: 'Draft Response Email',
+        description: 'Generate a personalized response email based on case context and account history',
+        template: `Draft a professional response email for this support case.
+
+**Case Subject:** {{Case.Subject}}
+**Case Description:** {{Case.Description}}
+**Account:** {{Account.Name}}
+**Support Tier:** {{Account.SupportTier}}
+**Customer Since:** {{Account.CustomerSince}}
+**Contact:** {{Contact.Name}}, {{Contact.Title}}
+
+Requirements:
+- Address the customer by name
+- Acknowledge their specific concern
+- Provide a clear next step or resolution path
+- Match tone to their sentiment (empathetic if frustrated)
+- Reference their support tier benefits if relevant
+- Keep it concise but thorough
+
+Respond in JSON format with these exact keys: DraftEmail, SubjectLine, EstimatedResolutionTime`,
+        outputFields: ['DraftEmail', 'SubjectLine', 'EstimatedResolutionTime']
+      },
+      {
+        id: 'summarize',
+        name: 'Case Summary',
+        description: 'Generate a concise summary for internal handoff or escalation',
+        template: `Create a concise internal summary of this case for team handoff.
+
+**Case:** {{Case.CaseId}}
+**Subject:** {{Case.Subject}}
+**Description:** {{Case.Description}}
+**Account:** {{Account.Name}} ({{Account.Industry}}, {{Account.AnnualRevenue}} ARR)
+**Support Tier:** {{Account.SupportTier}}
+
+Provide:
+1. One-line summary (max 100 chars)
+2. Business impact assessment
+3. Recommended priority (P1-P4)
+4. Escalation needed? (Yes/No with reason)
+
+Respond in JSON format with these exact keys: OneLiner, BusinessImpact, Priority, EscalationNeeded, EscalationReason`,
+        outputFields: ['OneLiner', 'BusinessImpact', 'Priority', 'EscalationNeeded', 'EscalationReason']
+      }
+    ];
+
+    // State
+    let state = {
+      activeTab: 'playground',
+      selectedPrimaryDMO: 'Case__dlm',
+      selectedRelatedDMOs: ['Account__dlm', 'Contact__dlm'],
+      selectedTemplate: promptTemplates[0],
+      selectedRecordIndex: 0,
+      isRunning: false,
+      runComplete: false,
+      currentOutput: null,
+      outputFormat: 'structured',
+      showTokenEstimate: true,
+      useLiveApi: false,
+      selectedModel: 'gpt-4o',
+      error: null,
+      latency: null
+    };
+
+    // Helper functions
+    function getRelatedRecord(dmoKey, foreignKey, foreignValue) {
+      const dmo = sampleDMOs[dmoKey];
+      if (!dmo) return null;
+      return dmo.records.find(r => r[foreignKey] === foreignValue);
+    }
+
+    function resolveTemplate(template, primaryRecord) {
+      let resolved = template;
+
+      // Replace Case fields
+      Object.keys(primaryRecord).forEach(field => {
+        resolved = resolved.replace(new RegExp(`{{Case.${field}}}`, 'g'), primaryRecord[field] || '');
+      });
+
+      // Replace Account fields
+      const account = getRelatedRecord('Account__dlm', 'AccountId', primaryRecord.AccountId);
+      if (account) {
+        Object.keys(account).forEach(field => {
+          resolved = resolved.replace(new RegExp(`{{Account.${field}}}`, 'g'), account[field] || '');
+        });
+      }
+
+      // Replace Contact fields
+      const contact = getRelatedRecord('Contact__dlm', 'Email', primaryRecord.ContactEmail);
+      if (contact) {
+        Object.keys(contact).forEach(field => {
+          resolved = resolved.replace(new RegExp(`{{Contact.${field}}}`, 'g'), contact[field] || '');
+        });
+      }
+
+      return resolved;
+    }
+
+    function estimateTokens(text) {
+      return Math.ceil(text.length / 4);
+    }
+
+    async function runPipeline() {
+      state.isRunning = true;
+      state.runComplete = false;
+      state.currentOutput = null;
+      state.error = null;
+      state.latency = null;
+      render();
+
+      const record = sampleDMOs[state.selectedPrimaryDMO].records[state.selectedRecordIndex];
+      const resolvedPrompt = resolveTemplate(state.selectedTemplate.template, record);
+      const startTime = Date.now();
+
+      if (state.useLiveApi) {
+        try {
+          const response = await fetch(`${API_BASE}/pipeline/execute`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              templateId: state.selectedTemplate.id,
+              prompt: resolvedPrompt,
+              model: state.selectedModel,
+              outputFields: state.selectedTemplate.outputFields,
+              context: {
+                primaryRecord: record,
+                relatedRecords: {
+                  Account: getRelatedRecord('Account__dlm', 'AccountId', record.AccountId),
+                  Contact: getRelatedRecord('Contact__dlm', 'Email', record.ContactEmail)
+                }
+              }
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+          state.currentOutput = data.output;
+          state.latency = Date.now() - startTime;
+        } catch (err) {
+          state.error = err.message;
+        }
+      } else {
+        // Simulated response for demo mode
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        state.currentOutput = getSimulatedResponse(state.selectedTemplate.id, record.CaseId);
+        state.latency = Date.now() - startTime;
+      }
+
+      state.isRunning = false;
+      state.runComplete = !state.error;
+      render();
+    }
+
+    function getSimulatedResponse(templateId, caseId) {
+      const responses = {
+        'triage': {
+          'CASE-001': {
+            Category: 'Technical',
+            Sentiment: 'Angry',
+            UrgencyScore: 9,
+            RecommendedTeam: 'Engineering',
+            KeyIssues: ['Production system outage', 'Revenue loss ($50k/hr)', 'SLA breach concern'],
+            ResponseTone: 'Urgent, empathetic, action-oriented'
+          },
+          'CASE-002': {
+            Category: 'General Inquiry',
+            Sentiment: 'Positive',
+            UrgencyScore: 3,
+            RecommendedTeam: 'Support L1',
+            KeyIssues: ['API rate limit clarification', 'Scaling planning', 'Limit increase process'],
+            ResponseTone: 'Friendly, informative, helpful'
+          },
+          'CASE-003': {
+            Category: 'Billing',
+            Sentiment: 'Neutral',
+            UrgencyScore: 5,
+            RecommendedTeam: 'Billing',
+            KeyIssues: ['Invoice discrepancy ($600)', 'Contract verification needed', 'Credit request'],
+            ResponseTone: 'Professional, apologetic, solution-focused'
+          }
+        },
+        'draft-response': {
+          'CASE-001': {
+            SubjectLine: 'RE: Urgent - Production Outage - Engineering Team Engaged',
+            DraftEmail: `Dear John,
+
+I understand how critical this situation is, and I want you to know that we are treating this with the highest priority.
+
+Our engineering team has been immediately engaged and is actively investigating the root cause of your production outage. As a Premium Support customer, you have our commitment to a 15-minute initial response SLA, and I'm personally ensuring we meet that.
+
+**Immediate Actions Taken:**
+• Senior Engineer assigned and investigating
+• Incident bridge opened - you'll receive dial-in details shortly
+• Executive escalation initiated
+
+I will call you directly within the next 10 minutes with an initial status update.
+
+We deeply value your partnership and will do everything to restore your systems as quickly as possible.
+
+Best regards,
+Support Team`,
+            EstimatedResolutionTime: '2-4 hours (initial assessment in 30 min)'
+          },
+          'CASE-002': {
+            SubjectLine: 'RE: API Rate Limits - Happy to Help!',
+            DraftEmail: `Hi Sarah,
+
+Great question, and it's smart to plan ahead for scaling!
+
+For your Enterprise plan, here are your current API rate limits:
+• 10,000 requests per minute
+• 1,000,000 requests per day
+• Burst capacity up to 15,000 rpm for short periods
+
+**Need Higher Limits?**
+Absolutely! You can request an increase through your Account Manager, or I can submit the request on your behalf. Typically, limit increases are approved within 2-3 business days for Enterprise customers.
+
+Would you like me to initiate that request? Just let me know your expected peak usage and timeline.
+
+Happy to help with any other questions!
+
+Best,
+Support Team`,
+            EstimatedResolutionTime: 'Resolved - Information provided'
+          },
+          'CASE-003': {
+            SubjectLine: 'RE: Invoice #INV-2024-0892 - Credit Being Processed',
+            DraftEmail: `Dear Mike,
+
+Thank you for bringing this to our attention, and I apologize for the billing discrepancy.
+
+I've reviewed your account and confirmed you are indeed on the Growth plan at $150/user for 12 users, which should total $1,800. The $2,400 charge was an error on our end.
+
+**Resolution:**
+• A credit of $600 has been initiated
+• You'll see this reflected on your next statement
+• I've flagged your account to prevent future discrepancies
+
+I've also attached a corrected invoice for your records. If you need this expedited for month-end close, please let me know and I can process a direct refund instead.
+
+Thank you for your patience and for being a valued customer since 2020.
+
+Best regards,
+Support Team`,
+            EstimatedResolutionTime: 'Credit processed within 3-5 business days'
+          }
+        },
+        'summarize': {
+          'CASE-001': {
+            OneLiner: 'Production outage at Acme Corp - $50k/hr revenue loss, Premium customer',
+            BusinessImpact: 'CRITICAL - High-value customer ($2.4B) experiencing complete production failure. Revenue impact estimated at $50,000/hour. Multiple teams blocked. Premium SLA at risk.',
+            Priority: 'P1',
+            EscalationNeeded: 'Yes',
+            EscalationReason: 'Premium customer, high revenue impact, SLA breach imminent'
+          },
+          'CASE-002': {
+            OneLiner: 'API rate limit inquiry from TechStart - planning scaling effort',
+            BusinessImpact: 'LOW - Proactive planning question. No immediate issue. Good engagement signal from growing customer.',
+            Priority: 'P4',
+            EscalationNeeded: 'No',
+            EscalationReason: 'Standard inquiry, can be handled by L1 support'
+          },
+          'CASE-003': {
+            OneLiner: 'Billing error - $600 overcharge on Global Logistics invoice',
+            BusinessImpact: 'MEDIUM - Premium customer with valid billing complaint. Quick resolution needed to maintain trust. Contract documentation available.',
+            Priority: 'P3',
+            EscalationNeeded: 'No',
+            EscalationReason: 'Clear-cut billing error, standard correction process applies'
+          }
+        }
+      };
+      return responses[templateId]?.[caseId] || { error: 'No simulated response available' };
+    }
+
+    // Render functions
+    function render() {
+      const app = document.getElementById('app');
+      const primaryDMO = sampleDMOs[state.selectedPrimaryDMO];
+      const selectedRecord = primaryDMO.records[state.selectedRecordIndex];
+      const resolvedPrompt = resolveTemplate(state.selectedTemplate.template, selectedRecord);
+      const inputTokens = estimateTokens(resolvedPrompt);
+      const outputTokens = state.currentOutput ? estimateTokens(JSON.stringify(state.currentOutput)) : 0;
+
+      app.innerHTML = `
+        <div class="min-h-screen bg-gray-100 flex flex-col">
+          <!-- Header -->
+          <div class="bg-white border-b flex items-center justify-between px-4 py-2">
+            <div class="flex items-center gap-3">
+              <button class="text-gray-500 hover:text-gray-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                  </svg>
+                </div>
+                <div>
+                  <span class="font-semibold text-gray-800">Content Foundry</span>
+                  <span class="text-xs text-gray-500 ml-2">Playground</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox" ${state.useLiveApi ? 'checked' : ''} onchange="toggleLiveApi()" class="rounded text-purple-600">
+                <span class="text-gray-600">Live API</span>
+              </label>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="text-gray-500">Model:</span>
+                <select onchange="setModel(this.value)" class="border rounded px-2 py-1 text-sm bg-white">
+                  <option value="gpt-4o" ${state.selectedModel === 'gpt-4o' ? 'selected' : ''}>GPT-4o</option>
+                  <option value="gpt-4o-mini" ${state.selectedModel === 'gpt-4o-mini' ? 'selected' : ''}>GPT-4o-mini</option>
+                  <option value="claude-3-5-sonnet" ${state.selectedModel === 'claude-3-5-sonnet' ? 'selected' : ''}>Claude 3.5 Sonnet</option>
+                </select>
+              </div>
+              <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span class="text-sm">Settings</span>
+              </button>
+              <button class="bg-purple-600 text-white px-4 py-1.5 rounded font-medium hover:bg-purple-700">
+                Save Pipeline
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <div class="bg-white border-b px-4">
+            <div class="flex gap-6">
+              <button onclick="setActiveTab('playground')" class="py-3 text-sm font-medium border-b-2 ${state.activeTab === 'playground' ? 'text-purple-600 border-purple-600' : 'text-gray-500 border-transparent hover:text-gray-700'}">
+                🧪 Playground
+              </button>
+              <button onclick="setActiveTab('configure')" class="py-3 text-sm font-medium border-b-2 ${state.activeTab === 'configure' ? 'text-purple-600 border-purple-600' : 'text-gray-500 border-transparent hover:text-gray-700'}">
+                ⚙️ Configure Pipeline
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Content -->
+          <div class="flex flex-1 overflow-hidden" style="height: calc(100vh - 110px);">
+
+            <!-- Left Panel: Data Sources -->
+            <div class="w-72 bg-white border-r flex flex-col flex-shrink-0">
+              <div class="p-4 border-b">
+                <h3 class="font-semibold text-gray-800 mb-3">📊 Data Sources</h3>
+
+                <!-- Primary DMO -->
+                <div class="mb-4">
+                  <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Primary DMO</label>
+                  <select onchange="setPrimaryDMO(this.value)" class="mt-1 w-full border rounded-lg px-3 py-2 text-sm bg-white">
+                    ${Object.keys(sampleDMOs).map(key => `
+                      <option value="${key}" ${state.selectedPrimaryDMO === key ? 'selected' : ''}>
+                        ${sampleDMOs[key].icon} ${sampleDMOs[key].name}
+                      </option>
+                    `).join('')}
+                  </select>
+                </div>
+
+                <!-- Related DMOs -->
+                <div>
+                  <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Related DMOs</label>
+                  <div class="mt-1 space-y-1">
+                    ${Object.keys(sampleDMOs).filter(k => k !== state.selectedPrimaryDMO).map(key => `
+                      <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" ${state.selectedRelatedDMOs.includes(key) ? 'checked' : ''}
+                          onchange="toggleRelatedDMO('${key}')"
+                          class="rounded text-purple-600">
+                        <span class="text-sm">${sampleDMOs[key].icon} ${sampleDMOs[key].name}</span>
+                      </label>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Record Selector -->
+              <div class="p-4 border-b">
+                <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Test Record</label>
+                <div class="mt-2 space-y-2">
+                  ${primaryDMO.records.map((record, idx) => `
+                    <div
+                      onclick="selectRecord(${idx})"
+                      class="p-2 rounded-lg border cursor-pointer transition-colors ${state.selectedRecordIndex === idx ? 'bg-purple-50 border-purple-300' : 'hover:bg-gray-50 border-gray-200'}"
+                    >
+                      <div class="text-sm font-medium text-gray-800 truncate">${record.Subject || record.CaseId}</div>
+                      <div class="text-xs text-gray-500">${record.CaseId}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Token Estimate -->
+              ${state.showTokenEstimate ? `
+                <div class="p-4 bg-gray-50 mt-auto">
+                  <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Token Estimate</h4>
+                  <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                      <span class="text-gray-600">Input</span>
+                      <span class="font-medium">${inputTokens.toLocaleString()} tokens</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-600">Output (est.)</span>
+                      <span class="font-medium">~${(outputTokens || 500).toLocaleString()} tokens</span>
+                    </div>
+                    <div class="pt-2 border-t flex justify-between">
+                      <span class="text-gray-600">Est. Cost</span>
+                      <span class="font-medium text-green-600">$${((inputTokens * 0.00001) + ((outputTokens || 500) * 0.00003)).toFixed(4)}</span>
+                    </div>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Center Panel: Prompt & Preview -->
+            <div class="flex-1 flex flex-col overflow-hidden min-w-0">
+              <!-- Template Selector -->
+              <div class="bg-white border-b px-6 py-4 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-4">
+                    <label class="text-sm font-medium text-gray-700">Prompt Template:</label>
+                    <select onchange="selectTemplate(this.value)" class="border rounded-lg px-3 py-2 text-sm bg-white min-w-64">
+                      ${promptTemplates.map(t => `
+                        <option value="${t.id}" ${state.selectedTemplate.id === t.id ? 'selected' : ''}>
+                          ${t.name}
+                        </option>
+                      `).join('')}
+                    </select>
+                  </div>
+                  <button
+                    onclick="runPipeline()"
+                    ${state.isRunning ? 'disabled' : ''}
+                    class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    ${state.isRunning ? `
+                      <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Running...
+                    ` : `
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Test Run
+                    `}
+                  </button>
+                </div>
+                <p class="text-sm text-gray-500 mt-1">${state.selectedTemplate.description}</p>
+              </div>
+
+              <!-- Split View: Prompt & Output -->
+              <div class="flex-1 flex overflow-hidden">
+                <!-- Resolved Prompt -->
+                <div class="w-1/2 flex flex-col border-r overflow-hidden">
+                  <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between flex-shrink-0">
+                    <h3 class="font-semibold text-gray-800">📝 Resolved Prompt</h3>
+                    <span class="text-xs text-gray-500">${inputTokens} tokens</span>
+                  </div>
+                  <div class="flex-1 overflow-auto p-4 scrollbar-thin">
+                    <pre class="text-sm text-gray-700 whitespace-pre-wrap font-mono bg-gray-50 p-4 rounded-lg border">${escapeHtml(resolvedPrompt)}</pre>
+                  </div>
+                </div>
+
+                <!-- Output -->
+                <div class="w-1/2 flex flex-col overflow-hidden">
+                  <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between flex-shrink-0">
+                    <h3 class="font-semibold text-gray-800">✨ Generated Output</h3>
+                    <div class="flex items-center gap-2">
+                      <button
+                        onclick="setOutputFormat('structured')"
+                        class="px-2 py-1 text-xs rounded ${state.outputFormat === 'structured' ? 'bg-purple-100 text-purple-700' : 'text-gray-500 hover:bg-gray-100'}"
+                      >Structured</button>
+                      <button
+                        onclick="setOutputFormat('raw')"
+                        class="px-2 py-1 text-xs rounded ${state.outputFormat === 'raw' ? 'bg-purple-100 text-purple-700' : 'text-gray-500 hover:bg-gray-100'}"
+                      >Raw JSON</button>
+                    </div>
+                  </div>
+                  <div class="flex-1 overflow-auto p-4 scrollbar-thin">
+                    ${renderOutput()}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Panel: Output Mapping -->
+            <div class="w-80 bg-white border-l flex flex-col flex-shrink-0">
+              <div class="p-4 border-b">
+                <h3 class="font-semibold text-gray-800 mb-1">📤 Output Mapping</h3>
+                <p class="text-xs text-gray-500">Map generated fields to target DMO</p>
+              </div>
+
+              <div class="flex-1 overflow-auto p-4 scrollbar-thin">
+                <div class="mb-4">
+                  <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Target DMO</label>
+                  <select class="mt-1 w-full border rounded-lg px-3 py-2 text-sm bg-white">
+                    <option>📋 Case (Update existing)</option>
+                    <option>📊 Case_Enrichment__dlm (New)</option>
+                    <option>📧 Draft_Response__dlm (New)</option>
+                  </select>
+                </div>
+
+                <div class="space-y-3">
+                  <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Field Mappings</div>
+                  ${state.selectedTemplate.outputFields.map(field => `
+                    <div class="p-3 bg-gray-50 rounded-lg border">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">${field}</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full ${state.runComplete ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-500'}">
+                          ${state.runComplete ? '✓ Mapped' : 'Pending'}
+                        </span>
+                      </div>
+                      <select class="w-full border rounded px-2 py-1 text-xs bg-white">
+                        <option>→ Case.${field}__c</option>
+                        <option>→ Case_Enrichment.${field}</option>
+                        <option>→ [Create new field]</option>
+                      </select>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Run Stats -->
+              ${state.runComplete ? `
+                <div class="p-4 bg-green-50 border-t">
+                  <div class="flex items-center gap-2 text-green-700 mb-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="font-medium">Test Run Complete</span>
+                  </div>
+                  <div class="text-xs text-green-600 space-y-1">
+                    <div>Latency: ${(state.latency / 1000).toFixed(2)}s</div>
+                    <div>Tokens used: ${inputTokens + (state.currentOutput ? estimateTokens(JSON.stringify(state.currentOutput)) : 0)}</div>
+                    <div>Fields extracted: ${state.selectedTemplate.outputFields.length}</div>
+                  </div>
+                </div>
+              ` : state.error ? `
+                <div class="p-4 bg-red-50 border-t">
+                  <div class="flex items-center gap-2 text-red-700 mb-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="font-medium">Error</span>
+                  </div>
+                  <div class="text-xs text-red-600">${state.error}</div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderOutput() {
+      if (state.isRunning) {
+        return `
+          <div class="flex flex-col items-center justify-center h-full text-gray-400">
+            <svg class="w-12 h-12 animate-spin mb-4 text-purple-500" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p>Generating with LLM...</p>
+          </div>
+        `;
+      }
+
+      if (state.error) {
+        return `
+          <div class="flex flex-col items-center justify-center h-full text-red-400">
+            <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p>${state.error}</p>
+          </div>
+        `;
+      }
+
+      if (!state.runComplete || !state.currentOutput) {
+        return `
+          <div class="flex flex-col items-center justify-center h-full text-gray-400">
+            <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p>Click "Test Run" to generate output</p>
+          </div>
+        `;
+      }
+
+      if (state.outputFormat === 'raw') {
+        return `
+          <pre class="text-sm text-gray-700 whitespace-pre-wrap font-mono bg-gray-900 text-green-400 p-4 rounded-lg">${JSON.stringify(state.currentOutput, null, 2)}</pre>
+        `;
+      }
+
+      // Structured view
+      return `
+        <div class="space-y-3">
+          ${Object.entries(state.currentOutput).map(([key, value]) => `
+            <div class="p-3 bg-white rounded-lg border">
+              <div class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">${key}</div>
+              <div class="text-sm text-gray-800">
+                ${Array.isArray(value)
+                  ? `<ul class="list-disc list-inside space-y-1">${value.map(v => `<li>${escapeHtml(String(v))}</li>`).join('')}</ul>`
+                  : typeof value === 'object'
+                    ? `<pre class="text-xs bg-gray-50 p-2 rounded">${JSON.stringify(value, null, 2)}</pre>`
+                    : `<span class="${key === 'Sentiment' && value === 'Angry' ? 'text-red-600 font-medium' : ''} ${key === 'UrgencyScore' && value >= 8 ? 'text-red-600 font-bold' : ''}">${escapeHtml(String(value))}</span>`
+                }
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Event handlers
+    function setActiveTab(tab) {
+      state.activeTab = tab;
+      render();
+    }
+
+    function setPrimaryDMO(dmoKey) {
+      state.selectedPrimaryDMO = dmoKey;
+      state.selectedRecordIndex = 0;
+      state.runComplete = false;
+      state.currentOutput = null;
+      state.error = null;
+      render();
+    }
+
+    function toggleRelatedDMO(dmoKey) {
+      if (state.selectedRelatedDMOs.includes(dmoKey)) {
+        state.selectedRelatedDMOs = state.selectedRelatedDMOs.filter(k => k !== dmoKey);
+      } else {
+        state.selectedRelatedDMOs.push(dmoKey);
+      }
+      render();
+    }
+
+    function selectRecord(idx) {
+      state.selectedRecordIndex = idx;
+      state.runComplete = false;
+      state.currentOutput = null;
+      state.error = null;
+      render();
+    }
+
+    function selectTemplate(templateId) {
+      state.selectedTemplate = promptTemplates.find(t => t.id === templateId);
+      state.runComplete = false;
+      state.currentOutput = null;
+      state.error = null;
+      render();
+    }
+
+    function setOutputFormat(format) {
+      state.outputFormat = format;
+      render();
+    }
+
+    function toggleLiveApi() {
+      state.useLiveApi = !state.useLiveApi;
+      render();
+    }
+
+    function setModel(model) {
+      state.selectedModel = model;
+      render();
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
