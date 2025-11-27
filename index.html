@@ -120,6 +120,68 @@
     .mapping-header { font-size: 11px; color: #6b7280; text-transform: uppercase; margin: 8px 0 4px 0; font-weight: 600; }
     .input-fields-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 8px; margin-bottom: 8px; }
     .output-fields-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px; }
+
+    /* Template Builder Modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal { background: white; border-radius: 12px; width: 800px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+    .modal-header { padding: 20px 24px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 18px; font-weight: 600; color: #1f2937; display: flex; align-items: center; gap: 8px; }
+    .modal-close { background: none; border: none; font-size: 24px; color: #6b7280; cursor: pointer; padding: 4px; }
+    .modal-close:hover { color: #1f2937; }
+    .modal-body { flex: 1; overflow-y: auto; padding: 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; background: #f9fafb; }
+
+    .steps-indicator { display: flex; gap: 8px; margin-bottom: 24px; }
+    .step-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; }
+    .step-dot.active { background: #9333ea; color: white; }
+    .step-dot.done { background: #22c55e; color: white; }
+    .step-dot.pending { background: #e5e7eb; color: #6b7280; }
+    .step-line { flex: 1; height: 2px; background: #e5e7eb; align-self: center; }
+    .step-line.done { background: #22c55e; }
+
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px; }
+    .form-sublabel { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+    .form-input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; }
+    .form-input:focus { outline: none; border-color: #9333ea; box-shadow: 0 0 0 3px rgba(147,51,234,0.1); }
+    .form-textarea { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; font-family: monospace; min-height: 200px; resize: vertical; }
+    .form-textarea:focus { outline: none; border-color: #9333ea; box-shadow: 0 0 0 3px rgba(147,51,234,0.1); }
+
+    .dmo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .dmo-card { padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: all 0.15s; }
+    .dmo-card:hover { border-color: #d8b4fe; background: #faf5ff; }
+    .dmo-card.selected { border-color: #9333ea; background: #faf5ff; }
+    .dmo-card-icon { font-size: 24px; margin-bottom: 4px; }
+    .dmo-card-name { font-size: 14px; font-weight: 500; color: #1f2937; }
+    .dmo-card-cloud { font-size: 11px; color: #6b7280; }
+
+    .field-checkbox-list { max-height: 250px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; }
+    .field-checkbox { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; cursor: pointer; }
+    .field-checkbox:hover { background: #f9fafb; }
+    .field-checkbox input { width: 16px; height: 16px; accent-color: #9333ea; }
+    .field-checkbox-label { font-size: 14px; color: #374151; }
+
+    .output-field-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    .output-field-row input { flex: 1; }
+    .output-field-row button { padding: 8px 12px; border: 1px solid #e5e7eb; background: white; border-radius: 6px; cursor: pointer; color: #6b7280; }
+    .output-field-row button:hover { background: #fee2e2; color: #dc2626; border-color: #fecaca; }
+    .add-field-btn { padding: 8px 16px; border: 2px dashed #d1d5db; background: white; border-radius: 8px; cursor: pointer; color: #6b7280; font-size: 14px; width: 100%; margin-top: 8px; }
+    .add-field-btn:hover { border-color: #9333ea; color: #9333ea; background: #faf5ff; }
+
+    .btn-secondary { background: white; color: #374151; border: 1px solid #d1d5db; padding: 8px 16px; border-radius: 6px; font-weight: 500; cursor: pointer; }
+    .btn-secondary:hover { background: #f9fafb; }
+    .btn-next { background: #9333ea; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 500; cursor: pointer; }
+    .btn-next:hover { background: #7e22ce; }
+    .btn-next:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .plus-btn { width: 32px; height: 32px; border-radius: 6px; border: 2px dashed #d1d5db; background: white; cursor: pointer; font-size: 18px; color: #6b7280; display: flex; align-items: center; justify-content: center; margin-left: 8px; }
+    .plus-btn:hover { border-color: #9333ea; color: #9333ea; background: #faf5ff; }
+
+    .template-type-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 8px; }
+    .template-type-badge.custom { background: #fef3c7; color: #92400e; }
+    .template-type-badge.builtin { background: #dbeafe; color: #1e40af; }
+
+    .use-case-header { display: flex; align-items: center; justify-content: space-between; }
   </style>
 </head>
 <body>
@@ -344,9 +406,238 @@
       }
     };
 
+    // Custom templates storage (will persist in localStorage)
+    var CUSTOM_TEMPLATES = JSON.parse(localStorage.getItem('customTemplates') || '[]');
+
     var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured' };
 
+    // Template Builder State
+    var builder = {
+      open: false,
+      step: 1,
+      name: '',
+      desc: '',
+      icon: '⚙️',
+      cloud: 'service',
+      sourceDMO: '',
+      targetDMO: '',
+      inputFields: [],
+      outputFields: [''],
+      prompt: ''
+    };
+
     function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+    // Get all templates (built-in + custom)
+    function getAllTemplates() {
+      return TEMPLATES.concat(CUSTOM_TEMPLATES);
+    }
+
+    // Template Builder Functions
+    function openBuilder() {
+      builder = {
+        open: true,
+        step: 1,
+        name: '',
+        desc: '',
+        icon: '⚙️',
+        cloud: 'service',
+        sourceDMO: '',
+        targetDMO: '',
+        inputFields: [],
+        outputFields: [''],
+        prompt: ''
+      };
+      render();
+    }
+
+    function closeBuilder() {
+      builder.open = false;
+      render();
+    }
+
+    function builderNext() {
+      if (builder.step < 5) {
+        if (builder.step === 2 && builder.sourceDMO) {
+          // Auto-generate prompt template when moving from step 2
+          generatePromptTemplate();
+        }
+        builder.step++;
+        render();
+      }
+    }
+
+    function builderPrev() {
+      if (builder.step > 1) {
+        builder.step--;
+        render();
+      }
+    }
+
+    function selectSourceDMO(dmoKey) {
+      builder.sourceDMO = dmoKey;
+      builder.targetDMO = dmoKey; // Default target to same DMO
+      builder.cloud = DMOs[dmoKey].cloud;
+      builder.inputFields = [];
+      render();
+    }
+
+    function toggleInputField(field) {
+      var idx = builder.inputFields.indexOf(field);
+      if (idx > -1) {
+        builder.inputFields.splice(idx, 1);
+      } else {
+        builder.inputFields.push(field);
+      }
+      render();
+    }
+
+    function updateOutputField(idx, value) {
+      builder.outputFields[idx] = value;
+    }
+
+    function addOutputField() {
+      builder.outputFields.push('');
+      render();
+    }
+
+    function removeOutputField(idx) {
+      builder.outputFields.splice(idx, 1);
+      render();
+    }
+
+    function generatePromptTemplate() {
+      if (!builder.sourceDMO) return;
+      var dmoName = builder.sourceDMO.replace('__dlm', '');
+      var prompt = '=== INPUT FIELDS (from ' + builder.sourceDMO + ') ===\n';
+      builder.inputFields.forEach(function(f) {
+        prompt += f + ': {{' + dmoName + '.' + f + '}}\n';
+      });
+      prompt += '\n=== INSTRUCTIONS ===\n[Describe what the LLM should do with this data]\n\n';
+      prompt += '=== OUTPUT FIELDS (to generate) ===\n';
+      builder.outputFields.filter(function(f) { return f.trim(); }).forEach(function(f, i) {
+        prompt += (i + 1) + '. ' + f + ': (description)\n';
+      });
+      prompt += '\nRespond in JSON format.';
+      builder.prompt = prompt;
+    }
+
+    function saveCustomTemplate() {
+      var validOutputFields = builder.outputFields.filter(function(f) { return f.trim(); });
+      var newTemplate = {
+        id: 'custom-' + Date.now(),
+        type: 'custom',
+        cloud: builder.cloud,
+        name: builder.icon + ' ' + builder.name,
+        desc: builder.desc,
+        primaryDMO: builder.sourceDMO,
+        relatedDMOs: [],
+        inputFields: builder.inputFields,
+        outputFields: validOutputFields,
+        fields: validOutputFields,
+        prompt: builder.prompt,
+        createdAt: new Date().toISOString()
+      };
+
+      CUSTOM_TEMPLATES.push(newTemplate);
+      localStorage.setItem('customTemplates', JSON.stringify(CUSTOM_TEMPLATES));
+
+      // Switch to the new template
+      state.template = newTemplate;
+      state.recordIdx = 0;
+      state.done = false;
+      state.output = null;
+
+      closeBuilder();
+    }
+
+    function deleteCustomTemplate(id) {
+      CUSTOM_TEMPLATES = CUSTOM_TEMPLATES.filter(function(t) { return t.id !== id; });
+      localStorage.setItem('customTemplates', JSON.stringify(CUSTOM_TEMPLATES));
+      if (state.template.id === id) {
+        state.template = TEMPLATES[0];
+      }
+      render();
+    }
+
+    function renderBuilderModal() {
+      if (!builder.open) return '';
+
+      var stepTitles = ['Basic Info', 'Source DMO', 'Input Fields', 'Output Fields', 'Prompt'];
+      var stepsHtml = '<div class="steps-indicator">';
+      for (var i = 1; i <= 5; i++) {
+        var stepClass = i < builder.step ? 'done' : (i === builder.step ? 'active' : 'pending');
+        stepsHtml += '<div class="step-dot ' + stepClass + '">' + (i < builder.step ? '✓' : i) + '</div>';
+        if (i < 5) stepsHtml += '<div class="step-line' + (i < builder.step ? ' done' : '') + '"></div>';
+      }
+      stepsHtml += '</div>';
+
+      var bodyHtml = '';
+
+      if (builder.step === 1) {
+        bodyHtml = '<div class="form-group"><label class="form-label">Template Name</label><input type="text" class="form-input" placeholder="e.g., Lead Scoring" value="' + esc(builder.name) + '" onchange="builder.name=this.value"></div>' +
+          '<div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" placeholder="Brief description of what this template does" value="' + esc(builder.desc) + '" onchange="builder.desc=this.value"></div>' +
+          '<div class="form-group"><label class="form-label">Icon</label><div style="display:flex;gap:8px;flex-wrap:wrap;">';
+        ['⚙️', '🎯', '📊', '✨', '🔍', '📝', '💡', '🚀', '📈', '🤖', '💬', '📋'].forEach(function(icon) {
+          bodyHtml += '<button style="padding:8px 12px;border:2px solid ' + (builder.icon === icon ? '#9333ea' : '#e5e7eb') + ';border-radius:6px;background:' + (builder.icon === icon ? '#faf5ff' : 'white') + ';cursor:pointer;font-size:20px;" onclick="builder.icon=\'' + icon + '\';render()">' + icon + '</button>';
+        });
+        bodyHtml += '</div></div>';
+      }
+
+      else if (builder.step === 2) {
+        bodyHtml = '<div class="form-group"><label class="form-label">Select Source DMO</label><div class="form-sublabel">Choose the data object to read from</div><div class="dmo-grid">';
+        for (var dmoKey in DMOs) {
+          var dmo = DMOs[dmoKey];
+          var isSelected = builder.sourceDMO === dmoKey;
+          bodyHtml += '<div class="dmo-card' + (isSelected ? ' selected' : '') + '" onclick="selectSourceDMO(\'' + dmoKey + '\')">' +
+            '<div class="dmo-card-icon">' + dmo.icon + '</div>' +
+            '<div class="dmo-card-name">' + dmo.name + '</div>' +
+            '<div class="dmo-card-cloud">' + CLOUDS[dmo.cloud].icon + ' ' + CLOUDS[dmo.cloud].name + '</div>' +
+            '</div>';
+        }
+        bodyHtml += '</div></div>';
+      }
+
+      else if (builder.step === 3) {
+        var fields = builder.sourceDMO ? Object.keys(DMOs[builder.sourceDMO].records[0] || {}) : [];
+        bodyHtml = '<div class="form-group"><label class="form-label">Select Input Fields</label><div class="form-sublabel">Choose which fields to include in the prompt (' + builder.inputFields.length + ' selected)</div>' +
+          '<div class="field-checkbox-list">';
+        fields.forEach(function(f) {
+          var checked = builder.inputFields.indexOf(f) > -1;
+          bodyHtml += '<label class="field-checkbox"><input type="checkbox" ' + (checked ? 'checked' : '') + ' onchange="toggleInputField(\'' + f + '\')"><span class="field-checkbox-label">' + f + '</span></label>';
+        });
+        bodyHtml += '</div></div>';
+      }
+
+      else if (builder.step === 4) {
+        bodyHtml = '<div class="form-group"><label class="form-label">Define Output Fields</label><div class="form-sublabel">Add the fields you want the LLM to generate</div>';
+        builder.outputFields.forEach(function(f, i) {
+          bodyHtml += '<div class="output-field-row"><input type="text" class="form-input" placeholder="Field name (e.g., Sentiment, Summary)" value="' + esc(f) + '" onchange="updateOutputField(' + i + ', this.value)">' +
+            '<button onclick="removeOutputField(' + i + ')">✕</button></div>';
+        });
+        bodyHtml += '<button class="add-field-btn" onclick="addOutputField()">+ Add Output Field</button></div>';
+      }
+
+      else if (builder.step === 5) {
+        bodyHtml = '<div class="form-group"><label class="form-label">Prompt Template</label><div class="form-sublabel">Edit the prompt that will be sent to the LLM. Use {{DMO.Field}} syntax for placeholders.</div>' +
+          '<textarea class="form-textarea" onchange="builder.prompt=this.value">' + esc(builder.prompt) + '</textarea></div>';
+      }
+
+      var canNext = (builder.step === 1 && builder.name.trim()) ||
+                    (builder.step === 2 && builder.sourceDMO) ||
+                    (builder.step === 3 && builder.inputFields.length > 0) ||
+                    (builder.step === 4 && builder.outputFields.filter(function(f) { return f.trim(); }).length > 0) ||
+                    (builder.step === 5);
+
+      return '<div class="modal-overlay" onclick="if(event.target===this)closeBuilder()">' +
+        '<div class="modal">' +
+        '<div class="modal-header"><div class="modal-title">✨ Create Custom Template</div><button class="modal-close" onclick="closeBuilder()">×</button></div>' +
+        '<div class="modal-body">' + stepsHtml + '<h3 style="margin-bottom:16px;color:#374151;">Step ' + builder.step + ': ' + stepTitles[builder.step - 1] + '</h3>' + bodyHtml + '</div>' +
+        '<div class="modal-footer">' +
+        '<button class="btn-secondary" onclick="' + (builder.step === 1 ? 'closeBuilder()' : 'builderPrev()') + '">' + (builder.step === 1 ? 'Cancel' : '← Back') + '</button>' +
+        '<button class="btn-next" onclick="' + (builder.step === 5 ? 'saveCustomTemplate()' : 'builderNext()') + '"' + (canNext ? '' : ' disabled') + '>' + (builder.step === 5 ? 'Create Template' : 'Next →') + '</button>' +
+        '</div></div></div>';
+    }
     function tokens(t) { return Math.ceil((t || '').length / 4); }
 
     function resolve(tpl, rec) {
@@ -375,7 +666,8 @@
     }
 
     function render() {
-      var tpls = state.cloud === 'all' ? TEMPLATES : TEMPLATES.filter(function(t) { return t.cloud === state.cloud; });
+      var allTpls = getAllTemplates();
+      var tpls = state.cloud === 'all' ? allTpls : allTpls.filter(function(t) { return t.cloud === state.cloud; });
       if (!tpls.find(function(t) { return t.id === state.template.id; })) { state.template = tpls[0]; state.recordIdx = 0; state.done = false; }
       var dmo = DMOs[state.template.primaryDMO];
       var recs = dmo.records;
@@ -393,9 +685,14 @@
       var inputFields = state.template.inputFields || [];
       var outputFields = state.template.outputFields || state.template.fields || [];
 
-      html += '</div><div class="main-content"><aside class="sidebar-left"><div class="sidebar-section"><div class="sidebar-title">🎯 Use Case</div><select class="sidebar-select" onchange="state.template=TEMPLATES.find(function(t){return t.id===this.value}.bind(this));state.recordIdx=0;state.done=false;state.output=null;render()">';
-      tpls.forEach(function(t) { html += '<option value="' + t.id + '"' + (state.template.id === t.id ? ' selected' : '') + '>' + t.name + '</option>'; });
-      html += '</select><div class="sidebar-desc">' + state.template.desc + '</div><div class="cloud-badge badge-' + state.template.cloud + '">' + CLOUDS[state.template.cloud].icon + ' ' + CLOUDS[state.template.cloud].name + '</div></div>' +
+      html += '</div><div class="main-content"><aside class="sidebar-left"><div class="sidebar-section"><div class="use-case-header"><span class="sidebar-title" style="margin-bottom:0">🎯 Use Case</span><button class="plus-btn" onclick="openBuilder()" title="Create Custom Template">+</button></div><select class="sidebar-select" style="margin-top:12px" onchange="var t=getAllTemplates().find(function(t){return t.id===this.value}.bind(this));if(t){state.template=t;state.recordIdx=0;state.done=false;state.output=null;render()}">';
+      tpls.forEach(function(t) {
+        var badge = t.type === 'custom' ? ' [Custom]' : '';
+        html += '<option value="' + t.id + '"' + (state.template.id === t.id ? ' selected' : '') + '>' + t.name + badge + '</option>';
+      });
+      html += '</select><div class="sidebar-desc">' + state.template.desc + (state.template.type === 'custom' ? '<span class="template-type-badge custom">Custom</span>' : '') + '</div><div class="cloud-badge badge-' + state.template.cloud + '">' + CLOUDS[state.template.cloud].icon + ' ' + CLOUDS[state.template.cloud].name + '</div>' +
+        (state.template.type === 'custom' ? '<button style="margin-top:8px;font-size:12px;color:#dc2626;background:none;border:none;cursor:pointer;text-decoration:underline;" onclick="if(confirm(\'Delete this custom template?\'))deleteCustomTemplate(\'' + state.template.id + '\')">Delete Template</button>' : '') +
+        '</div>' +
         '<div class="sidebar-section"><div class="sidebar-title">📊 Data Source</div><div class="dmo-info"><span class="dmo-primary">' + dmo.icon + ' ' + dmo.name + '</span> <span style="font-size:12px;color:#6b7280">(' + dmoFields.length + ' fields)</span></div>';
       if (state.template.relatedDMOs.length) { state.template.relatedDMOs.forEach(function(rd) { var d = DMOs[rd]; var rdFields = d.records[0] ? Object.keys(d.records[0]).length : 0; html += '<div class="dmo-related">+ ' + d.icon + ' ' + d.name + ' (' + rdFields + ' fields)</div>'; }); }
 
@@ -428,6 +725,10 @@
         '<aside class="sidebar-right"><div class="sidebar-section"><div class="sidebar-title">📤 Output Mapping</div><div class="sidebar-desc">Map fields to target DMO</div></div><div class="sidebar-section"><div style="font-size:12px;color:#6b7280;margin-bottom:4px">Target DMO</div><select class="sidebar-select"><option>' + dmo.icon + ' ' + dmo.name + ' (Update)</option><option>📊 ' + dmo.name + '_Enriched (New)</option></select></div><div class="fields-list"><div style="font-size:12px;color:#6b7280;text-transform:uppercase;margin-bottom:8px">Output Fields (' + state.template.fields.length + ')</div>';
       state.template.fields.forEach(function(f) { html += '<div class="field-item"><span class="field-name">' + f + '</span><span class="field-status ' + (state.done ? 'done' : 'pending') + '">' + (state.done ? '✓' : '...') + '</span></div>'; });
       html += '</div>' + (state.done ? '<div class="complete-panel"><div class="complete-title">✓ Test Complete</div><div class="complete-sub">All ' + state.template.fields.length + ' fields extracted</div></div>' : '') + '</aside></div></div>';
+
+      // Add the Template Builder Modal
+      html += renderBuilderModal();
+
       document.getElementById('app').innerHTML = html;
     }
 
