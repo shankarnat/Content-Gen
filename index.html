@@ -681,7 +681,39 @@
         var rec = recs[state.recordIdx];
         var idKey = Object.keys(rec).find(function(k) { return k.indexOf('Id') > -1; });
         var id = rec[idKey];
-        state.output = (MOCK_OUTPUTS[state.template.id] || {})[id] || { message: 'No mock output' };
+
+        // Check for existing mock output
+        var mockOutput = (MOCK_OUTPUTS[state.template.id] || {})[id];
+
+        // For custom templates or missing mocks, generate sample output based on output fields
+        if (!mockOutput && state.template.outputFields) {
+          mockOutput = {};
+          state.template.outputFields.forEach(function(field) {
+            // Generate sample values based on common field name patterns
+            var lowerField = field.toLowerCase();
+            if (lowerField.includes('sentiment')) {
+              mockOutput[field] = ['Positive', 'Negative', 'Neutral'][Math.floor(Math.random() * 3)];
+            } else if (lowerField.includes('category') || lowerField.includes('type')) {
+              mockOutput[field] = 'Category A';
+            } else if (lowerField.includes('score') || lowerField.includes('rating')) {
+              mockOutput[field] = Math.floor(Math.random() * 5) + 1;
+            } else if (lowerField.includes('urgency') || lowerField.includes('priority')) {
+              mockOutput[field] = ['High', 'Medium', 'Low'][Math.floor(Math.random() * 3)];
+            } else if (lowerField.includes('summary') || lowerField.includes('description')) {
+              mockOutput[field] = 'AI-generated summary based on the input data provided.';
+            } else if (lowerField.includes('recommend') || lowerField.includes('action') || lowerField.includes('next')) {
+              mockOutput[field] = 'Recommended action based on analysis of the input.';
+            } else if (lowerField.includes('risk')) {
+              mockOutput[field] = ['High', 'Medium', 'Low'][Math.floor(Math.random() * 3)] + ' - Based on analysis';
+            } else if (lowerField.includes('list') || lowerField.includes('items') || lowerField.includes('tags')) {
+              mockOutput[field] = ['Item 1', 'Item 2', 'Item 3'];
+            } else {
+              mockOutput[field] = 'Generated value for ' + field;
+            }
+          });
+        }
+
+        state.output = mockOutput || { message: 'No mock output available' };
         state.running = false; state.done = true; render();
       }, 1500);
     }
