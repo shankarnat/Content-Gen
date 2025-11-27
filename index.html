@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Foundry - Multi-Cloud Playground</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+    .cloud-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+    .service { background: #dbeafe; color: #1e40af; }
+    .sales { background: #dcfce7; color: #166534; }
+    .marketing { background: #fce7f3; color: #9d174d; }
+    .health { background: #fef3c7; color: #92400e; }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div id="app"></div>
+
+  <script>
+    // ===================== CLOUD CONFIGURATIONS =====================
+    const CLOUDS = {
+      service: { name: 'Service Cloud', icon: '🎧', color: 'service' },
+      sales: { name: 'Sales Cloud', icon: '📈', color: 'sales' },
+      marketing: { name: 'Marketing Cloud', icon: '📣', color: 'marketing' },
+      health: { name: 'Health Cloud', icon: '🏥', color: 'health' }
+    };
+
+    // ===================== DMO DATA BY CLOUD =====================
+    const DMOs = {
+      // SERVICE CLOUD DMOs
+      'Case__dlm': {
+        cloud: 'service', name: 'Case', icon: '📋',
+        fields: ['CaseId', 'Subject', 'Description', 'Priority', 'AccountId', 'ContactEmail'],
+        records: [
+          { CaseId: 'CASE-001', Subject: 'Urgent: System outage affecting production', Description: 'Our production environment has been down for 2 hours. We are losing approximately $50,000 per hour in revenue. Multiple teams are blocked. We need immediate escalation to your engineering team. This is completely unacceptable for the premium support tier we are paying for. I expect a call back within 15 minutes.', Priority: 'High', AccountId: 'ACC-1001', ContactEmail: 'john.smith@acmecorp.com' },
+          { CaseId: 'CASE-002', Subject: 'Question about API rate limits', Description: 'Hi team, I was wondering if you could clarify the API rate limits for the Enterprise plan. We are planning to scale our integration and want to make sure we stay within bounds. Also, is there a way to request higher limits if needed? Thanks for your help!', Priority: 'Medium', AccountId: 'ACC-1002', ContactEmail: 'sarah.jones@techstart.io' },
+          { CaseId: 'CASE-003', Subject: 'Billing discrepancy on invoice #INV-2024-0892', Description: 'I noticed we were charged $2,400 instead of $1,800 on our latest invoice. Looking at our contract, we should be on the Growth plan at $150/user for 12 users. Can you please review and issue a credit for the difference? Attached is our signed contract for reference.', Priority: 'Medium', AccountId: 'ACC-1003', ContactEmail: 'mike.chen@globallogistics.com' }
+        ]
+      },
+      'EmailMessage__dlm': {
+        cloud: 'service', name: 'Email Message', icon: '📧',
+        fields: ['EmailId', 'Subject', 'Body', 'FromAddress', 'CaseId'],
+        records: [
+          { EmailId: 'EMAIL-001', Subject: 'Error message when uploading files', Body: 'Hi Support,\n\nI keep getting error code E-5502 when trying to upload files larger than 25MB. I\'ve tried Chrome, Firefox, and Safari. My account is john.smith@acmecorp.com and my company ID is AC-9921.\n\nThis is blocking our quarterly report submission. We purchased the Premium SKU-ENT-500 package last month. Please help ASAP!\n\n- John Smith\nPhone: 555-123-4567', FromAddress: 'john.smith@acmecorp.com', CaseId: 'CASE-004' },
+          { EmailId: 'EMAIL-002', Subject: 'Love your product!', Body: 'Just wanted to say that your new dashboard feature is amazing! It has saved our team at least 5 hours per week. The reporting on SKU-DASH-PRO has been incredibly helpful.\n\nAny chance you could add export to PDF? That would make it perfect.\n\nThanks!\nSarah', FromAddress: 'sarah@happycustomer.com', CaseId: 'CASE-005' }
+        ]
+      },
+      'ResolvedCase__dlm': {
+        cloud: 'service', name: 'Resolved Case', icon: '✅',
+        fields: ['CaseId', 'Subject', 'Resolution', 'Comments', 'Category'],
+        records: [
+          { CaseId: 'CASE-R001', Subject: 'Cannot connect API to Salesforce', Resolution: 'Resolved - Authentication token was expired', Category: 'Technical', Comments: 'Customer was using an expired OAuth token. Steps taken:\n1. Navigated to Setup > Connected Apps\n2. Located the "DataSync" connected app\n3. Clicked "Manage" then "Edit Policies"\n4. Generated new consumer key and secret\n5. Customer updated their .env file with new credentials\n6. Tested connection - successful 200 response\n7. Customer confirmed data sync working\n\nNote: Recommended customer set up token refresh automation to prevent future issues. Sent KB article #4521 for reference.' },
+          { CaseId: 'CASE-R002', Subject: 'Reports showing wrong timezone', Resolution: 'Resolved - User timezone settings updated', Category: 'Configuration', Comments: 'Issue: Reports showing timestamps 3 hours off.\n\nRoot cause: User timezone was set to UTC instead of EST.\n\nResolution steps:\n1. User clicked avatar > Settings\n2. Selected "Time & Language"\n3. Changed timezone from UTC to America/New_York\n4. Clicked Save\n5. Refreshed reports - times now correct\n\nAlso updated org default timezone for new users in Setup > Company Information.' }
+        ]
+      },
+
+      // SALES CLOUD DMOs
+      'Opportunity__dlm': {
+        cloud: 'sales', name: 'Opportunity', icon: '💰',
+        fields: ['OpportunityId', 'Name', 'Amount', 'Stage', 'AccountId', 'CloseDate'],
+        records: [
+          { OpportunityId: 'OPP-001', Name: 'Acme Corp - Enterprise License', Amount: 150000, Stage: 'Negotiation', AccountId: 'ACC-1001', CloseDate: '2024-03-15' },
+          { OpportunityId: 'OPP-002', Name: 'TechStart - Platform Expansion', Amount: 75000, Stage: 'Proposal', AccountId: 'ACC-1002', CloseDate: '2024-02-28' },
+          { OpportunityId: 'OPP-003', Name: 'Global Logistics - Data Cloud Add-on', Amount: 250000, Stage: 'Discovery', AccountId: 'ACC-1003', CloseDate: '2024-04-30' }
+        ]
+      },
+      'VoiceCall__dlm': {
+        cloud: 'sales', name: 'Voice Call', icon: '📞',
+        fields: ['CallId', 'Transcript', 'Duration', 'OpportunityId', 'ContactName'],
+        records: [
+          { CallId: 'CALL-001', Duration: '32:15', OpportunityId: 'OPP-001', ContactName: 'John Smith, VP Engineering', Transcript: 'Sales Rep: Thanks for taking the time today, John. I wanted to walk through our Enterprise proposal.\n\nJohn: Sure, but I have to be honest - your price is significantly higher than Competitor X. They quoted us $100k for similar functionality.\n\nSales Rep: I understand price is a key factor. Can you tell me more about what Competitor X is offering?\n\nJohn: They have the core platform plus basic analytics. But I\'ve heard their support isn\'t great.\n\nSales Rep: That\'s important feedback. Our Enterprise tier includes 24/7 premium support and a dedicated CSM. Last quarter we had 99.9% uptime.\n\nJohn: That matters to us. Our team was burned by downtime with our current vendor. When could we realistically go live if we signed next week?\n\nSales Rep: With your scope, we could have you fully deployed in 6 weeks. I can get our implementation team on a call this Thursday.\n\nJohn: Let me discuss with our CFO. She\'s concerned about the implementation timeline. Can you send over a detailed project plan?\n\nSales Rep: Absolutely. I\'ll have that over by end of day tomorrow.' },
+          { CallId: 'CALL-002', Duration: '18:45', OpportunityId: 'OPP-002', ContactName: 'Sarah Jones, CTO', Transcript: 'Sarah: We love what we\'ve seen so far. The demo last week really impressed our dev team.\n\nSales Rep: Great to hear! Were there any features they were particularly excited about?\n\nSarah: The API flexibility is huge for us. We\'re currently limited by our legacy system. Quick question - do you integrate with AWS and Azure? We\'re multi-cloud.\n\nSales Rep: Yes, we have native integrations with both. Most of our tech customers are in similar situations.\n\nSarah: Perfect. What would the timeline look like for adding 50 more users mid-contract?\n\nSales Rep: Very flexible - we can do monthly true-ups. No need to wait for renewal.\n\nSarah: Who would be our main point of contact for technical issues?\n\nSales Rep: You\'d have a dedicated Technical Account Manager plus access to our 24/7 engineering support.\n\nSarah: This is sounding good. Can we schedule a call next week with our procurement team to discuss terms?' }
+        ]
+      },
+      'Account__dlm': {
+        cloud: 'sales', name: 'Account', icon: '🏢',
+        fields: ['AccountId', 'Name', 'Industry', 'AnnualRevenue', 'SupportTier', 'CustomerSince'],
+        records: [
+          { AccountId: 'ACC-1001', Name: 'Acme Corporation', Industry: 'Manufacturing', AnnualRevenue: '$2.4B', SupportTier: 'Premium', CustomerSince: '2019-03-15' },
+          { AccountId: 'ACC-1002', Name: 'TechStart Inc', Industry: 'Technology', AnnualRevenue: '$180M', SupportTier: 'Standard', CustomerSince: '2022-08-01' },
+          { AccountId: 'ACC-1003', Name: 'Global Logistics Partners', Industry: 'Transportation', AnnualRevenue: '$5.1B', SupportTier: 'Premium', CustomerSince: '2020-01-10' }
+        ]
+      },
+
+      // MARKETING CLOUD DMOs
+      'SurveyResponse__dlm': {
+        cloud: 'marketing', name: 'Survey Response', icon: '📊',
+        fields: ['ResponseId', 'SurveyName', 'OpenEndedFeedback', 'Rating', 'ContactId'],
+        records: [
+          { ResponseId: 'SURV-001', SurveyName: 'Q4 NPS Survey', Rating: 2, ContactId: 'CON-101', OpenEndedFeedback: 'The website redesign is terrible. I can\'t find anything anymore. The old navigation was so much better. Also, your mobile app crashes constantly on my iPhone. Customer service took 3 days to respond to my last email. Very disappointed with the direction things are going. Used to recommend you to everyone but not anymore.' },
+          { ResponseId: 'SURV-002', SurveyName: 'Q4 NPS Survey', Rating: 9, ContactId: 'CON-102', OpenEndedFeedback: 'Absolutely love the new product quality improvements! The packaging is more sustainable now which is important to my family. Shipping has been super fast lately - got my last order in 2 days. Your customer service team, especially Maria, went above and beyond helping me with a return. Will definitely keep buying!' },
+          { ResponseId: 'SURV-003', SurveyName: 'Product Feedback', Rating: 6, ContactId: 'CON-103', OpenEndedFeedback: 'Product works fine for basic needs. Price is fair I guess. Wish the battery lasted longer - I have to charge it every day. The companion app is slow to load. Not sure if I\'d buy the premium version. Maybe if you added sleep tracking?' }
+        ]
+      },
+      'UnifiedProfile__dlm': {
+        cloud: 'marketing', name: 'Unified Profile', icon: '👤',
+        fields: ['ProfileId', 'Name', 'Email', 'LoyaltyStatus', 'LTV', 'LastInteraction', 'Preferences'],
+        records: [
+          { ProfileId: 'UP-001', Name: 'Jennifer Martinez', Email: 'j.martinez@email.com', LoyaltyStatus: 'Gold', LTV: '$4,250', LastInteraction: 'Left 1-star review (shipping delay)', Preferences: 'Eco-friendly products, Fast shipping' },
+          { ProfileId: 'UP-002', Name: 'Robert Chen', Email: 'rchen@business.com', LoyaltyStatus: 'Platinum', LTV: '$12,800', LastInteraction: 'Purchased Premium Bundle', Preferences: 'Tech gadgets, Early access' },
+          { ProfileId: 'UP-003', Name: 'Amanda Wilson', Email: 'amanda.w@inbox.com', LoyaltyStatus: 'Silver', LTV: '$890', LastInteraction: 'Browsed sale items', Preferences: 'Discounts, Free shipping' }
+        ]
+      },
+
+      // HEALTH CLOUD DMOs
+      'ClinicalNote__dlm': {
+        cloud: 'health', name: 'Clinical Note', icon: '📋',
+        fields: ['NoteId', 'PatientMRN', 'NoteType', 'ClinicalText', 'Provider', 'Date'],
+        records: [
+          { NoteId: 'CN-001', PatientMRN: 'MRN-78432', NoteType: 'Progress Note', Provider: 'Dr. Sarah Johnson', Date: '2024-01-15', ClinicalText: 'Patient: John Smith, DOB 03/15/1965, MRN 78432\nAddress: 123 Oak Street, Springfield, IL 62701\nPhone: (555) 234-5678\n\nChief Complaint: Follow-up for Type 2 Diabetes and Hypertension management.\n\nHPI: 58 y/o male returns for 3-month follow-up. Reports good compliance with medications. Blood glucose logs show fasting levels between 110-140 mg/dL. Occasional headaches, denies chest pain, shortness of breath, or visual changes.\n\nCurrent Medications:\n- Metformin 1000mg BID\n- Lisinopril 20mg daily\n- Atorvastatin 40mg at bedtime\n\nVitals: BP 138/82, HR 76, Weight 198 lbs (down 4 lbs)\n\nAssessment:\n1. Type 2 Diabetes Mellitus (E11.9) - improved control, A1c pending\n2. Essential Hypertension (I10) - at goal\n3. Hyperlipidemia (E78.5) - stable on statin\n\nPlan:\n- Continue current medications\n- Repeat A1c, lipid panel, BMP in 1 week\n- Increase physical activity to 150 min/week\n- Follow up in 3 months\n- Referral to ophthalmology for annual diabetic eye exam' },
+          { NoteId: 'CN-002', PatientMRN: 'MRN-92156', NoteType: 'Visit Summary', Provider: 'Dr. Michael Lee', Date: '2024-01-18', ClinicalText: 'Patient: Mary Johnson, DOB 07/22/1978, MRN 92156\nEmergency Contact: Tom Johnson (husband) - (555) 876-5432\n\nReason for Visit: New patient establishing care, anxiety management\n\nHPI: 45 y/o female presents to establish primary care. Main concern is anxiety that has worsened over past 6 months. Reports difficulty sleeping, racing thoughts, and occasional palpitations. No panic attacks. Stress from work (accountant during tax season). Denies depression, SI/HI.\n\nPMH: GERD, seasonal allergies\nMedications: Omeprazole 20mg daily, Zyrtec PRN\nAllergies: Penicillin (hives)\n\nPhysical Exam: Anxious appearing, otherwise unremarkable\n\nAssessment:\n1. Generalized Anxiety Disorder (F41.1)\n2. Insomnia (G47.00)\n\nPlan:\n- Start Sertraline 25mg daily, increase to 50mg after 1 week if tolerated\n- Sleep hygiene counseling provided\n- Referral to behavioral health for CBT\n- Return in 4 weeks to assess response' }
+        ]
+      },
+      'PatientMessage__dlm': {
+        cloud: 'health', name: 'Patient Message', icon: '💬',
+        fields: ['MessageId', 'PatientName', 'MessageText', 'Timestamp', 'Source'],
+        records: [
+          { MessageId: 'PM-001', PatientName: 'Robert Garcia', Timestamp: '2024-01-20 09:15 AM', Source: 'Patient Portal', MessageText: 'Hi, I need to refill my Lisinopril 10mg. I have about 5 pills left. My pharmacy is CVS on Main Street. Also, I\'ve been having some dizziness when I stand up quickly - is that related to the medication? Should I be concerned? Thanks.' },
+          { MessageId: 'PM-002', PatientName: 'Susan Miller', Timestamp: '2024-01-20 11:30 AM', Source: 'Patient Portal', MessageText: 'I received a bill for $450 for my last visit but I thought my insurance covered preventive care. Can someone explain these charges? I have BlueCross BlueShield PPO. My member ID is XYZ123456. This seems wrong.' },
+          { MessageId: 'PM-003', PatientName: 'James Wilson', Timestamp: '2024-01-20 02:45 PM', Source: 'Patient Portal', MessageText: 'URGENT - I\'ve had severe chest pain for the past hour, spreading to my left arm. I\'m sweating and feel nauseous. My wife thinks I should go to the ER. What should I do?? I\'m 62 with a history of high cholesterol.' },
+          { MessageId: 'PM-004', PatientName: 'Emily Brown', Timestamp: '2024-01-20 04:00 PM', Source: 'Patient Portal', MessageText: 'Can I schedule my annual physical? I\'m available most mornings next week except Wednesday. Also, do I need to fast for bloodwork? It\'s been over a year since my last checkup.' }
+        ]
+      }
+    };
+
+    // ===================== PROMPT TEMPLATES BY USE CASE =====================
+    const TEMPLATES = [
+      // SERVICE CLOUD TEMPLATES
+      {
+        id: 'case-triage',
+        cloud: 'service',
+        name: '🤖 Automated Case Triage',
+        desc: 'Extract sentiment, product, category, and urgency from customer communications',
+        primaryDMO: 'EmailMessage__dlm',
+        relatedDMOs: ['Account__dlm'],
+        fields: ['Sentiment', 'ProductSKU', 'IssueCategory', 'Urgency', 'Summary'],
+        prompt: `Analyze this customer communication and extract structured data.
+
+**Email Subject:** {{EmailMessage.Subject}}
+**Email Body:** {{EmailMessage.Body}}
+**From:** {{EmailMessage.FromAddress}}
+
+Extract the following:
+1. Sentiment: (Positive, Neutral, Negative)
+2. Product SKU/Name: (Find any mentioned product codes or names)
+3. Issue Category: (Classify as 'Billing', 'Technical Support', 'Shipping', or 'Other')
+4. Urgency: (High, Medium, Low)
+5. One-sentence summary of the request
+
+Respond in JSON format.`
+      },
+      {
+        id: 'knowledge-gen',
+        cloud: 'service',
+        name: '📚 Knowledge Article Generator',
+        desc: 'Create customer-facing KB articles from resolved cases',
+        primaryDMO: 'ResolvedCase__dlm',
+        relatedDMOs: [],
+        fields: ['ArticleTitle', 'Summary', 'Steps', 'Keywords', 'Category'],
+        prompt: `Review this resolved case and create a Knowledge Base article.
+
+**Case Subject:** {{ResolvedCase.Subject}}
+**Resolution:** {{ResolvedCase.Resolution}}
+**Agent Comments:** {{ResolvedCase.Comments}}
+**Category:** {{ResolvedCase.Category}}
+
+Create a customer-facing Knowledge Base article:
+1. Anonymize all PII (names, emails, phone numbers, account IDs)
+2. Write a clear, descriptive title
+3. Provide a brief summary (2-3 sentences)
+4. List step-by-step instructions
+5. Suggest keywords for search
+6. Categorize the article
+
+Write in a friendly, professional tone at an 8th-grade reading level.`
+      },
+
+      // SALES CLOUD TEMPLATES
+      {
+        id: 'call-insights',
+        cloud: 'sales',
+        name: '📈 Voice Call Insights',
+        desc: 'Extract objections, competitor mentions, and buying signals from sales calls',
+        primaryDMO: 'VoiceCall__dlm',
+        relatedDMOs: ['Opportunity__dlm', 'Account__dlm'],
+        fields: ['BuyerObjections', 'CompetitorMentions', 'BuyingSignals', 'NextBestAction', 'DealRisk'],
+        prompt: `Analyze this sales call transcript in context of the opportunity.
+
+**Call Duration:** {{VoiceCall.Duration}}
+**Contact:** {{VoiceCall.ContactName}}
+**Opportunity:** {{Opportunity.Name}}
+**Deal Amount:** ${{Opportunity.Amount}}
+**Stage:** {{Opportunity.Stage}}
+**Account:** {{Account.Name}} ({{Account.Industry}})
+
+**Transcript:**
+{{VoiceCall.Transcript}}
+
+Extract:
+1. Buyer Objections (list all concerns raised)
+2. Competitor Mentions (names and what was said)
+3. Buying Signals (positive indicators)
+4. Deal Risk Assessment (Low/Medium/High with reason)
+5. Recommended Next Best Action for the sales rep
+
+Respond in JSON format.`
+      },
+      {
+        id: 'email-followup',
+        cloud: 'sales',
+        name: '✉️ Email Follow-Up Draft',
+        desc: 'Generate personalized follow-up emails based on account context',
+        primaryDMO: 'Account__dlm',
+        relatedDMOs: ['Opportunity__dlm'],
+        fields: ['SubjectLine', 'EmailBody', 'CallToAction', 'Tone'],
+        prompt: `Draft a follow-up email for this prospect.
+
+**Account:** {{Account.Name}}
+**Industry:** {{Account.Industry}}
+**Annual Revenue:** {{Account.AnnualRevenue}}
+**Opportunity:** {{Opportunity.Name}}
+**Deal Stage:** {{Opportunity.Stage}}
+**Amount:** ${{Opportunity.Amount}}
+**Target Close:** {{Opportunity.CloseDate}}
+
+Write a professional follow-up email that:
+1. References their industry-specific challenges
+2. Highlights relevant value propositions
+3. Includes a clear call-to-action
+4. Maintains an appropriate tone for the deal stage
+5. Keeps it concise (under 150 words)
+
+Provide the subject line and email body.`
+      },
+
+      // MARKETING CLOUD TEMPLATES
+      {
+        id: 'voc-analysis',
+        cloud: 'marketing',
+        name: '🎯 Voice of Customer Analysis',
+        desc: 'Analyze survey responses for sentiment, themes, and segmentation',
+        primaryDMO: 'SurveyResponse__dlm',
+        relatedDMOs: [],
+        fields: ['SentimentScore', 'KeyThemes', 'ProductFeatures', 'ChurnRisk', 'RecommendedAction'],
+        prompt: `Analyze this customer feedback for insights.
+
+**Survey:** {{SurveyResponse.SurveyName}}
+**Rating:** {{SurveyResponse.Rating}}/10
+**Open-Ended Feedback:**
+{{SurveyResponse.OpenEndedFeedback}}
+
+Extract:
+1. Sentiment Score: (-1.0 to 1.0, where -1 is very negative, 1 is very positive)
+2. Key Themes: (e.g., 'Customer Service', 'Product Quality', 'Price', 'Website UI', 'Shipping', 'Mobile App')
+3. Product Features Mentioned: (specific features or products referenced)
+4. Churn Risk: (High/Medium/Low with reasoning)
+5. Recommended Action: (specific follow-up action to take)
+
+Respond in JSON format.`
+      },
+      {
+        id: 'dynamic-content',
+        cloud: 'marketing',
+        name: '✨ Dynamic Content Generator',
+        desc: 'Create personalized marketing content based on customer profile',
+        primaryDMO: 'UnifiedProfile__dlm',
+        relatedDMOs: [],
+        fields: ['HeroBanner', 'EmailSubject', 'OfferDetails', 'Personalization'],
+        prompt: `Generate personalized marketing content for this customer.
+
+**Customer:** {{UnifiedProfile.Name}}
+**Loyalty Status:** {{UnifiedProfile.LoyaltyStatus}}
+**Lifetime Value:** {{UnifiedProfile.LTV}}
+**Last Interaction:** {{UnifiedProfile.LastInteraction}}
+**Preferences:** {{UnifiedProfile.Preferences}}
+
+Create:
+1. Hero Banner Copy: 2-3 sentences for email header, addressing their recent experience and loyalty status
+2. Email Subject Line: Compelling, personalized subject (<50 chars)
+3. Offer Details: Specific offer based on their status and preferences
+4. Personalization Notes: Key elements used for personalization
+
+Tone should match their sentiment (empathetic if recent negative experience, celebratory if positive).`
+      },
+
+      // HEALTH CLOUD TEMPLATES
+      {
+        id: 'clinical-summary',
+        cloud: 'health',
+        name: '🩺 Clinical Note Summarization',
+        desc: 'De-identify notes and extract medications, conditions, and patient summary',
+        primaryDMO: 'ClinicalNote__dlm',
+        relatedDMOs: [],
+        fields: ['DeidentifiedNote', 'Medications', 'Conditions', 'PatientSummary', 'FollowUpItems'],
+        prompt: `Process this clinical note for the patient portal.
+
+**Note Type:** {{ClinicalNote.NoteType}}
+**Provider:** {{ClinicalNote.Provider}}
+**Date:** {{ClinicalNote.Date}}
+
+**Clinical Text:**
+{{ClinicalNote.ClinicalText}}
+
+Perform the following:
+1. De-identify: Remove ALL PHI (patient name, DOB, MRN, address, phone, emergency contacts)
+2. Extract Medications: List each medication with dosage
+3. Extract Conditions: List diagnoses with ICD-10 codes if present
+4. Patient-Friendly Summary: Write a 3-4 bullet summary at 6th-grade reading level
+5. Follow-Up Items: List any tests, referrals, or appointments mentioned
+
+CRITICAL: Ensure NO identifiable patient information remains in output.`
+      },
+      {
+        id: 'message-triage',
+        cloud: 'health',
+        name: '💬 Patient Message Triage',
+        desc: 'Classify patient messages for routing and urgency',
+        primaryDMO: 'PatientMessage__dlm',
+        relatedDMOs: [],
+        fields: ['Intent', 'Urgency', 'Medications', 'Symptoms', 'RoutingQueue', 'SuggestedResponse'],
+        prompt: `Triage this patient portal message for routing.
+
+**Patient:** {{PatientMessage.PatientName}}
+**Timestamp:** {{PatientMessage.Timestamp}}
+**Source:** {{PatientMessage.Source}}
+
+**Message:**
+{{PatientMessage.MessageText}}
+
+Analyze and classify:
+1. Intent: ('Medication Refill', 'Appointment Scheduling', 'Billing Question', 'Clinical Question', 'Urgent Medical')
+2. Urgency: ('URGENT - Immediate', 'High - Same Day', 'Medium - 24-48 hrs', 'Low - 3-5 days')
+3. Medications Mentioned: (list any medication names)
+4. Symptoms Mentioned: (list any symptoms or complaints)
+5. Routing Queue: ('Pharmacy', 'Scheduling', 'Billing', 'Nursing', 'Provider', '911/ED')
+6. Suggested Response: (brief template response or action)
+
+IMPORTANT: Flag any messages with chest pain, difficulty breathing, or other emergency symptoms as URGENT.`
+      }
+    ];
+
+    // ===================== MOCK OUTPUTS =====================
+    const MOCK_OUTPUTS = {
+      'case-triage': {
+        'EMAIL-001': { Sentiment: 'Negative', ProductSKU: 'SKU-ENT-500', IssueCategory: 'Technical Support', Urgency: 'High', Summary: 'Customer experiencing file upload errors (E-5502) for files over 25MB, blocking quarterly report submission.' },
+        'EMAIL-002': { Sentiment: 'Positive', ProductSKU: 'SKU-DASH-PRO', IssueCategory: 'Other', Urgency: 'Low', Summary: 'Happy customer praising new dashboard feature and requesting PDF export functionality.' }
+      },
+      'knowledge-gen': {
+        'CASE-R001': {
+          ArticleTitle: 'How to Fix Expired OAuth Token Errors in API Connections',
+          Summary: 'If your API integration suddenly stops working with authentication errors, the OAuth token may have expired. This guide walks through regenerating your credentials and updating your configuration.',
+          Steps: [
+            '1. Log in to your admin account and navigate to Setup > Connected Apps',
+            '2. Find your connected app (e.g., "DataSync") and click on it',
+            '3. Click "Manage" and then "Edit Policies"',
+            '4. Under the OAuth section, click "Generate New Key"',
+            '5. Copy the new Consumer Key and Consumer Secret',
+            '6. Update your application\'s configuration file with the new credentials',
+            '7. Test the connection to verify it\'s working',
+            '8. Consider setting up automatic token refresh to prevent future issues'
+          ],
+          Keywords: ['OAuth', 'API', 'authentication', 'token expired', 'connected app', 'integration'],
+          Category: 'Technical / API Integration'
+        },
+        'CASE-R002': {
+          ArticleTitle: 'How to Fix Incorrect Timezone in Reports',
+          Summary: 'Reports showing timestamps in the wrong timezone is a common issue that can be fixed by updating your personal timezone settings. This usually happens when your profile defaults to UTC.',
+          Steps: [
+            '1. Click on your avatar/profile picture in the top right corner',
+            '2. Select "Settings" from the dropdown menu',
+            '3. Navigate to "Time & Language" section',
+            '4. Find the "Timezone" dropdown',
+            '5. Select your correct timezone (e.g., America/New_York for Eastern Time)',
+            '6. Click "Save" to apply changes',
+            '7. Refresh your reports - timestamps should now be correct'
+          ],
+          Keywords: ['timezone', 'reports', 'timestamp', 'UTC', 'settings'],
+          Category: 'Configuration / User Settings'
+        }
+      },
+      'call-insights': {
+        'CALL-001': {
+          BuyerObjections: [
+            'Price is significantly higher than Competitor X ($100k vs $150k)',
+            'CFO concerned about implementation timeline',
+            'Need detailed project plan before proceeding'
+          ],
+          CompetitorMentions: [
+            { competitor: 'Competitor X', context: 'Quoted $100k for similar functionality, but reportedly has poor support' }
+          ],
+          BuyingSignals: [
+            '"When could we realistically go live if we signed next week?"',
+            'Asked about dedicated CSM - values relationship',
+            'Willing to schedule implementation call Thursday',
+            'Previous vendor downtime is a pain point - our 99.9% uptime resonates'
+          ],
+          DealRisk: 'Medium',
+          NextBestAction: 'Send detailed project plan with 6-week timeline today. Include ROI analysis showing value over Competitor X despite higher price. Schedule call with CFO to address timeline concerns.'
+        },
+        'CALL-002': {
+          BuyerObjections: [],
+          CompetitorMentions: [],
+          BuyingSignals: [
+            '"We love what we\'ve seen so far"',
+            'Dev team impressed by demo',
+            'Asked about mid-contract scaling - planning growth',
+            '"Can we schedule a call with procurement?"',
+            'Asked "Who would be our main contact?" - visualizing relationship'
+          ],
+          DealRisk: 'Low',
+          NextBestAction: 'Schedule procurement call immediately. Prepare flexible pricing for 50-user expansion. This deal is ready to close - create urgency with end-of-quarter incentive.'
+        }
+      },
+      'email-followup': {
+        'ACC-1001': {
+          SubjectLine: 'Re: Acme Enterprise Deployment - Project Timeline Attached',
+          EmailBody: 'Hi John,\n\nThank you for the productive conversation yesterday. As promised, I\'ve attached our detailed 6-week implementation roadmap specifically tailored for manufacturing environments like Acme.\n\nGiven your team\'s concerns about the previous vendor\'s downtime, I wanted to highlight that our Enterprise tier includes:\n• 99.9% uptime SLA with financial guarantees\n• 24/7 dedicated support\n• Your own Customer Success Manager\n\nI\'d love to schedule a brief call with your CFO to walk through the timeline. Does Thursday at 2pm work?\n\nBest regards',
+          CallToAction: 'Schedule CFO call for Thursday',
+          Tone: 'Professional, consultative - addressing specific concerns raised'
+        },
+        'ACC-1002': {
+          SubjectLine: 'TechStart + [Our Platform] - Let\'s finalize next week?',
+          EmailBody: 'Hi Sarah,\n\nGreat speaking with you! Your team\'s enthusiasm about the API flexibility tells me we\'re a strong fit for TechStart\'s multi-cloud strategy.\n\nAs discussed, we integrate natively with both AWS and Azure, and our monthly true-up model means you can scale those 50 users anytime without waiting for renewal.\n\nI\'m excited to move forward. Can we get your procurement team on a call Monday or Tuesday?\n\nLooking forward to partnering with you!',
+          CallToAction: 'Book procurement call early next week',
+          Tone: 'Warm, enthusiastic - deal is hot, create momentum'
+        },
+        'ACC-1003': {
+          SubjectLine: 'Global Logistics: Unlocking Supply Chain Visibility with Data Cloud',
+          EmailBody: 'Hi Team,\n\nIn the transportation and logistics space, real-time data visibility can mean the difference between on-time delivery and costly delays.\n\nOur Data Cloud solution has helped similar $5B+ logistics companies:\n• Reduce shipment tracking blind spots by 40%\n• Cut customer inquiry response time in half\n• Predict delivery exceptions before they happen\n\nI\'d love to schedule a discovery call to learn more about Global Logistics\' specific data challenges. Do you have 30 minutes this week?\n\nBest regards',
+          CallToAction: 'Schedule discovery call this week',
+          Tone: 'Consultative, industry-focused - early stage discovery'
+        }
+      },
+      'voc-analysis': {
+        'SURV-001': {
+          SentimentScore: -0.8,
+          KeyThemes: ['Website UI', 'Mobile App', 'Customer Service'],
+          ProductFeatures: ['Website navigation', 'Mobile app stability', 'Email support response time'],
+          ChurnRisk: 'High',
+          RecommendedAction: 'Immediate outreach from Customer Success. Acknowledge website feedback, offer guided walkthrough of new navigation. Escalate mobile app crashes to engineering. Consider win-back offer.'
+        },
+        'SURV-002': {
+          SentimentScore: 0.9,
+          KeyThemes: ['Product Quality', 'Shipping', 'Customer Service'],
+          ProductFeatures: ['Product improvements', 'Sustainable packaging', '2-day shipping'],
+          ChurnRisk: 'Low',
+          RecommendedAction: 'Add to "Brand Advocates" segment. Send referral program invitation. Consider for testimonial request. Flag Maria for recognition.'
+        },
+        'SURV-003': {
+          SentimentScore: 0.1,
+          KeyThemes: ['Product Quality', 'Mobile App', 'Price'],
+          ProductFeatures: ['Battery life', 'Companion app performance', 'Sleep tracking (requested)'],
+          ChurnRisk: 'Medium',
+          RecommendedAction: 'Send battery optimization tips. Add to "Sleep tracking interest" segment for feature launch notification. Consider upgrade discount before renewal.'
+        }
+      },
+      'dynamic-content': {
+        'UP-001': {
+          HeroBanner: "Jennifer, we're truly sorry about the delay on your recent order. As a valued Gold member, your experience matters deeply to us. Please accept 15% off your next eco-friendly purchase as our apology.",
+          EmailSubject: 'Jennifer, a personal apology + 15% off 💚',
+          OfferDetails: '15% off next order (code: SORRY15), free expedited shipping on eco-friendly collection, valid 30 days',
+          Personalization: 'Referenced shipping complaint, Gold status, eco-friendly preference. Empathetic tone to rebuild trust.'
+        },
+        'UP-002': {
+          HeroBanner: "Robert, as a Platinum member you get first access to our newest tech drop! Based on your love of cutting-edge gadgets, we think you'll want to see this before anyone else.",
+          EmailSubject: 'Robert: Platinum Early Access Inside 🚀',
+          OfferDetails: '48-hour early access to new product launch, exclusive Platinum pricing (additional 10% off), free next-day shipping',
+          Personalization: 'Leveraged Platinum status, tech gadget preference, early access interest. Celebratory, exclusive tone.'
+        },
+        'UP-003': {
+          HeroBanner: "Amanda, those items you were browsing just went on extra sale! As a Silver member, you\'re getting an exclusive additional 10% off already-reduced prices.",
+          EmailSubject: 'Amanda: Extra 10% off your browsed items!',
+          OfferDetails: 'Extra 10% off sale items (code: SILVER10), free shipping on orders $50+, 48-hour flash sale',
+          Personalization: 'Triggered by browse behavior, discount preference, free shipping threshold to encourage larger basket.'
+        }
+      },
+      'clinical-summary': {
+        'CN-001': {
+          DeidentifiedNote: '[PATIENT], a 58-year-old male, presented for 3-month diabetes and hypertension follow-up. Reports good medication compliance. Glucose logs show fasting levels 110-140 mg/dL. Occasional headaches, no chest pain or vision changes. Blood pressure and weight improved.',
+          Medications: [
+            { name: 'Metformin', dosage: '1000mg twice daily', purpose: 'Diabetes' },
+            { name: 'Lisinopril', dosage: '20mg once daily', purpose: 'Blood pressure' },
+            { name: 'Atorvastatin', dosage: '40mg at bedtime', purpose: 'Cholesterol' }
+          ],
+          Conditions: [
+            { condition: 'Type 2 Diabetes Mellitus', code: 'E11.9', status: 'Improving' },
+            { condition: 'Essential Hypertension', code: 'I10', status: 'Controlled' },
+            { condition: 'High Cholesterol', code: 'E78.5', status: 'Stable' }
+          ],
+          PatientSummary: [
+            '• Your diabetes is improving - keep up the good work with your medications!',
+            '• Your blood pressure is now at a healthy level',
+            '• You lost 4 pounds since your last visit - great progress!',
+            '• Continue your current medications and try to exercise more (aim for 30 minutes, 5 days a week)'
+          ],
+          FollowUpItems: ['Lab work (A1c, cholesterol, kidney function) in 1 week', 'Eye doctor appointment for annual diabetes eye exam', 'Return visit in 3 months']
+        },
+        'CN-002': {
+          DeidentifiedNote: '[PATIENT], a 45-year-old female, establishing primary care. Main concern is worsening anxiety over 6 months with sleep difficulty, racing thoughts, and occasional palpitations. Work stress identified as trigger. No panic attacks or depression.',
+          Medications: [
+            { name: 'Sertraline (Zoloft)', dosage: '25mg daily, increasing to 50mg after 1 week', purpose: 'Anxiety' },
+            { name: 'Omeprazole', dosage: '20mg daily', purpose: 'Acid reflux' },
+            { name: 'Zyrtec', dosage: 'As needed', purpose: 'Allergies' }
+          ],
+          Conditions: [
+            { condition: 'Generalized Anxiety Disorder', code: 'F41.1', status: 'New diagnosis' },
+            { condition: 'Insomnia', code: 'G47.00', status: 'New diagnosis' },
+            { condition: 'GERD', code: 'K21.0', status: 'Existing' }
+          ],
+          PatientSummary: [
+            '• You have anxiety, which is very common and very treatable',
+            '• We\'re starting a medication that takes 2-4 weeks to fully work',
+            '• Good sleep habits can help a lot - we gave you tips to try',
+            '• You\'ll also meet with a counselor to learn helpful coping skills'
+          ],
+          FollowUpItems: ['Behavioral health referral for therapy (CBT)', 'Return visit in 4 weeks to check on medication', 'Allergy: Penicillin - causes hives']
+        }
+      },
+      'message-triage': {
+        'PM-001': {
+          Intent: 'Medication Refill',
+          Urgency: 'Medium - 24-48 hrs',
+          Medications: ['Lisinopril 10mg'],
+          Symptoms: ['Dizziness when standing (orthostatic symptoms)'],
+          RoutingQueue: 'Pharmacy + Nursing',
+          SuggestedResponse: 'Refill request received and sent to pharmacy (CVS Main Street). Regarding your dizziness: this can be a side effect of Lisinopril. Please rise slowly from sitting/lying positions. If dizziness persists or worsens, or if you experience fainting, contact us. A nurse will follow up within 24 hours.'
+        },
+        'PM-002': {
+          Intent: 'Billing Question',
+          Urgency: 'Low - 3-5 days',
+          Medications: [],
+          Symptoms: [],
+          RoutingQueue: 'Billing',
+          SuggestedResponse: 'Thank you for reaching out about your bill. We\'ve forwarded your inquiry to our billing team with your insurance information (BCBS PPO, Member ID ending in 456). They will review the charges and contact you within 3-5 business days. Preventive care coverage depends on specific services rendered - they\'ll provide a detailed explanation.'
+        },
+        'PM-003': {
+          Intent: 'Urgent Medical',
+          Urgency: 'URGENT - Immediate',
+          Medications: [],
+          Symptoms: ['Severe chest pain for 1 hour', 'Pain radiating to left arm', 'Sweating', 'Nausea'],
+          RoutingQueue: '911/ED',
+          SuggestedResponse: '🚨 EMERGENCY ALERT: This patient is describing symptoms of a possible heart attack. DO NOT RESPOND VIA PORTAL. Immediately call patient and instruct to call 911 or go to nearest ED. If unable to reach, dispatch emergency services. Patient: James Wilson, 62 y/o male with history of high cholesterol.'
+        },
+        'PM-004': {
+          Intent: 'Appointment Scheduling',
+          Urgency: 'Low - 3-5 days',
+          Medications: [],
+          Symptoms: [],
+          RoutingQueue: 'Scheduling',
+          SuggestedResponse: 'We\'d be happy to schedule your annual physical! Based on your availability, we have openings Monday 9am, Tuesday 10am, Thursday 8:30am, or Friday 9:30am. For your bloodwork, please fast for 10-12 hours before your appointment (water is fine). Reply with your preferred time or call us at [number].'
+        }
+      }
+    };
+
+    // ===================== STATE =====================
+    let state = {
+      cloud: 'all',
+      template: TEMPLATES[0],
+      recordIdx: 0,
+      running: false,
+      done: false,
+      output: null,
+      model: 'gpt-4o',
+      format: 'structured'
+    };
+
+    // ===================== HELPERS =====================
+    const getRecords = (dmoKey) => DMOs[dmoKey]?.records || [];
+    const getRelated = (dmoKey, field, value) => DMOs[dmoKey]?.records.find(r => r[field] === value);
+    const tokens = (t) => Math.ceil((t || '').length / 4);
+    const esc = (t) => { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
+
+    function resolve(template, rec) {
+      let t = template.prompt;
+      const primaryDMO = template.primaryDMO.replace('__dlm', '');
+
+      // Replace primary DMO fields
+      Object.entries(rec).forEach(([k, v]) => {
+        t = t.replace(new RegExp(`{{${primaryDMO}.${k}}}`, 'g'), v || '');
+      });
+
+      // Replace related DMO fields
+      template.relatedDMOs.forEach(relDMO => {
+        const relName = relDMO.replace('__dlm', '');
+        const relRecords = DMOs[relDMO]?.records || [];
+        // Try to find related record by common keys
+        let relRec = relRecords.find(r => r.AccountId === rec.AccountId) ||
+                     relRecords.find(r => r.OpportunityId === rec.OpportunityId) ||
+                     relRecords[0];
+        if (relRec) {
+          Object.entries(relRec).forEach(([k, v]) => {
+            t = t.replace(new RegExp(`{{${relName}.${k}}}`, 'g'), v || '');
+          });
+        }
+      });
+
+      return t;
+    }
+
+    function run() {
+      state.running = true; state.done = false; state.output = null; render();
+      setTimeout(() => {
+        const records = getRecords(state.template.primaryDMO);
+        const rec = records[state.recordIdx];
+        const idField = Object.keys(rec).find(k => k.includes('Id') || k === 'ResponseId' || k === 'NoteId' || k === 'MessageId' || k === 'CallId');
+        const recId = rec[idField];
+        state.output = MOCK_OUTPUTS[state.template.id]?.[recId] || { message: 'Mock output not configured for this record' };
+        state.running = false; state.done = true; render();
+      }, 1500 + Math.random() * 1000);
+    }
+
+    function getFilteredTemplates() {
+      return state.cloud === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.cloud === state.cloud);
+    }
+
+    // ===================== RENDER =====================
+    function render() {
+      const templates = getFilteredTemplates();
+      if (!templates.find(t => t.id === state.template.id)) {
+        state.template = templates[0];
+        state.recordIdx = 0;
+        state.done = false;
+      }
+
+      const records = getRecords(state.template.primaryDMO);
+      const rec = records[state.recordIdx] || {};
+      const dmoInfo = DMOs[state.template.primaryDMO];
+      const prompt = resolve(state.template, rec);
+      const inTok = tokens(prompt), outTok = state.output ? tokens(JSON.stringify(state.output)) : 500;
+
+      document.getElementById('app').innerHTML = `
+        <div class="min-h-screen flex flex-col">
+          <!-- Header -->
+          <header class="bg-white border-b px-4 py-2 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+              </div>
+              <div>
+                <span class="font-semibold text-gray-800">Content Foundry</span>
+                <span class="text-xs text-gray-500 ml-1">Multi-Cloud Playground</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="text-gray-500">Model:</span>
+                <select onchange="state.model=this.value" class="border rounded px-2 py-1 text-sm">
+                  <option ${state.model==='gpt-4o'?'selected':''}>gpt-4o</option>
+                  <option ${state.model==='gpt-4o-mini'?'selected':''}>gpt-4o-mini</option>
+                  <option ${state.model==='claude-3-5-sonnet'?'selected':''}>claude-3-5-sonnet</option>
+                </select>
+              </div>
+              <button class="bg-purple-600 text-white px-4 py-1.5 rounded font-medium hover:bg-purple-700">Save Pipeline</button>
+            </div>
+          </header>
+
+          <!-- Cloud Filter Tabs -->
+          <div class="bg-white border-b px-4 flex gap-1">
+            <button onclick="state.cloud='all';state.recordIdx=0;state.done=false;render()" class="px-4 py-2 text-sm font-medium ${state.cloud==='all' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}">All Clouds</button>
+            ${Object.entries(CLOUDS).map(([key, c]) => `
+              <button onclick="state.cloud='${key}';state.recordIdx=0;state.done=false;render()" class="px-4 py-2 text-sm font-medium flex items-center gap-1 ${state.cloud===key ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}">
+                ${c.icon} ${c.name}
+              </button>
+            `).join('')}
+          </div>
+
+          <!-- Main -->
+          <div class="flex flex-1 overflow-hidden">
+            <!-- Left: Use Case & Records -->
+            <aside class="w-80 bg-white border-r flex flex-col">
+              <div class="p-4 border-b">
+                <h3 class="font-semibold text-gray-800 mb-3">🎯 Use Case</h3>
+                <select onchange="state.template=TEMPLATES.find(t=>t.id===this.value);state.recordIdx=0;state.done=false;state.output=null;render()" class="w-full border rounded-lg px-3 py-2 text-sm">
+                  ${templates.map(t => `<option value="${t.id}" ${state.template.id===t.id?'selected':''}>${t.name}</option>`).join('')}
+                </select>
+                <p class="text-xs text-gray-500 mt-2">${state.template.desc}</p>
+                <div class="mt-2">
+                  <span class="cloud-badge ${state.template.cloud}">${CLOUDS[state.template.cloud].icon} ${CLOUDS[state.template.cloud].name}</span>
+                </div>
+              </div>
+
+              <div class="p-4 border-b">
+                <h3 class="font-semibold text-gray-800 mb-2">📊 Data Source</h3>
+                <div class="text-sm bg-gray-50 rounded-lg p-2 mb-2">
+                  <span class="font-medium">${dmoInfo?.icon} ${dmoInfo?.name}</span>
+                  <span class="text-gray-500 text-xs ml-1">(Primary)</span>
+                </div>
+                ${state.template.relatedDMOs.length > 0 ? `
+                  <div class="text-xs text-gray-500 mb-1">Related:</div>
+                  ${state.template.relatedDMOs.map(d => `
+                    <div class="text-sm text-gray-600 ml-2">+ ${DMOs[d]?.icon} ${DMOs[d]?.name}</div>
+                  `).join('')}
+                ` : ''}
+              </div>
+
+              <div class="p-4 flex-1 overflow-auto">
+                <div class="text-xs text-gray-500 uppercase mb-2">Test Records (${records.length})</div>
+                ${records.map((r, i) => {
+                  const title = r.Subject || r.Name || r.OpenEndedFeedback?.substring(0,50) + '...' || r.NoteType || r.MessageText?.substring(0,50) + '...' || 'Record';
+                  const subtitle = Object.values(r)[0];
+                  return `
+                    <div onclick="state.recordIdx=${i};state.done=false;state.output=null;render()" class="p-2 rounded-lg border mb-2 cursor-pointer ${state.recordIdx===i ? 'bg-purple-50 border-purple-300' : 'hover:bg-gray-50'}">
+                      <div class="text-sm font-medium text-gray-800 truncate">${esc(title)}</div>
+                      <div class="text-xs text-gray-500">${subtitle}</div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+
+              <div class="p-4 bg-gray-50 border-t text-sm">
+                <div class="text-xs text-gray-500 uppercase mb-2">Estimated Usage</div>
+                <div class="flex justify-between"><span class="text-gray-600">Input</span><span class="font-medium">${inTok} tokens</span></div>
+                <div class="flex justify-between"><span class="text-gray-600">Output</span><span class="font-medium">~${outTok} tokens</span></div>
+                <div class="flex justify-between pt-2 border-t mt-2"><span class="text-gray-600">Est. Cost</span><span class="font-medium text-green-600">$${((inTok*0.00001)+(outTok*0.00003)).toFixed(4)}</span></div>
+              </div>
+            </aside>
+
+            <!-- Center -->
+            <main class="flex-1 flex flex-col overflow-hidden">
+              <div class="bg-white border-b px-6 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="text-lg">${state.template.name}</span>
+                </div>
+                <button onclick="run()" ${state.running?'disabled':''} class="flex items-center gap-2 px-5 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50">
+                  ${state.running ? '<svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Running...' : '▶ Test Run'}
+                </button>
+              </div>
+
+              <div class="flex-1 flex overflow-hidden">
+                <div class="w-1/2 flex flex-col border-r">
+                  <div class="px-4 py-2 bg-gray-50 border-b flex justify-between items-center">
+                    <span class="font-semibold text-gray-800 text-sm">📝 Resolved Prompt</span>
+                    <span class="text-xs text-gray-500">${inTok} tokens</span>
+                  </div>
+                  <div class="flex-1 overflow-auto p-4 scrollbar-thin">
+                    <pre class="text-sm whitespace-pre-wrap font-mono bg-gray-50 p-4 rounded-lg border text-gray-700">${esc(prompt)}</pre>
+                  </div>
+                </div>
+                <div class="w-1/2 flex flex-col">
+                  <div class="px-4 py-2 bg-gray-50 border-b flex justify-between items-center">
+                    <span class="font-semibold text-gray-800 text-sm">✨ Generated Output</span>
+                    <div class="flex gap-1">
+                      <button onclick="state.format='structured';render()" class="px-2 py-1 text-xs rounded ${state.format==='structured'?'bg-purple-100 text-purple-700':'text-gray-500'}">Structured</button>
+                      <button onclick="state.format='raw';render()" class="px-2 py-1 text-xs rounded ${state.format==='raw'?'bg-purple-100 text-purple-700':'text-gray-500'}">JSON</button>
+                    </div>
+                  </div>
+                  <div class="flex-1 overflow-auto p-4 scrollbar-thin">${renderOutput()}</div>
+                </div>
+              </div>
+            </main>
+
+            <!-- Right: Output Fields -->
+            <aside class="w-72 bg-white border-l flex flex-col">
+              <div class="p-4 border-b">
+                <h3 class="font-semibold text-gray-800">📤 Output Mapping</h3>
+                <p class="text-xs text-gray-500">Map generated fields to target DMO</p>
+              </div>
+              <div class="flex-1 overflow-auto p-4">
+                <div class="mb-4">
+                  <div class="text-xs text-gray-500 uppercase mb-1">Target DMO</div>
+                  <select class="w-full border rounded-lg px-3 py-2 text-sm">
+                    <option>${dmoInfo?.icon} ${dmoInfo?.name} (Update)</option>
+                    <option>📊 ${dmoInfo?.name}_Enriched__dlm (New)</option>
+                  </select>
+                </div>
+                <div class="text-xs text-gray-500 uppercase mb-2">Output Fields (${state.template.fields.length})</div>
+                ${state.template.fields.map(f => `
+                  <div class="p-2 bg-gray-50 rounded-lg border mb-2">
+                    <div class="flex justify-between items-center">
+                      <span class="text-sm font-medium">${f}</span>
+                      <span class="text-xs px-2 py-0.5 rounded-full ${state.done?'bg-green-100 text-green-700':'bg-gray-200 text-gray-500'}">${state.done?'✓':'...'}</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+              ${state.done ? `<div class="p-4 bg-green-50 border-t">
+                <div class="flex items-center gap-2 text-green-700 font-medium mb-1">✓ Test Complete</div>
+                <div class="text-xs text-green-600">All ${state.template.fields.length} fields extracted</div>
+              </div>` : ''}
+            </aside>
+          </div>
+        </div>`;
+    }
+
+    function renderOutput() {
+      if (state.running) return `<div class="flex flex-col items-center justify-center h-full text-gray-400"><svg class="w-10 h-10 animate-spin mb-2 text-purple-500" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Generating with ${state.model}...</div>`;
+      if (!state.done) return `<div class="flex flex-col items-center justify-center h-full text-gray-400"><div class="text-4xl mb-2">▶</div>Click "Test Run" to generate</div>`;
+      if (state.format === 'raw') return `<pre class="text-xs font-mono bg-gray-900 text-green-400 p-4 rounded-lg whitespace-pre-wrap overflow-auto">${JSON.stringify(state.output, null, 2)}</pre>`;
+
+      return `<div class="space-y-3">${renderStructuredOutput(state.output)}</div>`;
+    }
+
+    function renderStructuredOutput(obj, depth = 0) {
+      if (!obj) return '';
+      return Object.entries(obj).map(([k, v]) => {
+        const isUrgent = (k === 'Urgency' && String(v).includes('URGENT')) || (k === 'RoutingQueue' && v === '911/ED');
+        const isHigh = (k === 'Urgency' && String(v).includes('High')) || (k === 'ChurnRisk' && v === 'High') || (k === 'DealRisk' && v === 'High') || (k === 'Priority' && v === 'P1');
+        const isPositive = (k === 'Sentiment' && v === 'Positive') || (k === 'ChurnRisk' && v === 'Low') || (k === 'DealRisk' && v === 'Low');
+        const isNegative = (k === 'Sentiment' && v === 'Negative') || (k === 'SentimentScore' && v < -0.5);
+
+        let valueHtml;
+        if (Array.isArray(v)) {
+          if (typeof v[0] === 'object') {
+            valueHtml = `<div class="space-y-1 mt-1">${v.map(item => `<div class="bg-gray-50 p-2 rounded text-xs">${Object.entries(item).map(([ik,iv]) => `<div><span class="text-gray-500">${ik}:</span> ${esc(String(iv))}</div>`).join('')}</div>`).join('')}</div>`;
+          } else {
+            valueHtml = `<ul class="list-disc list-inside text-sm space-y-1">${v.map(x => `<li>${esc(String(x))}</li>`).join('')}</ul>`;
+          }
+        } else if (typeof v === 'object' && v !== null) {
+          valueHtml = `<div class="bg-gray-50 p-2 rounded text-xs mt-1">${Object.entries(v).map(([ik,iv]) => `<div><span class="text-gray-500">${ik}:</span> ${esc(String(iv))}</div>`).join('')}</div>`;
+        } else {
+          const colorClass = isUrgent ? 'text-red-600 font-bold bg-red-50 px-2 py-1 rounded' :
+                            isHigh ? 'text-orange-600 font-semibold' :
+                            isNegative ? 'text-red-600' :
+                            isPositive ? 'text-green-600 font-medium' : '';
+          valueHtml = `<div class="text-sm ${colorClass} whitespace-pre-wrap">${esc(String(v))}</div>`;
+        }
+
+        return `<div class="p-3 bg-white rounded-lg border">
+          <div class="text-xs text-gray-500 uppercase mb-1 font-medium">${k}</div>
+          ${valueHtml}
+        </div>`;
+      }).join('');
+    }
+
+    render();
+  </script>
+</body>
+</html>
