@@ -497,6 +497,124 @@
       'Loyalty': { icon: '🏆', name: 'Loyalty', desc: 'Loyalty programs and members' }
     };
 
+    // ==================== UNSTRUCTURED DATA MODEL OBJECTS (UDMOs) ====================
+    var UDMOs = {
+      // Service Cloud UDMOs
+      'DraftResponse__udmo': {
+        cloud: 'service', name: 'Draft Response', icon: '💬', category: 'Response',
+        contentType: 'HTML',
+        desc: 'AI-generated draft email responses for customer cases',
+        fields: ['Subject', 'Body', 'Signature', 'Attachments', 'Metadata']
+      },
+      'KnowledgeArticle__udmo': {
+        cloud: 'service', name: 'Knowledge Article', icon: '📄', category: 'Document',
+        contentType: 'Markdown',
+        desc: 'Full knowledge base articles with formatting and media',
+        fields: ['Title', 'Content', 'TableOfContents', 'RelatedLinks', 'Metadata']
+      },
+      'InternalNote__udmo': {
+        cloud: 'service', name: 'Internal Note', icon: '📝', category: 'Note',
+        contentType: 'PlainText',
+        desc: 'Internal agent notes and case documentation',
+        fields: ['Summary', 'Details', 'ActionItems', 'Metadata']
+      },
+      'FAQDocument__udmo': {
+        cloud: 'service', name: 'FAQ Document', icon: '❓', category: 'Document',
+        contentType: 'Markdown',
+        desc: 'Frequently asked questions formatted for self-service',
+        fields: ['Title', 'Questions', 'Metadata']
+      },
+      'VideoScript__udmo': {
+        cloud: 'service', name: 'Video Script', icon: '🎬', category: 'Media',
+        contentType: 'PlainText',
+        desc: 'Video narration scripts for training and tutorials',
+        fields: ['Title', 'Scenes', 'Narration', 'VisualCues', 'Metadata']
+      },
+      'TroubleshootingGuide__udmo': {
+        cloud: 'service', name: 'Troubleshooting Guide', icon: '🔧', category: 'Document',
+        contentType: 'Markdown',
+        desc: 'Step-by-step troubleshooting runbooks for agents',
+        fields: ['Title', 'Problem', 'DiagnosticSteps', 'Solutions', 'Metadata']
+      },
+
+      // Sales Cloud UDMOs
+      'EmailDraft__udmo': {
+        cloud: 'sales', name: 'Email Draft', icon: '✉️', category: 'Email',
+        contentType: 'HTML',
+        desc: 'Personalized sales email drafts with formatting',
+        fields: ['Subject', 'Body', 'Signature', 'TrackingPixel', 'Metadata']
+      },
+      'ProposalDocument__udmo': {
+        cloud: 'sales', name: 'Proposal Document', icon: '📋', category: 'Document',
+        contentType: 'HTML',
+        desc: 'Sales proposals and quotes with pricing tables',
+        fields: ['Title', 'ExecutiveSummary', 'Scope', 'Pricing', 'Terms', 'Metadata']
+      },
+      'MeetingAgenda__udmo': {
+        cloud: 'sales', name: 'Meeting Agenda', icon: '📅', category: 'Document',
+        contentType: 'Markdown',
+        desc: 'Structured meeting agendas with talking points',
+        fields: ['Title', 'Attendees', 'Topics', 'TalkingPoints', 'NextSteps', 'Metadata']
+      },
+      'CallSummary__udmo': {
+        cloud: 'sales', name: 'Call Summary', icon: '📞', category: 'Note',
+        contentType: 'Markdown',
+        desc: 'AI-generated summaries of sales calls',
+        fields: ['Title', 'Participants', 'KeyPoints', 'ActionItems', 'Metadata']
+      },
+
+      // Marketing Cloud UDMOs
+      'CampaignContent__udmo': {
+        cloud: 'marketing', name: 'Campaign Content', icon: '📢', category: 'Content',
+        contentType: 'HTML',
+        desc: 'Marketing campaign content blocks',
+        fields: ['Headline', 'Body', 'CTA', 'Images', 'Metadata']
+      },
+      'PersonalizedEmail__udmo': {
+        cloud: 'marketing', name: 'Personalized Email', icon: '🎯', category: 'Email',
+        contentType: 'HTML',
+        desc: 'Dynamic personalized marketing emails',
+        fields: ['Subject', 'PreHeader', 'Body', 'DynamicBlocks', 'Metadata']
+      },
+
+      // Health Cloud UDMOs
+      'PatientSummary__udmo': {
+        cloud: 'health', name: 'Patient Summary', icon: '🏥', category: 'Clinical',
+        contentType: 'PlainText',
+        desc: 'De-identified patient summaries for portal display',
+        fields: ['Summary', 'Instructions', 'Medications', 'FollowUp', 'Metadata']
+      },
+      'ClinicalDocument__udmo': {
+        cloud: 'health', name: 'Clinical Document', icon: '📋', category: 'Clinical',
+        contentType: 'HTML',
+        desc: 'Clinical documentation with PHI removed',
+        fields: ['Title', 'Content', 'Attestation', 'Metadata']
+      }
+    };
+
+    // UDMO Categories for organizing
+    var UDMO_CATEGORIES = {
+      'Response': { icon: '💬', name: 'Response', desc: 'Email and message responses' },
+      'Document': { icon: '📄', name: 'Document', desc: 'Articles, guides, and documents' },
+      'Note': { icon: '📝', name: 'Note', desc: 'Internal notes and summaries' },
+      'Email': { icon: '✉️', name: 'Email', desc: 'Email drafts and templates' },
+      'Media': { icon: '🎬', name: 'Media', desc: 'Video scripts and media content' },
+      'Content': { icon: '📢', name: 'Content', desc: 'Marketing content blocks' },
+      'Clinical': { icon: '🏥', name: 'Clinical', desc: 'Healthcare documentation' }
+    };
+
+    // Get UDMOs by Category
+    function getUDMOsByCategory() {
+      var result = {};
+      for (var udmoKey in UDMOs) {
+        var udmo = UDMOs[udmoKey];
+        var cat = udmo.category || 'Other';
+        if (!result[cat]) result[cat] = [];
+        result[cat].push({ key: udmoKey, ...udmo });
+      }
+      return result;
+    }
+
     // Get DMOs by Subject Area
     function getDMOsBySubjectArea() {
       var result = {};
@@ -521,7 +639,8 @@
         },
         outputFields: ['Sentiment', 'IssueCategory', 'Urgency', 'Summary', 'ProductMentioned', 'SuggestedPriority', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'SuggestedResponses', 'EscalationReason', 'SimilarCases'],
         fields: ['Sentiment', 'IssueCategory', 'Urgency', 'Summary', 'ProductMentioned', 'SuggestedPriority', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'SuggestedResponses', 'EscalationReason', 'SimilarCases'],
-        prompt: '=== INPUT FIELDS (from EmailMessage__dlm) ===\nSubject: {{EmailMessage.Subject}}\nBody: {{EmailMessage.Body}}\nFrom: {{EmailMessage.FromAddress}}\nTo: {{EmailMessage.ToAddress}}\nSent Date: {{EmailMessage.SentDate}}\nHas Attachment: {{EmailMessage.HasAttachment}}\nChannel: {{EmailMessage.Channel}}\n\n=== INPUT FIELDS (from Account__dlm) ===\nAccount: {{Account.Name}}\nSupport Tier: {{Account.SupportTier}}\nHealth Score: {{Account.HealthScore}}\nIndustry: {{Account.Industry}}\nCustomer Since: {{Account.CustomerSince}}\n\n=== INSTRUCTIONS ===\nAnalyze this customer email and extract structured data.\n- Detect input language and note it\n- Flag any content needing human review (threats, legal, sensitive)\n- Consider account context for priority\n- Provide confidence score and explain reasoning\n\n=== OUTPUT FIELDS (to generate) ===\n1. Sentiment: (Positive | Neutral | Negative)\n2. IssueCategory: (Technical Support | Billing | Feature Request | General Inquiry | Legal | Complaint)\n3. Urgency: (Critical | High | Medium | Low)\n4. Summary: (One sentence summary)\n5. ProductMentioned: (Any product SKUs or names mentioned)\n6. SuggestedPriority: (P1 | P2 | P3 | P4) with reasoning\n7. ConfidenceScore: (0-100 confidence in classification)\n8. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n9. DetectedLanguage: { input: "xx", name: "Language Name" }\n10. GroundingSources: (Array of fields used for classification)\n11. SuggestedResponses: (Array of 2-3 response templates)\n12. EscalationReason: (null or reason for escalation)\n13. SimilarCases: (Array of similar case patterns)\n\nRespond in JSON format.'
+        outputUDMOs: ['DraftResponse__udmo', 'InternalNote__udmo'],
+        prompt: '=== INPUT FIELDS (from EmailMessage__dlm) ===\nSubject: {{EmailMessage.Subject}}\nBody: {{EmailMessage.Body}}\nFrom: {{EmailMessage.FromAddress}}\nTo: {{EmailMessage.ToAddress}}\nSent Date: {{EmailMessage.SentDate}}\nHas Attachment: {{EmailMessage.HasAttachment}}\nChannel: {{EmailMessage.Channel}}\n\n=== INPUT FIELDS (from Account__dlm) ===\nAccount: {{Account.Name}}\nSupport Tier: {{Account.SupportTier}}\nHealth Score: {{Account.HealthScore}}\nIndustry: {{Account.Industry}}\nCustomer Since: {{Account.CustomerSince}}\n\n=== INSTRUCTIONS ===\nAnalyze this customer email and extract structured data.\n- Detect input language and note it\n- Flag any content needing human review (threats, legal, sensitive)\n- Consider account context for priority\n- Provide confidence score and explain reasoning\n- Generate a draft response email (DraftResponse__udmo)\n- Generate internal agent notes (InternalNote__udmo)\n\n=== OUTPUT FIELDS (to generate) ===\n1. Sentiment: (Positive | Neutral | Negative)\n2. IssueCategory: (Technical Support | Billing | Feature Request | General Inquiry | Legal | Complaint)\n3. Urgency: (Critical | High | Medium | Low)\n4. Summary: (One sentence summary)\n5. ProductMentioned: (Any product SKUs or names mentioned)\n6. SuggestedPriority: (P1 | P2 | P3 | P4) with reasoning\n7. ConfidenceScore: (0-100 confidence in classification)\n8. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n9. DetectedLanguage: { input: "xx", name: "Language Name" }\n10. GroundingSources: (Array of fields used for classification)\n11. SuggestedResponses: (Array of 2-3 response templates)\n12. EscalationReason: (null or reason for escalation)\n13. SimilarCases: (Array of similar case patterns)\n\n=== UNSTRUCTURED OUTPUT (UDMOs) ===\n14. DraftResponse__udmo: Full HTML email draft ready to send\n15. InternalNote__udmo: Internal case notes for agents\n\nRespond in JSON format.'
       },
       {
         id: 'knowledge-gen', cloud: 'service', name: '📚 KB Generator',
@@ -534,7 +653,8 @@
         },
         outputFields: ['ArticleTitle', 'Summary', 'Steps', 'Keywords', 'Audience', 'RelatedArticles', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'AlternativeFormats', 'QualityScore', 'PIIRemoved'],
         fields: ['ArticleTitle', 'Summary', 'Steps', 'Keywords', 'Audience', 'RelatedArticles', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'AlternativeFormats', 'QualityScore', 'PIIRemoved'],
-        prompt: '=== INPUT FIELDS (from ResolvedCase__dlm) ===\nSubject: {{ResolvedCase.Subject}}\nResolution: {{ResolvedCase.Resolution}}\nAgent Comments: {{ResolvedCase.Comments}}\nCategory: {{ResolvedCase.Category}}\nProduct Area: {{ResolvedCase.ProductArea}}\nRoot Cause: {{ResolvedCase.RootCause}}\nPriority: {{ResolvedCase.Priority}}\nResolution Time: {{ResolvedCase.ResolutionTime}}\nCSAT Score: {{ResolvedCase.CustomerSatisfactionScore}}\n\n=== INPUT FIELDS (from Account__dlm) ===\nIndustry: {{Account.Industry}}\nAccount Type: {{Account.AccountType}}\n\n=== INSTRUCTIONS ===\nCreate a customer-facing Knowledge Base article.\n- Anonymize ALL PII (names, emails, account numbers, etc.)\n- Detect source language and generate in same language\n- Flag any content that may need legal/compliance review\n- Provide quality score based on completeness\n- Generate alternative formats (video script, FAQ)\n\n=== OUTPUT FIELDS (to generate) ===\n1. ArticleTitle: (Clear, searchable title)\n2. Summary: (2-3 sentence overview)\n3. Steps: (Array of step-by-step instructions)\n4. Keywords: (Array of search keywords)\n5. Audience: (Customer | Internal | Both)\n6. RelatedArticles: (Suggested related topics)\n7. ConfidenceScore: (0-100 confidence in article quality)\n8. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n9. DetectedLanguage: { input: "xx", output: "xx", name: "Language Name" }\n10. GroundingSources: (Array of fields used to generate article)\n11. AlternativeFormats: [{ type: "FAQ", content: "..." }, { type: "VideoScript", content: "..." }]\n12. QualityScore: { completeness: 0-100, clarity: 0-100, accuracy: 0-100, overall: 0-100 }\n13. PIIRemoved: (Array of PII types that were anonymized)\n\nCRITICAL: Ensure NO identifiable information remains. Respond in JSON format.'
+        outputUDMOs: ['KnowledgeArticle__udmo', 'FAQDocument__udmo', 'VideoScript__udmo'],
+        prompt: '=== INPUT FIELDS (from ResolvedCase__dlm) ===\nSubject: {{ResolvedCase.Subject}}\nResolution: {{ResolvedCase.Resolution}}\nAgent Comments: {{ResolvedCase.Comments}}\nCategory: {{ResolvedCase.Category}}\nProduct Area: {{ResolvedCase.ProductArea}}\nRoot Cause: {{ResolvedCase.RootCause}}\nPriority: {{ResolvedCase.Priority}}\nResolution Time: {{ResolvedCase.ResolutionTime}}\nCSAT Score: {{ResolvedCase.CustomerSatisfactionScore}}\n\n=== INPUT FIELDS (from Account__dlm) ===\nIndustry: {{Account.Industry}}\nAccount Type: {{Account.AccountType}}\n\n=== INSTRUCTIONS ===\nCreate a customer-facing Knowledge Base article.\n- Anonymize ALL PII (names, emails, account numbers, etc.)\n- Detect source language and generate in same language\n- Flag any content that may need legal/compliance review\n- Provide quality score based on completeness\n- Generate full article document (KnowledgeArticle__udmo)\n- Generate FAQ version (FAQDocument__udmo)\n- Generate video script (VideoScript__udmo)\n\n=== OUTPUT FIELDS (to generate) ===\n1. ArticleTitle: (Clear, searchable title)\n2. Summary: (2-3 sentence overview)\n3. Steps: (Array of step-by-step instructions)\n4. Keywords: (Array of search keywords)\n5. Audience: (Customer | Internal | Both)\n6. RelatedArticles: (Suggested related topics)\n7. ConfidenceScore: (0-100 confidence in article quality)\n8. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n9. DetectedLanguage: { input: "xx", output: "xx", name: "Language Name" }\n10. GroundingSources: (Array of fields used to generate article)\n11. AlternativeFormats: [{ type: "FAQ", content: "..." }, { type: "VideoScript", content: "..." }]\n12. QualityScore: { completeness: 0-100, clarity: 0-100, accuracy: 0-100, overall: 0-100 }\n13. PIIRemoved: (Array of PII types that were anonymized)\n\n=== UNSTRUCTURED OUTPUT (UDMOs) ===\n14. KnowledgeArticle__udmo: Full Markdown article with formatting\n15. FAQDocument__udmo: Formatted FAQ document\n16. VideoScript__udmo: Complete video narration script\n\nCRITICAL: Ensure NO identifiable information remains. Respond in JSON format.'
       },
       {
         id: 'call-insights', cloud: 'sales', name: '📈 Call Insights',
@@ -556,7 +676,8 @@
         },
         outputFields: ['SubjectLine', 'EmailBody', 'CallToAction', 'Tone', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'AlternativeReplies', 'PersonalizationNotes'],
         fields: ['SubjectLine', 'EmailBody', 'CallToAction', 'Tone', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'AlternativeReplies', 'PersonalizationNotes'],
-        prompt: '=== INPUT FIELDS (from Account__dlm) ===\nAccount: {{Account.Name}}\nIndustry: {{Account.Industry}}\nAnnual Revenue: {{Account.AnnualRevenue}}\nEmployee Count: {{Account.EmployeeCount}}\nSupport Tier: {{Account.SupportTier}}\nHealth Score: {{Account.HealthScore}}\n\n=== INPUT FIELDS (from Opportunity__dlm) ===\nOpportunity: {{Opportunity.Name}}\nAmount: ${{Opportunity.Amount}}\nStage: {{Opportunity.Stage}}\nClose Date: {{Opportunity.CloseDate}}\nNext Step: {{Opportunity.NextStep}}\nProbability: {{Opportunity.Probability}}%\nCompetitor: {{Opportunity.CompetitorPresence}}\n\n=== INSTRUCTIONS ===\nDraft a personalized follow-up email. Keep under 150 words.\nDetect input language and respond in same language.\nFlag any content that may need human review.\n\n=== OUTPUT FIELDS (to generate) ===\n1. SubjectLine: (Compelling subject < 50 chars)\n2. EmailBody: (Professional email body)\n3. CallToAction: (Clear next step)\n4. Tone: (Consultative | Urgent | Friendly)\n5. ConfidenceScore: (0-100 confidence in appropriateness)\n6. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n7. DetectedLanguage: { input: "en", output: "en", name: "English" }\n8. GroundingSources: (Array of fields used to generate response)\n9. AlternativeReplies: (Array of 2 alternative email approaches)\n10. PersonalizationNotes: (What was personalized and why)\n\nRespond in JSON format.'
+        outputUDMOs: ['EmailDraft__udmo', 'ProposalDocument__udmo', 'MeetingAgenda__udmo'],
+        prompt: '=== INPUT FIELDS (from Account__dlm) ===\nAccount: {{Account.Name}}\nIndustry: {{Account.Industry}}\nAnnual Revenue: {{Account.AnnualRevenue}}\nEmployee Count: {{Account.EmployeeCount}}\nSupport Tier: {{Account.SupportTier}}\nHealth Score: {{Account.HealthScore}}\n\n=== INPUT FIELDS (from Opportunity__dlm) ===\nOpportunity: {{Opportunity.Name}}\nAmount: ${{Opportunity.Amount}}\nStage: {{Opportunity.Stage}}\nClose Date: {{Opportunity.CloseDate}}\nNext Step: {{Opportunity.NextStep}}\nProbability: {{Opportunity.Probability}}%\nCompetitor: {{Opportunity.CompetitorPresence}}\n\n=== INSTRUCTIONS ===\nDraft a personalized follow-up email. Keep under 150 words.\nDetect input language and respond in same language.\nFlag any content that may need human review.\nGenerate full email draft (EmailDraft__udmo)\nGenerate proposal document if deal stage warrants (ProposalDocument__udmo)\nGenerate meeting agenda for follow-up call (MeetingAgenda__udmo)\n\n=== OUTPUT FIELDS (to generate) ===\n1. SubjectLine: (Compelling subject < 50 chars)\n2. EmailBody: (Professional email body)\n3. CallToAction: (Clear next step)\n4. Tone: (Consultative | Urgent | Friendly)\n5. ConfidenceScore: (0-100 confidence in appropriateness)\n6. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n7. DetectedLanguage: { input: "en", output: "en", name: "English" }\n8. GroundingSources: (Array of fields used to generate response)\n9. AlternativeReplies: (Array of 2 alternative email approaches)\n10. PersonalizationNotes: (What was personalized and why)\n\n=== UNSTRUCTURED OUTPUT (UDMOs) ===\n11. EmailDraft__udmo: Full HTML email with formatting and signature\n12. ProposalDocument__udmo: Sales proposal with pricing (if applicable)\n13. MeetingAgenda__udmo: Structured agenda for follow-up meeting\n\nRespond in JSON format.'
       },
       {
         id: 'voc-analysis', cloud: 'marketing', name: '🎯 VoC Analysis',
@@ -1272,75 +1393,106 @@
 
       var outputConfig = getSelectedOutputDMO();
       var dmosByArea = getDMOsBySubjectArea();
+      var udmosByCat = getUDMOsByCategory();
       var outputFields = state.template.outputFields || state.template.fields || [];
+      var templateUDMOs = state.template.outputUDMOs || [];
 
-      var bodyHtml = '<div style="font-size:13px;color:#6b7280;margin-bottom:16px;">Choose where the generated output fields will be stored.</div>';
+      var bodyHtml = '';
 
-      // Mode selection
-      bodyHtml += '<div style="display:flex;gap:12px;margin-bottom:20px;">';
-      bodyHtml += '<button class="bulk-toggle-btn' + (outputConfig.mode === 'update' ? ' active' : '') + '" style="flex:1;padding:12px;" onclick="setOutputDMOMode(\'update\')">📝 Update Existing DMO</button>';
-      bodyHtml += '<button class="bulk-toggle-btn' + (outputConfig.mode === 'create' ? ' active' : '') + '" style="flex:1;padding:12px;" onclick="setOutputDMOMode(\'create\')">✨ Create New DMO</button>';
+      // Two column layout: DMO (structured) on left, UDMO (unstructured) on right
+      bodyHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">';
+
+      // LEFT COLUMN: Structured Output (DMO)
+      bodyHtml += '<div style="border-right:1px solid #e5e7eb;padding-right:20px;">';
+      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:12px;">📊 Structured Output (DMO)</div>';
+      bodyHtml += '<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Store extracted fields in a Data Model Object</div>';
+
+      // Mode selection for DMO
+      bodyHtml += '<div style="display:flex;gap:8px;margin-bottom:12px;">';
+      bodyHtml += '<button class="bulk-toggle-btn' + (outputConfig.mode === 'update' ? ' active' : '') + '" style="flex:1;padding:8px;font-size:11px;" onclick="setOutputDMOMode(\'update\')">📝 Existing</button>';
+      bodyHtml += '<button class="bulk-toggle-btn' + (outputConfig.mode === 'create' ? ' active' : '') + '" style="flex:1;padding:8px;font-size:11px;" onclick="setOutputDMOMode(\'create\')">✨ New</button>';
       bodyHtml += '</div>';
 
       if (outputConfig.mode === 'update') {
-        // Show DMO selection grid
-        bodyHtml += '<div style="max-height:300px;overflow-y:auto;">';
+        bodyHtml += '<div style="max-height:200px;overflow-y:auto;">';
         for (var area in SUBJECT_AREAS) {
           var areaDMOs = dmosByArea[area] || [];
           if (areaDMOs.length === 0) continue;
-
-          bodyHtml += '<div class="subject-area-group">';
-          bodyHtml += '<div class="subject-area-header">' + SUBJECT_AREAS[area].icon + ' ' + SUBJECT_AREAS[area].name + '</div>';
-
+          bodyHtml += '<div class="subject-area-group" style="margin-bottom:8px;">';
+          bodyHtml += '<div class="subject-area-header" style="font-size:11px;padding:4px 0;">' + SUBJECT_AREAS[area].icon + ' ' + SUBJECT_AREAS[area].name + '</div>';
           areaDMOs.forEach(function(dmo) {
             var isSelected = outputConfig.dmoKey === dmo.key;
-            var fieldCount = dmo.records[0] ? Object.keys(dmo.records[0]).length : 0;
-
-            bodyHtml += '<div class="dmo-select-card' + (isSelected ? ' selected' : '') + '" onclick="selectOutputDMO(\'' + dmo.key + '\')">';
-            bodyHtml += '<span class="dmo-select-icon">' + dmo.icon + '</span>';
-            bodyHtml += '<div class="dmo-select-info"><div class="dmo-select-name">' + dmo.name + '</div>';
-            bodyHtml += '<div class="dmo-select-meta">' + CLOUDS[dmo.cloud].icon + ' ' + CLOUDS[dmo.cloud].name + ' • ' + fieldCount + ' fields</div></div>';
-            bodyHtml += '<input type="radio" name="outputDMO" ' + (isSelected ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#9333ea;">';
+            bodyHtml += '<div class="dmo-select-card' + (isSelected ? ' selected' : '') + '" style="padding:6px 8px;margin-bottom:4px;" onclick="selectOutputDMO(\'' + dmo.key + '\')">';
+            bodyHtml += '<span style="font-size:14px;">' + dmo.icon + '</span>';
+            bodyHtml += '<div class="dmo-select-info"><div style="font-size:12px;font-weight:500;">' + dmo.name + '</div></div>';
+            bodyHtml += '<input type="radio" name="outputDMO" ' + (isSelected ? 'checked' : '') + ' style="width:14px;height:14px;accent-color:#9333ea;">';
             bodyHtml += '</div>';
           });
-
           bodyHtml += '</div>';
         }
         bodyHtml += '</div>';
       } else {
-        // Create new DMO form
         var suggestedName = state.template.name.replace(/[^a-zA-Z0-9]/g, '') + 'Output__dlm';
-        bodyHtml += '<div class="form-group"><label class="form-label">New DMO Name</label>';
-        bodyHtml += '<input type="text" class="form-input" placeholder="e.g., GeneratedEmail__dlm" value="' + (outputConfig.newDMOName || suggestedName) + '" onchange="selectedOutputDMOByTemplate[\'' + state.template.id + '\'].newDMOName=this.value">';
+        bodyHtml += '<div class="form-group"><label class="form-label" style="font-size:11px;">New DMO Name</label>';
+        bodyHtml += '<input type="text" class="form-input" style="font-size:12px;padding:6px 8px;" placeholder="e.g., GeneratedEmail__dlm" value="' + (outputConfig.newDMOName || suggestedName) + '" onchange="selectedOutputDMOByTemplate[\'' + state.template.id + '\'].newDMOName=this.value">';
         bodyHtml += '</div>';
-
-        // Preview fields
-        bodyHtml += '<div class="form-group"><label class="form-label">Output Fields (' + outputFields.length + ')</label>';
-        bodyHtml += '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;">';
-        outputFields.forEach(function(f) {
-          bodyHtml += '<span class="field-tag output">' + f + '</span>';
-        });
-        bodyHtml += '</div></div>';
       }
 
-      // Show current selection summary
-      var selectedDMO = outputConfig.mode === 'update' ? DMOs[outputConfig.dmoKey] : null;
-      bodyHtml += '<div style="margin-top:16px;padding:12px;background:#f9fafb;border-radius:8px;">';
-      bodyHtml += '<div style="font-size:11px;color:#6b7280;text-transform:uppercase;margin-bottom:8px;">Output Configuration</div>';
-      if (outputConfig.mode === 'update' && selectedDMO) {
-        bodyHtml += '<div class="output-dmo-card"><span class="output-dmo-icon">' + selectedDMO.icon + '</span>';
-        bodyHtml += '<div class="output-dmo-info"><div class="output-dmo-name">' + selectedDMO.name + '</div>';
-        bodyHtml += '<div class="output-dmo-fields">Will add ' + outputFields.length + ' new fields</div></div></div>';
-      } else {
-        bodyHtml += '<div class="output-dmo-card"><span class="output-dmo-icon">✨</span>';
-        bodyHtml += '<div class="output-dmo-info"><div class="output-dmo-name">' + (outputConfig.newDMOName || suggestedName) + '</div>';
-        bodyHtml += '<div class="output-dmo-fields">New DMO with ' + outputFields.length + ' fields</div></div></div>';
-      }
+      // Show structured output fields
+      bodyHtml += '<div style="margin-top:12px;padding:8px;background:#eff6ff;border-radius:6px;border:1px solid #bfdbfe;">';
+      bodyHtml += '<div style="font-size:10px;color:#1d4ed8;text-transform:uppercase;margin-bottom:6px;">Structured Fields (' + outputFields.length + ')</div>';
+      bodyHtml += '<div style="display:flex;flex-wrap:wrap;gap:4px;">';
+      outputFields.slice(0, 6).forEach(function(f) { bodyHtml += '<span class="field-tag output" style="font-size:10px;padding:2px 6px;">' + f + '</span>'; });
+      if (outputFields.length > 6) bodyHtml += '<span style="font-size:10px;color:#6b7280;">+' + (outputFields.length - 6) + ' more</span>';
+      bodyHtml += '</div></div>';
       bodyHtml += '</div>';
 
+      // RIGHT COLUMN: Unstructured Output (UDMO)
+      bodyHtml += '<div>';
+      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:12px;">📄 Unstructured Output (UDMO)</div>';
+      bodyHtml += '<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Generate full documents, emails, articles</div>';
+
+      if (templateUDMOs.length > 0) {
+        bodyHtml += '<div style="font-size:11px;color:#059669;background:#ecfdf5;padding:6px 8px;border-radius:4px;margin-bottom:12px;">✓ ' + templateUDMOs.length + ' UDMO(s) configured for this template</div>';
+
+        templateUDMOs.forEach(function(udmoKey) {
+          var udmo = UDMOs[udmoKey];
+          if (!udmo) return;
+          bodyHtml += '<div class="dmo-select-card selected" style="padding:10px 12px;margin-bottom:8px;background:#f0fdf4;border-color:#86efac;">';
+          bodyHtml += '<span style="font-size:18px;">' + udmo.icon + '</span>';
+          bodyHtml += '<div class="dmo-select-info"><div style="font-size:13px;font-weight:500;color:#166534;">' + udmo.name + '</div>';
+          bodyHtml += '<div style="font-size:11px;color:#22c55e;">' + udmo.contentType + ' • ' + udmo.desc + '</div></div>';
+          bodyHtml += '</div>';
+        });
+      } else {
+        bodyHtml += '<div style="font-size:12px;color:#9ca3af;text-align:center;padding:20px;">No UDMOs configured for this template</div>';
+      }
+
+      // Show available UDMOs by category
+      bodyHtml += '<div style="margin-top:12px;"><div style="font-size:11px;color:#6b7280;margin-bottom:8px;">Available UDMOs:</div>';
+      bodyHtml += '<div style="max-height:150px;overflow-y:auto;">';
+      for (var cat in UDMO_CATEGORIES) {
+        var catUDMOs = udmosByCat[cat] || [];
+        if (catUDMOs.length === 0) continue;
+        bodyHtml += '<div style="margin-bottom:8px;">';
+        bodyHtml += '<div style="font-size:10px;color:#6b7280;margin-bottom:4px;">' + UDMO_CATEGORIES[cat].icon + ' ' + cat + '</div>';
+        catUDMOs.forEach(function(udmo) {
+          var isConfigured = templateUDMOs.indexOf(udmo.key) > -1;
+          bodyHtml += '<div style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;margin:2px;background:' + (isConfigured ? '#dcfce7' : '#f3f4f6') + ';border-radius:4px;font-size:11px;">';
+          bodyHtml += udmo.icon + ' ' + udmo.name;
+          if (isConfigured) bodyHtml += ' ✓';
+          bodyHtml += '</div>';
+        });
+        bodyHtml += '</div>';
+      }
+      bodyHtml += '</div></div>';
+      bodyHtml += '</div>';
+
+      bodyHtml += '</div>'; // Close grid
+
       return '<div class="modal-overlay" onclick="if(event.target===this)closeOutputDMOSelector()">' +
-        '<div class="modal" style="width:700px;max-height:85vh;">' +
-        '<div class="modal-header"><div class="modal-title">📤 Configure Output DMO</div><button class="modal-close" onclick="closeOutputDMOSelector()">×</button></div>' +
+        '<div class="modal" style="width:800px;max-height:85vh;">' +
+        '<div class="modal-header"><div class="modal-title">📤 Configure Output: DMO + UDMO</div><button class="modal-close" onclick="closeOutputDMOSelector()">×</button></div>' +
         '<div class="modal-body" style="max-height:65vh;overflow-y:auto;">' + bodyHtml + '</div>' +
         '<div class="modal-footer"><button class="btn-secondary" onclick="closeOutputDMOSelector()">Cancel</button><button class="btn-next" onclick="closeOutputDMOSelector()">Save Configuration</button></div>' +
         '</div></div>';
@@ -1624,17 +1776,37 @@
         '<main class="center-panel"><div class="center-header"><span class="center-title">' + state.template.name + '</span><div style="display:flex;align-items:center;gap:8px;"><div class="bulk-mode-toggle"><span style="font-size:12px;color:#6b7280;">Mode:</span><button class="bulk-toggle-btn' + (!state.bulkMode ? ' active' : '') + '" onclick="if(state.bulkMode)toggleBulkMode()">Single</button><button class="bulk-toggle-btn' + (state.bulkMode ? ' active' : '') + '" onclick="if(!state.bulkMode)toggleBulkMode()">Bulk (' + recs.length + ')</button></div><button class="run-btn" onclick="' + (state.bulkMode ? 'runBulk()' : 'run()') + '"' + (state.running ? ' disabled' : '') + '>' + (state.running ? '<svg class="spinner" width="16" height="16" viewBox="0 0 24 24"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Running...' : (state.bulkMode ? '▶ Run All (' + recs.length + ')' : '▶ Test Run')) + '</button></div></div>' +
         (state.bulkMode ? renderBulkMode(recs) : '<div class="panels"><div class="panel"><div class="panel-header"><span class="panel-title">📝 Resolved Prompt</span><span class="panel-tokens">' + inTok + ' tokens</span></div><div class="panel-content"><pre class="prompt-box">' + esc(prompt) + '</pre></div></div>' +
         '<div class="panel"><div class="panel-header"><span class="panel-title">✨ Generated Output</span><div class="format-btns"><button class="format-btn' + (state.format === 'structured' ? ' active' : '') + '" onclick="state.format=\'structured\';render()">Structured</button><button class="format-btn' + (state.format === 'raw' ? ' active' : '') + '" onclick="state.format=\'raw\';render()">JSON</button></div></div><div class="panel-content">' + renderOutput() + '</div></div></div>') + '</main>' +
-        '<aside class="sidebar-right"><div class="sidebar-section"><div class="sidebar-title" style="display:flex;justify-content:space-between;align-items:center;">📤 Output DMO<button class="field-selector-btn" onclick="openOutputDMOSelector()">Edit</button></div>';
+        '<aside class="sidebar-right"><div class="sidebar-section"><div class="sidebar-title" style="display:flex;justify-content:space-between;align-items:center;">📤 Output<button class="field-selector-btn" onclick="openOutputDMOSelector()">Edit</button></div>';
+
+      // Show Structured Output (DMO)
       var outputConfig = getSelectedOutputDMO();
       var outputDMO = outputConfig.mode === 'update' && DMOs[outputConfig.dmoKey] ? DMOs[outputConfig.dmoKey] : null;
+      html += '<div style="font-size:10px;color:#6b7280;text-transform:uppercase;margin:8px 0 4px 0;">📊 Structured (DMO)</div>';
       if (outputDMO) {
-        html += '<div class="output-dmo-card" style="margin-top:8px;"><span class="output-dmo-icon">' + outputDMO.icon + '</span><div class="output-dmo-info"><div class="output-dmo-name">' + outputDMO.name + '</div><div class="output-dmo-fields">Adding ' + (state.template.outputFields || state.template.fields).length + ' fields</div></div></div>';
+        html += '<div class="output-dmo-card" style="padding:8px;"><span class="output-dmo-icon" style="font-size:18px;">' + outputDMO.icon + '</span><div class="output-dmo-info"><div class="output-dmo-name" style="font-size:12px;">' + outputDMO.name + '</div><div class="output-dmo-fields" style="font-size:10px;">' + (state.template.outputFields || state.template.fields).length + ' fields</div></div></div>';
       } else {
-        html += '<div class="output-dmo-card" style="margin-top:8px;"><span class="output-dmo-icon">✨</span><div class="output-dmo-info"><div class="output-dmo-name">' + (outputConfig.newDMOName || 'New DMO') + '</div><div class="output-dmo-fields">New DMO with ' + (state.template.outputFields || state.template.fields).length + ' fields</div></div></div>';
+        html += '<div class="output-dmo-card" style="padding:8px;"><span class="output-dmo-icon" style="font-size:18px;">✨</span><div class="output-dmo-info"><div class="output-dmo-name" style="font-size:12px;">' + (outputConfig.newDMOName || 'New DMO') + '</div><div class="output-dmo-fields" style="font-size:10px;">' + (state.template.outputFields || state.template.fields).length + ' fields</div></div></div>';
       }
-      html += '</div><div class="fields-list"><div style="font-size:12px;color:#6b7280;text-transform:uppercase;margin-bottom:8px">Output Fields (' + state.template.fields.length + ')</div>';
-      state.template.fields.forEach(function(f) { html += '<div class="field-item"><span class="field-name">' + f + '</span><span class="field-status ' + (state.done ? 'done' : 'pending') + '">' + (state.done ? '✓' : '...') + '</span></div>'; });
-      html += '</div>' + (state.done ? '<div class="complete-panel"><div class="complete-title">✓ Test Complete</div><div class="complete-sub">All ' + state.template.fields.length + ' fields extracted</div></div>' : '') + '</aside></div></div>';
+
+      // Show Unstructured Output (UDMOs)
+      var templateUDMOs = state.template.outputUDMOs || [];
+      if (templateUDMOs.length > 0) {
+        html += '<div style="font-size:10px;color:#6b7280;text-transform:uppercase;margin:12px 0 4px 0;">📄 Unstructured (UDMO)</div>';
+        templateUDMOs.forEach(function(udmoKey) {
+          var udmo = UDMOs[udmoKey];
+          if (!udmo) return;
+          html += '<div style="display:flex;align-items:center;gap:6px;padding:6px 8px;background:#f0fdf4;border:1px solid #86efac;border-radius:6px;margin-bottom:4px;">';
+          html += '<span style="font-size:14px;">' + udmo.icon + '</span>';
+          html += '<div><div style="font-size:11px;font-weight:500;color:#166534;">' + udmo.name + '</div>';
+          html += '<div style="font-size:9px;color:#22c55e;">' + udmo.contentType + '</div></div>';
+          html += '<span style="margin-left:auto;font-size:10px;color:' + (state.done ? '#22c55e' : '#9ca3af') + ';">' + (state.done ? '✓' : '...') + '</span></div>';
+        });
+      }
+
+      html += '</div><div class="fields-list"><div style="font-size:12px;color:#6b7280;text-transform:uppercase;margin-bottom:8px">Structured Fields (' + state.template.fields.length + ')</div>';
+      state.template.fields.slice(0, 8).forEach(function(f) { html += '<div class="field-item"><span class="field-name">' + f + '</span><span class="field-status ' + (state.done ? 'done' : 'pending') + '">' + (state.done ? '✓' : '...') + '</span></div>'; });
+      if (state.template.fields.length > 8) { html += '<div style="font-size:11px;color:#6b7280;padding:4px 0;">+' + (state.template.fields.length - 8) + ' more fields...</div>'; }
+      html += '</div>' + (state.done ? '<div class="complete-panel"><div class="complete-title">✓ Test Complete</div><div class="complete-sub">' + state.template.fields.length + ' fields + ' + templateUDMOs.length + ' documents</div></div>' : '') + '</aside></div></div>';
 
       // Add the Template Builder Modal
       html += renderBuilderModal();
