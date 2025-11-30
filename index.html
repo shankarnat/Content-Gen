@@ -1396,9 +1396,33 @@
       var outputConfig = getSelectedOutputDMO();
       var inputFields = getSelectedFields();
       var templateUDMOs = state.template.outputUDMOs || [];
+      var inputFieldsByDMO = state.template.inputFieldsByDMO || {};
+      var outputDMOKey = outputConfig.mode === 'create' ? outputConfig.newDMOName : outputConfig.dmoKey;
+      var pipelineId = publishConfig.pipelineName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      var baseUrl = 'https://api.salesforce.com/data/v1';
+
+      // Build input DMOs array
+      var inputDMOs = [];
+      for (var dmoKey in inputFieldsByDMO) {
+        var dmo = DMOs[dmoKey];
+        inputDMOs.push({
+          dmo: dmoKey,
+          name: dmo ? dmo.name : dmoKey,
+          fields: inputFieldsByDMO[dmoKey]
+        });
+      }
+      // Add primary DMO if not in inputFieldsByDMO
+      if (inputDMOs.length === 0) {
+        inputDMOs.push({
+          dmo: state.template.primaryDMO,
+          name: DMOs[state.template.primaryDMO] ? DMOs[state.template.primaryDMO].name : state.template.primaryDMO,
+          fields: inputFields
+        });
+      }
 
       return {
         pipeline: {
+          id: pipelineId,
           name: publishConfig.pipelineName,
           templateId: state.template.id,
           templateName: state.template.name,
@@ -1406,7 +1430,8 @@
         },
         trigger: {
           type: publishConfig.trigger,
-          schedule: publishConfig.trigger === 'scheduled' ? 'daily' : null
+          schedule: publishConfig.trigger === 'scheduled' ? 'daily' : null,
+          eventSource: publishConfig.trigger === 'event' ? state.template.primaryDMO : null
         },
         runtime: {
           environment: publishConfig.environment,
@@ -1415,12 +1440,11 @@
           autoPublish: publishConfig.autoPublish
         },
         input: {
-          dmo: state.template.primaryDMO,
-          fields: inputFields
+          dmos: inputDMOs
         },
         output: {
           structured: {
-            dmo: outputConfig.mode === 'create' ? outputConfig.newDMOName : outputConfig.dmoKey,
+            dmo: outputDMOKey,
             mode: outputConfig.mode,
             fields: state.template.outputFields || state.template.fields || []
           },
@@ -1432,6 +1456,30 @@
               contentType: udmo ? udmo.contentType : 'Text'
             };
           })
+        },
+        apis: {
+          structured: {
+            endpoint: baseUrl + '/content-foundry/' + pipelineId + '/outputs/' + outputDMOKey,
+            method: 'GET',
+            description: 'Query structured output records from ' + outputDMOKey
+          },
+          unstructured: templateUDMOs.map(function(udmoKey) {
+            return {
+              endpoint: baseUrl + '/content-foundry/' + pipelineId + '/documents/' + udmoKey,
+              method: 'GET',
+              description: 'Retrieve generated ' + (UDMOs[udmoKey] ? UDMOs[udmoKey].name : udmoKey) + ' documents'
+            };
+          }),
+          webhook: {
+            endpoint: baseUrl + '/content-foundry/' + pipelineId + '/webhook',
+            method: 'POST',
+            description: 'Webhook for real-time output notifications'
+          },
+          batch: {
+            endpoint: baseUrl + '/content-foundry/' + pipelineId + '/batch',
+            method: 'POST',
+            description: 'Submit batch processing requests'
+          }
         },
         createdAt: new Date().toISOString()
       };
@@ -1449,81 +1497,202 @@
 
       var configJSON = getPublishConfigJSON();
       var jsonPreview = JSON.stringify(configJSON, null, 2);
+      var outputConfig = getSelectedOutputDMO();
+      var templateUDMOs = state.template.outputUDMOs || [];
+      var inputFieldsByDMO = state.template.inputFieldsByDMO || {};
+      var pipelineId = publishConfig.pipelineName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      var baseUrl = 'https://api.salesforce.com/data/v1';
 
       var bodyHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">';
 
-      // LEFT COLUMN: Parameter Selection
+      // LEFT COLUMN: Parameters & DMO Configuration
       bodyHtml += '<div style="border-right:1px solid #e5e7eb;padding-right:24px;">';
-      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:16px;">⚙️ Pipeline Parameters</div>';
+
+      // Pipeline Parameters Section
+      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:12px;">⚙️ Pipeline Parameters</div>';
 
       // Pipeline Name
-      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
-      bodyHtml += '<label class="form-label" style="font-size:12px;font-weight:500;color:#374151;">Pipeline Name</label>';
-      bodyHtml += '<input type="text" class="form-input" style="font-size:13px;" value="' + esc(publishConfig.pipelineName) + '" onchange="updatePublishConfig(\'pipelineName\', this.value)">';
+      bodyHtml += '<div class="form-group" style="margin-bottom:12px;">';
+      bodyHtml += '<label class="form-label" style="font-size:11px;font-weight:500;color:#374151;">Pipeline Name</label>';
+      bodyHtml += '<input type="text" class="form-input" style="font-size:12px;padding:8px;" value="' + esc(publishConfig.pipelineName) + '" onchange="updatePublishConfig(\'pipelineName\', this.value)">';
       bodyHtml += '</div>';
 
+      // Trigger & Environment in one row
+      bodyHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">';
+
       // Trigger Type
-      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
-      bodyHtml += '<label class="form-label" style="font-size:12px;font-weight:500;color:#374151;">Trigger</label>';
-      bodyHtml += '<div style="display:flex;gap:8px;">';
-      ['manual', 'scheduled', 'event'].forEach(function(t) {
-        var icons = { manual: '👆', scheduled: '⏰', event: '⚡' };
-        var labels = { manual: 'Manual', scheduled: 'Scheduled', event: 'Event-Driven' };
-        bodyHtml += '<button class="bulk-toggle-btn' + (publishConfig.trigger === t ? ' active' : '') + '" style="flex:1;padding:10px 8px;font-size:11px;" onclick="updatePublishConfig(\'trigger\', \'' + t + '\')">' + icons[t] + ' ' + labels[t] + '</button>';
+      bodyHtml += '<div class="form-group">';
+      bodyHtml += '<label class="form-label" style="font-size:11px;font-weight:500;color:#374151;">Trigger</label>';
+      bodyHtml += '<select class="form-input" style="font-size:11px;padding:6px;" onchange="updatePublishConfig(\'trigger\', this.value)">';
+      [['manual', '👆 Manual'], ['scheduled', '⏰ Scheduled'], ['event', '⚡ Event']].forEach(function(t) {
+        bodyHtml += '<option value="' + t[0] + '"' + (publishConfig.trigger === t[0] ? ' selected' : '') + '>' + t[1] + '</option>';
       });
-      bodyHtml += '</div></div>';
+      bodyHtml += '</select></div>';
 
       // Environment
-      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
-      bodyHtml += '<label class="form-label" style="font-size:12px;font-weight:500;color:#374151;">Environment</label>';
-      bodyHtml += '<div style="display:flex;gap:8px;">';
-      ['sandbox', 'production'].forEach(function(e) {
-        var icons = { sandbox: '🧪', production: '🚀' };
-        var labels = { sandbox: 'Sandbox', production: 'Production' };
-        bodyHtml += '<button class="bulk-toggle-btn' + (publishConfig.environment === e ? ' active' : '') + '" style="flex:1;padding:10px 8px;font-size:12px;" onclick="updatePublishConfig(\'environment\', \'' + e + '\')">' + icons[e] + ' ' + labels[e] + '</button>';
+      bodyHtml += '<div class="form-group">';
+      bodyHtml += '<label class="form-label" style="font-size:11px;font-weight:500;color:#374151;">Environment</label>';
+      bodyHtml += '<select class="form-input" style="font-size:11px;padding:6px;" onchange="updatePublishConfig(\'environment\', this.value)">';
+      [['sandbox', '🧪 Sandbox'], ['production', '🚀 Production']].forEach(function(e) {
+        bodyHtml += '<option value="' + e[0] + '"' + (publishConfig.environment === e[0] ? ' selected' : '') + '>' + e[1] + '</option>';
       });
-      bodyHtml += '</div></div>';
+      bodyHtml += '</select></div>';
+      bodyHtml += '</div>';
+
+      // Model & Daily Limit in one row
+      bodyHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">';
 
       // Model
-      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
-      bodyHtml += '<label class="form-label" style="font-size:12px;font-weight:500;color:#374151;">AI Model</label>';
-      bodyHtml += '<select class="form-input" style="font-size:13px;" onchange="updatePublishConfig(\'model\', this.value)">';
+      bodyHtml += '<div class="form-group">';
+      bodyHtml += '<label class="form-label" style="font-size:11px;font-weight:500;color:#374151;">AI Model</label>';
+      bodyHtml += '<select class="form-input" style="font-size:11px;padding:6px;" onchange="updatePublishConfig(\'model\', this.value)">';
       ['gpt-4o', 'gpt-4o-mini', 'claude-3-5-sonnet'].forEach(function(m) {
         bodyHtml += '<option value="' + m + '"' + (publishConfig.model === m ? ' selected' : '') + '>' + m + '</option>';
       });
       bodyHtml += '</select></div>';
 
       // Daily Limit
-      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
-      bodyHtml += '<label class="form-label" style="font-size:12px;font-weight:500;color:#374151;">Daily Record Limit</label>';
-      bodyHtml += '<input type="number" class="form-input" style="font-size:13px;" value="' + publishConfig.dailyLimit + '" min="1" max="100000" onchange="updatePublishConfig(\'dailyLimit\', this.value)">';
-      bodyHtml += '<div style="font-size:11px;color:#6b7280;margin-top:4px;">Maximum records to process per day</div>';
+      bodyHtml += '<div class="form-group">';
+      bodyHtml += '<label class="form-label" style="font-size:11px;font-weight:500;color:#374151;">Daily Limit</label>';
+      bodyHtml += '<input type="number" class="form-input" style="font-size:11px;padding:6px;" value="' + publishConfig.dailyLimit + '" min="1" max="100000" onchange="updatePublishConfig(\'dailyLimit\', this.value)">';
+      bodyHtml += '</div>';
       bodyHtml += '</div>';
 
       // Auto-publish Toggle
-      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
-      bodyHtml += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">';
-      bodyHtml += '<input type="checkbox" style="width:16px;height:16px;accent-color:#9333ea;"' + (publishConfig.autoPublish ? ' checked' : '') + ' onchange="updatePublishConfig(\'autoPublish\', this.checked)">';
-      bodyHtml += '<span style="font-size:13px;color:#374151;">Auto-publish outputs to downstream apps</span>';
+      bodyHtml += '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:16px;">';
+      bodyHtml += '<input type="checkbox" style="width:14px;height:14px;accent-color:#9333ea;"' + (publishConfig.autoPublish ? ' checked' : '') + ' onchange="updatePublishConfig(\'autoPublish\', this.checked)">';
+      bodyHtml += '<span style="font-size:11px;color:#374151;">Auto-publish high-confidence outputs</span>';
       bodyHtml += '</label>';
-      bodyHtml += '<div style="font-size:11px;color:#6b7280;margin-top:4px;margin-left:24px;">Skip manual review for high-confidence outputs</div>';
+
+      // INPUT DMOs Section
+      bodyHtml += '<div style="border-top:1px solid #e5e7eb;padding-top:12px;margin-top:4px;">';
+      bodyHtml += '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px;">📥 Input DMOs</div>';
+
+      var inputDMOKeys = Object.keys(inputFieldsByDMO);
+      if (inputDMOKeys.length > 0) {
+        inputDMOKeys.forEach(function(dmoKey) {
+          var dmo = DMOs[dmoKey];
+          var fields = inputFieldsByDMO[dmoKey] || [];
+          bodyHtml += '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 10px;margin-bottom:6px;">';
+          bodyHtml += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">';
+          bodyHtml += '<span style="font-size:14px;">' + (dmo ? dmo.icon : '📊') + '</span>';
+          bodyHtml += '<span style="font-size:12px;font-weight:500;color:#1d4ed8;">' + (dmo ? dmo.name : dmoKey) + '</span>';
+          bodyHtml += '<span style="font-size:10px;color:#6b7280;margin-left:auto;">' + fields.length + ' fields</span>';
+          bodyHtml += '</div>';
+          bodyHtml += '<div style="display:flex;flex-wrap:wrap;gap:3px;">';
+          fields.slice(0, 4).forEach(function(f) { bodyHtml += '<span style="font-size:9px;padding:2px 5px;background:#dbeafe;color:#1e40af;border-radius:3px;">' + f + '</span>'; });
+          if (fields.length > 4) bodyHtml += '<span style="font-size:9px;color:#6b7280;">+' + (fields.length - 4) + '</span>';
+          bodyHtml += '</div></div>';
+        });
+      } else {
+        var primaryDMO = DMOs[state.template.primaryDMO];
+        bodyHtml += '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 10px;">';
+        bodyHtml += '<div style="display:flex;align-items:center;gap:6px;">';
+        bodyHtml += '<span style="font-size:14px;">' + (primaryDMO ? primaryDMO.icon : '📊') + '</span>';
+        bodyHtml += '<span style="font-size:12px;font-weight:500;color:#1d4ed8;">' + (primaryDMO ? primaryDMO.name : state.template.primaryDMO) + '</span>';
+        bodyHtml += '</div></div>';
+      }
       bodyHtml += '</div>';
 
+      // OUTPUT DMOs Section
+      bodyHtml += '<div style="border-top:1px solid #e5e7eb;padding-top:12px;margin-top:12px;">';
+      bodyHtml += '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px;">📤 Output DMOs</div>';
+
+      // Structured Output DMO
+      var outputDMOKey = outputConfig.mode === 'create' ? outputConfig.newDMOName : outputConfig.dmoKey;
+      var outputDMO = DMOs[outputDMOKey];
+      var outputFields = state.template.outputFields || state.template.fields || [];
+
+      bodyHtml += '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 10px;margin-bottom:6px;">';
+      bodyHtml += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">';
+      bodyHtml += '<span style="font-size:14px;">📊</span>';
+      bodyHtml += '<span style="font-size:12px;font-weight:500;color:#166534;">' + (outputDMO ? outputDMO.name : outputDMOKey) + '</span>';
+      bodyHtml += '<span style="font-size:9px;padding:2px 6px;background:#dcfce7;color:#166534;border-radius:10px;margin-left:auto;">Structured</span>';
+      bodyHtml += '</div>';
+      bodyHtml += '<div style="display:flex;flex-wrap:wrap;gap:3px;">';
+      outputFields.slice(0, 4).forEach(function(f) { bodyHtml += '<span style="font-size:9px;padding:2px 5px;background:#dcfce7;color:#166534;border-radius:3px;">' + f + '</span>'; });
+      if (outputFields.length > 4) bodyHtml += '<span style="font-size:9px;color:#6b7280;">+' + (outputFields.length - 4) + '</span>';
+      bodyHtml += '</div></div>';
+
+      // Unstructured Output UDMOs
+      if (templateUDMOs.length > 0) {
+        templateUDMOs.forEach(function(udmoKey) {
+          var udmo = UDMOs[udmoKey];
+          if (!udmo) return;
+          bodyHtml += '<div style="background:#faf5ff;border:1px solid #d8b4fe;border-radius:6px;padding:8px 10px;margin-bottom:6px;">';
+          bodyHtml += '<div style="display:flex;align-items:center;gap:6px;">';
+          bodyHtml += '<span style="font-size:14px;">' + udmo.icon + '</span>';
+          bodyHtml += '<span style="font-size:12px;font-weight:500;color:#7c3aed;">' + udmo.name + '</span>';
+          bodyHtml += '<span style="font-size:9px;padding:2px 6px;background:#ede9fe;color:#7c3aed;border-radius:10px;margin-left:auto;">' + udmo.contentType + '</span>';
+          bodyHtml += '</div></div>';
+        });
+      }
       bodyHtml += '</div>';
 
-      // RIGHT COLUMN: JSON Preview
+      bodyHtml += '</div>'; // Close left column
+
+      // RIGHT COLUMN: APIs & JSON Preview
       bodyHtml += '<div>';
-      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:16px;">📋 Configuration Preview</div>';
-      bodyHtml += '<div style="font-size:11px;color:#6b7280;margin-bottom:8px;">This JSON will be saved when you publish the pipeline:</div>';
-      bodyHtml += '<pre style="background:#1f2937;color:#e5e7eb;padding:16px;border-radius:8px;font-size:11px;line-height:1.5;max-height:400px;overflow:auto;font-family:\'Monaco\',\'Menlo\',monospace;white-space:pre-wrap;word-break:break-word;">' + esc(jsonPreview) + '</pre>';
+
+      // API Endpoints Section
+      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:12px;">🔌 API Endpoints</div>';
+      bodyHtml += '<div style="font-size:11px;color:#6b7280;margin-bottom:8px;">Access your pipeline outputs via these APIs:</div>';
+
+      // Structured Data API
+      bodyHtml += '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:10px;margin-bottom:8px;">';
+      bodyHtml += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">';
+      bodyHtml += '<span style="font-size:9px;padding:2px 6px;background:#22c55e;color:white;border-radius:3px;font-weight:600;">GET</span>';
+      bodyHtml += '<span style="font-size:11px;font-weight:500;color:#374151;">Structured Output</span>';
       bodyHtml += '</div>';
+      bodyHtml += '<code style="display:block;font-size:10px;color:#6b7280;background:#f3f4f6;padding:6px 8px;border-radius:4px;word-break:break-all;">/content-foundry/' + esc(pipelineId) + '/outputs/' + esc(outputDMOKey) + '</code>';
+      bodyHtml += '</div>';
+
+      // Unstructured Document APIs
+      if (templateUDMOs.length > 0) {
+        templateUDMOs.forEach(function(udmoKey) {
+          var udmo = UDMOs[udmoKey];
+          bodyHtml += '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:10px;margin-bottom:8px;">';
+          bodyHtml += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">';
+          bodyHtml += '<span style="font-size:9px;padding:2px 6px;background:#22c55e;color:white;border-radius:3px;font-weight:600;">GET</span>';
+          bodyHtml += '<span style="font-size:11px;font-weight:500;color:#374151;">' + (udmo ? udmo.name : udmoKey) + '</span>';
+          bodyHtml += '</div>';
+          bodyHtml += '<code style="display:block;font-size:10px;color:#6b7280;background:#f3f4f6;padding:6px 8px;border-radius:4px;word-break:break-all;">/content-foundry/' + esc(pipelineId) + '/documents/' + esc(udmoKey) + '</code>';
+          bodyHtml += '</div>';
+        });
+      }
+
+      // Webhook & Batch APIs
+      bodyHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">';
+      bodyHtml += '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px;">';
+      bodyHtml += '<div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">';
+      bodyHtml += '<span style="font-size:9px;padding:2px 5px;background:#3b82f6;color:white;border-radius:3px;font-weight:600;">POST</span>';
+      bodyHtml += '<span style="font-size:10px;font-weight:500;">Webhook</span>';
+      bodyHtml += '</div>';
+      bodyHtml += '<code style="font-size:9px;color:#6b7280;">/.../webhook</code>';
+      bodyHtml += '</div>';
+      bodyHtml += '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px;">';
+      bodyHtml += '<div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">';
+      bodyHtml += '<span style="font-size:9px;padding:2px 5px;background:#3b82f6;color:white;border-radius:3px;font-weight:600;">POST</span>';
+      bodyHtml += '<span style="font-size:10px;font-weight:500;">Batch</span>';
+      bodyHtml += '</div>';
+      bodyHtml += '<code style="font-size:9px;color:#6b7280;">/.../batch</code>';
+      bodyHtml += '</div>';
+      bodyHtml += '</div>';
+
+      // JSON Preview
+      bodyHtml += '<div style="border-top:1px solid #e5e7eb;padding-top:12px;">';
+      bodyHtml += '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px;">📋 Full Configuration</div>';
+      bodyHtml += '<pre style="background:#1f2937;color:#e5e7eb;padding:12px;border-radius:6px;font-size:9px;line-height:1.4;max-height:200px;overflow:auto;font-family:\'Monaco\',\'Menlo\',monospace;white-space:pre-wrap;word-break:break-word;">' + esc(jsonPreview) + '</pre>';
+      bodyHtml += '</div>';
+
+      bodyHtml += '</div>'; // Close right column
 
       bodyHtml += '</div>'; // Close grid
 
       return '<div class="modal-overlay" onclick="if(event.target===this)closePublishModal()">' +
-        '<div class="modal" style="width:900px;max-height:85vh;">' +
+        '<div class="modal" style="width:950px;max-height:90vh;">' +
         '<div class="modal-header"><div class="modal-title">🚀 Publish Pipeline</div><button class="modal-close" onclick="closePublishModal()">×</button></div>' +
-        '<div class="modal-body" style="max-height:65vh;overflow-y:auto;">' + bodyHtml + '</div>' +
+        '<div class="modal-body" style="max-height:70vh;overflow-y:auto;">' + bodyHtml + '</div>' +
         '<div class="modal-footer"><button class="btn-secondary" onclick="closePublishModal()">Cancel</button><button class="btn-next" onclick="publishPipeline()">🚀 Publish Pipeline</button></div>' +
         '</div></div>';
     }
