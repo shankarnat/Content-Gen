@@ -512,21 +512,29 @@
     var TEMPLATES = [
       {
         id: 'case-triage', cloud: 'service', name: '🤖 Case Triage',
-        desc: 'Extract sentiment, category, urgency from emails',
-        primaryDMO: 'EmailMessage__dlm', relatedDMOs: [],
+        desc: 'AI-powered case classification with safety rails, multi-language & explainability',
+        primaryDMO: 'EmailMessage__dlm', relatedDMOs: ['Account__dlm'],
         inputFields: ['Subject', 'Body', 'FromAddress', 'ToAddress', 'SentDate', 'HasAttachment', 'AccountId'],
-        outputFields: ['Sentiment', 'IssueCategory', 'Urgency', 'Summary', 'ProductMentioned', 'SuggestedPriority'],
-        fields: ['Sentiment', 'IssueCategory', 'Urgency', 'Summary', 'ProductMentioned', 'SuggestedPriority'],
-        prompt: '=== INPUT FIELDS (from EmailMessage__dlm) ===\nSubject: {{EmailMessage.Subject}}\nBody: {{EmailMessage.Body}}\nFrom: {{EmailMessage.FromAddress}}\nTo: {{EmailMessage.ToAddress}}\nSent Date: {{EmailMessage.SentDate}}\nHas Attachment: {{EmailMessage.HasAttachment}}\nAccount ID: {{EmailMessage.AccountId}}\n\n=== INSTRUCTIONS ===\nAnalyze this customer email and extract structured data.\n\n=== OUTPUT FIELDS (to generate) ===\n1. Sentiment: (Positive | Neutral | Negative)\n2. IssueCategory: (Technical Support | Billing | Feature Request | General Inquiry)\n3. Urgency: (High | Medium | Low)\n4. Summary: (One sentence summary)\n5. ProductMentioned: (Any product SKUs or names mentioned)\n6. SuggestedPriority: (P1 | P2 | P3 | P4)\n\nRespond in JSON format.'
+        inputFieldsByDMO: {
+          'EmailMessage__dlm': ['Subject', 'Body', 'FromAddress', 'ToAddress', 'SentDate', 'HasAttachment', 'AccountId', 'Channel', 'Status'],
+          'Account__dlm': ['Name', 'SupportTier', 'HealthScore', 'Industry', 'CustomerSince']
+        },
+        outputFields: ['Sentiment', 'IssueCategory', 'Urgency', 'Summary', 'ProductMentioned', 'SuggestedPriority', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'SuggestedResponses', 'EscalationReason', 'SimilarCases'],
+        fields: ['Sentiment', 'IssueCategory', 'Urgency', 'Summary', 'ProductMentioned', 'SuggestedPriority', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'SuggestedResponses', 'EscalationReason', 'SimilarCases'],
+        prompt: '=== INPUT FIELDS (from EmailMessage__dlm) ===\nSubject: {{EmailMessage.Subject}}\nBody: {{EmailMessage.Body}}\nFrom: {{EmailMessage.FromAddress}}\nTo: {{EmailMessage.ToAddress}}\nSent Date: {{EmailMessage.SentDate}}\nHas Attachment: {{EmailMessage.HasAttachment}}\nChannel: {{EmailMessage.Channel}}\n\n=== INPUT FIELDS (from Account__dlm) ===\nAccount: {{Account.Name}}\nSupport Tier: {{Account.SupportTier}}\nHealth Score: {{Account.HealthScore}}\nIndustry: {{Account.Industry}}\nCustomer Since: {{Account.CustomerSince}}\n\n=== INSTRUCTIONS ===\nAnalyze this customer email and extract structured data.\n- Detect input language and note it\n- Flag any content needing human review (threats, legal, sensitive)\n- Consider account context for priority\n- Provide confidence score and explain reasoning\n\n=== OUTPUT FIELDS (to generate) ===\n1. Sentiment: (Positive | Neutral | Negative)\n2. IssueCategory: (Technical Support | Billing | Feature Request | General Inquiry | Legal | Complaint)\n3. Urgency: (Critical | High | Medium | Low)\n4. Summary: (One sentence summary)\n5. ProductMentioned: (Any product SKUs or names mentioned)\n6. SuggestedPriority: (P1 | P2 | P3 | P4) with reasoning\n7. ConfidenceScore: (0-100 confidence in classification)\n8. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n9. DetectedLanguage: { input: "xx", name: "Language Name" }\n10. GroundingSources: (Array of fields used for classification)\n11. SuggestedResponses: (Array of 2-3 response templates)\n12. EscalationReason: (null or reason for escalation)\n13. SimilarCases: (Array of similar case patterns)\n\nRespond in JSON format.'
       },
       {
         id: 'knowledge-gen', cloud: 'service', name: '📚 KB Generator',
-        desc: 'Create KB articles from resolved cases',
-        primaryDMO: 'ResolvedCase__dlm', relatedDMOs: [],
+        desc: 'AI-generated KB articles with safety rails, multi-language & quality scoring',
+        primaryDMO: 'ResolvedCase__dlm', relatedDMOs: ['Account__dlm'],
         inputFields: ['Subject', 'Resolution', 'Comments', 'Category', 'ProductArea', 'RootCause'],
-        outputFields: ['ArticleTitle', 'Summary', 'Steps', 'Keywords', 'Audience', 'RelatedArticles'],
-        fields: ['ArticleTitle', 'Summary', 'Steps', 'Keywords', 'Audience', 'RelatedArticles'],
-        prompt: '=== INPUT FIELDS (from ResolvedCase__dlm) ===\nSubject: {{ResolvedCase.Subject}}\nResolution: {{ResolvedCase.Resolution}}\nAgent Comments: {{ResolvedCase.Comments}}\nCategory: {{ResolvedCase.Category}}\nProduct Area: {{ResolvedCase.ProductArea}}\nRoot Cause: {{ResolvedCase.RootCause}}\n\n=== INSTRUCTIONS ===\nCreate a customer-facing Knowledge Base article. Anonymize all PII.\n\n=== OUTPUT FIELDS (to generate) ===\n1. ArticleTitle: (Clear, searchable title)\n2. Summary: (2-3 sentence overview)\n3. Steps: (Array of step-by-step instructions)\n4. Keywords: (Array of search keywords)\n5. Audience: (Customer | Internal | Both)\n6. RelatedArticles: (Suggested related topics)\n\nRespond in JSON format.'
+        inputFieldsByDMO: {
+          'ResolvedCase__dlm': ['Subject', 'Resolution', 'Comments', 'Category', 'ProductArea', 'RootCause', 'Priority', 'ResolutionTime', 'CustomerSatisfactionScore'],
+          'Account__dlm': ['Industry', 'AccountType']
+        },
+        outputFields: ['ArticleTitle', 'Summary', 'Steps', 'Keywords', 'Audience', 'RelatedArticles', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'AlternativeFormats', 'QualityScore', 'PIIRemoved'],
+        fields: ['ArticleTitle', 'Summary', 'Steps', 'Keywords', 'Audience', 'RelatedArticles', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'AlternativeFormats', 'QualityScore', 'PIIRemoved'],
+        prompt: '=== INPUT FIELDS (from ResolvedCase__dlm) ===\nSubject: {{ResolvedCase.Subject}}\nResolution: {{ResolvedCase.Resolution}}\nAgent Comments: {{ResolvedCase.Comments}}\nCategory: {{ResolvedCase.Category}}\nProduct Area: {{ResolvedCase.ProductArea}}\nRoot Cause: {{ResolvedCase.RootCause}}\nPriority: {{ResolvedCase.Priority}}\nResolution Time: {{ResolvedCase.ResolutionTime}}\nCSAT Score: {{ResolvedCase.CustomerSatisfactionScore}}\n\n=== INPUT FIELDS (from Account__dlm) ===\nIndustry: {{Account.Industry}}\nAccount Type: {{Account.AccountType}}\n\n=== INSTRUCTIONS ===\nCreate a customer-facing Knowledge Base article.\n- Anonymize ALL PII (names, emails, account numbers, etc.)\n- Detect source language and generate in same language\n- Flag any content that may need legal/compliance review\n- Provide quality score based on completeness\n- Generate alternative formats (video script, FAQ)\n\n=== OUTPUT FIELDS (to generate) ===\n1. ArticleTitle: (Clear, searchable title)\n2. Summary: (2-3 sentence overview)\n3. Steps: (Array of step-by-step instructions)\n4. Keywords: (Array of search keywords)\n5. Audience: (Customer | Internal | Both)\n6. RelatedArticles: (Suggested related topics)\n7. ConfidenceScore: (0-100 confidence in article quality)\n8. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n9. DetectedLanguage: { input: "xx", output: "xx", name: "Language Name" }\n10. GroundingSources: (Array of fields used to generate article)\n11. AlternativeFormats: [{ type: "FAQ", content: "..." }, { type: "VideoScript", content: "..." }]\n12. QualityScore: { completeness: 0-100, clarity: 0-100, accuracy: 0-100, overall: 0-100 }\n13. PIIRemoved: (Array of PII types that were anonymized)\n\nCRITICAL: Ensure NO identifiable information remains. Respond in JSON format.'
       },
       {
         id: 'call-insights', cloud: 'sales', name: '📈 Call Insights',
@@ -590,16 +598,152 @@
 
     var MOCK_OUTPUTS = {
       'case-triage': {
-        'EMAIL-001': { Sentiment: 'Negative', IssueCategory: 'Technical Support', Urgency: 'High', Summary: 'Customer blocked by file upload error E-5502 for files over 25MB, affecting quarterly report submission', ProductMentioned: 'File Upload Service', SuggestedPriority: 'P1' },
-        'EMAIL-002': { Sentiment: 'Positive', IssueCategory: 'Feature Request', Urgency: 'Low', Summary: 'Satisfied customer praising dashboard feature and requesting PDF export capability', ProductMentioned: 'Dashboard Pro', SuggestedPriority: 'P4' },
-        'EMAIL-003': { Sentiment: 'Negative', IssueCategory: 'Billing', Urgency: 'High', Summary: 'Customer reporting duplicate charge of $200 on invoice, threatening bank dispute if not resolved', ProductMentioned: 'Billing System', SuggestedPriority: 'P1' },
-        'EMAIL-004': { Sentiment: 'Neutral', IssueCategory: 'General Inquiry', Urgency: 'Medium', Summary: 'Developer team asking technical questions about API rate limits, burst capacity, and webhook support for Pro plan', ProductMentioned: 'API Pro Plan', SuggestedPriority: 'P3' }
+        'EMAIL-001': {
+          Sentiment: 'Negative',
+          IssueCategory: 'Technical Support',
+          Urgency: 'Critical',
+          Summary: 'Customer blocked by file upload error E-5502 for files over 25MB, affecting quarterly report submission',
+          ProductMentioned: 'File Upload Service',
+          SuggestedPriority: 'P1 - Premium account with active business impact',
+          ConfidenceScore: 94,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { input: 'en', name: 'English' },
+          GroundingSources: ['EmailMessage.Subject', 'EmailMessage.Body', 'Account.SupportTier', 'Account.HealthScore'],
+          SuggestedResponses: [
+            { type: 'Immediate', template: 'Thank you for reporting this issue. Our engineering team is investigating error E-5502. As a Premium customer, you have priority support...' },
+            { type: 'Technical', template: 'We have identified the file size limitation. As a workaround, please try compressing the file or splitting into smaller batches...' }
+          ],
+          EscalationReason: null,
+          SimilarCases: ['CASE-R003 - File encoding issues', 'CASE-2341 - Upload timeout errors']
+        },
+        'EMAIL-002': {
+          Sentiment: 'Positive',
+          IssueCategory: 'Feature Request',
+          Urgency: 'Low',
+          Summary: 'Satisfied customer praising dashboard feature and requesting PDF export capability',
+          ProductMentioned: 'Dashboard Pro',
+          SuggestedPriority: 'P4 - Enhancement request from happy customer',
+          ConfidenceScore: 97,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { input: 'en', name: 'English' },
+          GroundingSources: ['EmailMessage.Subject', 'EmailMessage.Body'],
+          SuggestedResponses: [
+            { type: 'Appreciation', template: 'Thank you so much for the kind words! We are thrilled that the dashboard is saving your team time...' },
+            { type: 'Feature Request', template: 'Great suggestion! PDF export is on our roadmap. I have added your request to our feature tracker...' }
+          ],
+          EscalationReason: null,
+          SimilarCases: ['FR-1234 - Export functionality requests']
+        },
+        'EMAIL-003': {
+          Sentiment: 'Negative',
+          IssueCategory: 'Billing',
+          Urgency: 'Critical',
+          Summary: 'Customer reporting duplicate charge of $200 on invoice, threatening bank dispute if not resolved',
+          ProductMentioned: 'Billing System',
+          SuggestedPriority: 'P1 - Financial dispute with chargeback threat',
+          ConfidenceScore: 91,
+          SafetyFlags: { needsReview: true, reasons: ['Customer mentioned bank dispute', 'Financial/legal implications'], riskLevel: 'warning' },
+          DetectedLanguage: { input: 'en', name: 'English' },
+          GroundingSources: ['EmailMessage.Subject', 'EmailMessage.Body', 'EmailMessage.HasAttachment'],
+          SuggestedResponses: [
+            { type: 'Urgent', template: 'I sincerely apologize for this billing error. I am escalating this to our billing team immediately for a same-day refund...' },
+            { type: 'Empathetic', template: 'I completely understand your frustration. This should not have happened, especially twice. Let me personally ensure this is resolved today...' }
+          ],
+          EscalationReason: 'Chargeback threat - requires immediate billing team review',
+          SimilarCases: ['BILL-892 - Duplicate charge issue', 'BILL-756 - Invoice discrepancy']
+        },
+        'EMAIL-004': {
+          Sentiment: 'Neutral',
+          IssueCategory: 'General Inquiry',
+          Urgency: 'Medium',
+          Summary: 'Developer team asking technical questions about API rate limits, burst capacity, and webhook support for Pro plan',
+          ProductMentioned: 'API Pro Plan',
+          SuggestedPriority: 'P3 - Pre-sales technical inquiry',
+          ConfidenceScore: 88,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { input: 'en', name: 'English' },
+          GroundingSources: ['EmailMessage.Subject', 'EmailMessage.Body'],
+          SuggestedResponses: [
+            { type: 'Technical', template: 'Great questions! For the Pro plan: 1) Rate limits are 1000 req/min, 2) Burst capacity up to 2000 req/min for 30 seconds, 3) Webhooks are fully supported...' },
+            { type: 'Sales', template: 'Thanks for your interest in our API! I would love to schedule a call with our solutions architect to discuss your integration needs in detail...' }
+          ],
+          EscalationReason: null,
+          SimilarCases: ['API-FAQ-001 - Rate limit questions', 'API-FAQ-023 - Webhook documentation']
+        }
       },
       'knowledge-gen': {
-        'CASE-R001': { ArticleTitle: 'How to Fix Expired OAuth Token Errors in API Connections', Summary: 'If your API integration suddenly stops working with authentication errors, the OAuth token may have expired. This guide walks through regenerating credentials.', Steps: ['Log in to admin account and navigate to Setup > Connected Apps', 'Locate your connected app and click Manage', 'Click Edit Policies and generate new Consumer Key and Secret', 'Copy new credentials to your application configuration', 'Test the connection to verify it works'], Keywords: ['OAuth', 'API', 'token', 'authentication', 'expired', 'credentials'], Audience: 'Customer', RelatedArticles: ['API Rate Limits Explained', 'Troubleshooting Connection Errors'] },
-        'CASE-R002': { ArticleTitle: 'How to Fix Incorrect Timezone in Reports', Summary: 'Reports showing timestamps in the wrong timezone is usually caused by incorrect user settings. This can be fixed in a few simple steps.', Steps: ['Click on your profile avatar in the top right', 'Select Settings from the dropdown', 'Navigate to Time & Language section', 'Select your correct timezone from the dropdown', 'Click Save and refresh your reports'], Keywords: ['timezone', 'reports', 'timestamp', 'settings', 'UTC'], Audience: 'Customer', RelatedArticles: ['Understanding Report Timestamps', 'User Profile Settings Guide'] },
-        'CASE-R003': { ArticleTitle: 'Fixing CSV Import Errors: BOM Character Issues', Summary: 'If your CSV data import fails silently or shows garbled characters, Excel may have added invisible BOM characters. This guide shows how to fix the encoding.', Steps: ['Open your CSV file in Notepad++ or similar text editor', 'Go to Encoding menu at the top', 'Select "Convert to UTF-8 without BOM"', 'Save the file and close the editor', 'Re-upload the CSV file to complete import'], Keywords: ['CSV', 'import', 'encoding', 'UTF-8', 'BOM', 'Excel', 'data upload'], Audience: 'Customer', RelatedArticles: ['Supported File Formats', 'Data Import Best Practices'] },
-        'CASE-R004': { ArticleTitle: 'Resolving SSO Login Redirect Loops', Summary: 'A redirect loop during SSO login typically indicates misconfigured SAML settings, often after a domain migration. This guide covers updating your ACS URL.', Steps: ['Log into your Identity Provider admin console', 'Locate the SAML/SSO application settings', 'Update the ACS (Assertion Consumer Service) URL to match your current domain', 'Download the updated metadata XML file', 'Upload the new metadata to complete the configuration'], Keywords: ['SSO', 'SAML', 'redirect loop', 'login', 'ACS URL', 'authentication'], Audience: 'Internal', RelatedArticles: ['SSO Configuration Guide', 'SAML Troubleshooting Checklist'] }
+        'CASE-R001': {
+          ArticleTitle: 'How to Fix Expired OAuth Token Errors in API Connections',
+          Summary: 'If your API integration suddenly stops working with authentication errors, the OAuth token may have expired. This guide walks through regenerating credentials.',
+          Steps: ['Log in to admin account and navigate to Setup > Connected Apps', 'Locate your connected app and click Manage', 'Click Edit Policies and generate new Consumer Key and Secret', 'Copy new credentials to your application configuration', 'Test the connection to verify it works'],
+          Keywords: ['OAuth', 'API', 'token', 'authentication', 'expired', 'credentials'],
+          Audience: 'Customer',
+          RelatedArticles: ['API Rate Limits Explained', 'Troubleshooting Connection Errors'],
+          ConfidenceScore: 92,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { input: 'en', output: 'en', name: 'English' },
+          GroundingSources: ['ResolvedCase.Subject', 'ResolvedCase.Resolution', 'ResolvedCase.Comments', 'ResolvedCase.RootCause'],
+          AlternativeFormats: [
+            { type: 'FAQ', content: 'Q: Why did my API connection suddenly stop working?\nA: OAuth tokens expire after a set period. You need to regenerate your credentials in Setup > Connected Apps.\n\nQ: How do I get new credentials?\nA: Navigate to your connected app, click Manage, then Edit Policies to generate new keys.' },
+            { type: 'VideoScript', content: '[INTRO] Having trouble with API authentication errors? Your OAuth token might have expired. [STEP 1] Go to Setup, then Connected Apps... [STEP 2] Find your app and click Manage...' }
+          ],
+          QualityScore: { completeness: 95, clarity: 90, accuracy: 95, overall: 93 },
+          PIIRemoved: ['Agent email', 'Customer account number']
+        },
+        'CASE-R002': {
+          ArticleTitle: 'How to Fix Incorrect Timezone in Reports',
+          Summary: 'Reports showing timestamps in the wrong timezone is usually caused by incorrect user settings. This can be fixed in a few simple steps.',
+          Steps: ['Click on your profile avatar in the top right', 'Select Settings from the dropdown', 'Navigate to Time & Language section', 'Select your correct timezone from the dropdown', 'Click Save and refresh your reports'],
+          Keywords: ['timezone', 'reports', 'timestamp', 'settings', 'UTC'],
+          Audience: 'Customer',
+          RelatedArticles: ['Understanding Report Timestamps', 'User Profile Settings Guide'],
+          ConfidenceScore: 96,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { input: 'en', output: 'en', name: 'English' },
+          GroundingSources: ['ResolvedCase.Subject', 'ResolvedCase.Comments', 'ResolvedCase.ProductArea'],
+          AlternativeFormats: [
+            { type: 'FAQ', content: 'Q: Why are my report times wrong?\nA: Your timezone setting may be incorrect. Check Settings > Time & Language.\n\nQ: Will changing timezone affect historical data?\nA: No, the data is stored in UTC. Only the display will change.' },
+            { type: 'VideoScript', content: '[INTRO] Are your report timestamps showing the wrong time? Here is a quick fix! [STEP 1] Click your profile avatar...' }
+          ],
+          QualityScore: { completeness: 90, clarity: 95, accuracy: 92, overall: 92 },
+          PIIRemoved: ['Customer name']
+        },
+        'CASE-R003': {
+          ArticleTitle: 'Fixing CSV Import Errors: BOM Character Issues',
+          Summary: 'If your CSV data import fails silently or shows garbled characters, Excel may have added invisible BOM characters. This guide shows how to fix the encoding.',
+          Steps: ['Open your CSV file in Notepad++ or similar text editor', 'Go to Encoding menu at the top', 'Select "Convert to UTF-8 without BOM"', 'Save the file and close the editor', 'Re-upload the CSV file to complete import'],
+          Keywords: ['CSV', 'import', 'encoding', 'UTF-8', 'BOM', 'Excel', 'data upload'],
+          Audience: 'Customer',
+          RelatedArticles: ['Supported File Formats', 'Data Import Best Practices'],
+          ConfidenceScore: 89,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { input: 'en', output: 'en', name: 'English' },
+          GroundingSources: ['ResolvedCase.Subject', 'ResolvedCase.Resolution', 'ResolvedCase.Comments', 'ResolvedCase.RootCause'],
+          AlternativeFormats: [
+            { type: 'FAQ', content: 'Q: Why does my CSV import fail with no error message?\nA: Excel adds invisible BOM characters. Use Notepad++ to convert to UTF-8 without BOM.\n\nQ: What is a BOM character?\nA: Byte Order Mark - invisible characters that can break imports.' },
+            { type: 'VideoScript', content: '[INTRO] CSV imports failing silently? The culprit might be invisible BOM characters. [STEP 1] Open your file in Notepad++...' }
+          ],
+          QualityScore: { completeness: 88, clarity: 85, accuracy: 92, overall: 88 },
+          PIIRemoved: ['Customer email', 'File path']
+        },
+        'CASE-R004': {
+          ArticleTitle: 'Resolving SSO Login Redirect Loops',
+          Summary: 'A redirect loop during SSO login typically indicates misconfigured SAML settings, often after a domain migration. This guide covers updating your ACS URL.',
+          Steps: ['Log into your Identity Provider admin console', 'Locate the SAML/SSO application settings', 'Update the ACS (Assertion Consumer Service) URL to match your current domain', 'Download the updated metadata XML file', 'Upload the new metadata to complete the configuration'],
+          Keywords: ['SSO', 'SAML', 'redirect loop', 'login', 'ACS URL', 'authentication'],
+          Audience: 'Internal',
+          RelatedArticles: ['SSO Configuration Guide', 'SAML Troubleshooting Checklist'],
+          ConfidenceScore: 85,
+          SafetyFlags: { needsReview: true, reasons: ['Contains security configuration details', 'Internal audience - verify before publishing externally'], riskLevel: 'warning' },
+          DetectedLanguage: { input: 'en', output: 'en', name: 'English' },
+          GroundingSources: ['ResolvedCase.Subject', 'ResolvedCase.Resolution', 'ResolvedCase.Comments', 'ResolvedCase.RootCause'],
+          AlternativeFormats: [
+            { type: 'FAQ', content: 'Q: Why am I stuck in a login loop?\nA: Your SAML ACS URL may not match your current domain.\n\nQ: How do I update the ACS URL?\nA: Access your Identity Provider admin console and update the callback URL.' },
+            { type: 'VideoScript', content: '[INTRO] Stuck in an SSO redirect loop? This is usually a SAML configuration issue. [WARNING] This guide is for IT administrators only...' }
+          ],
+          QualityScore: { completeness: 82, clarity: 80, accuracy: 90, overall: 84 },
+          PIIRemoved: ['Domain name', 'Admin email', 'Tenant ID']
+        }
       },
       'call-insights': {
         'CALL-001': { Objections: ['Price is significantly higher than Competitor X ($150k vs $100k)', 'CFO concerned about implementation timeline'], BuyingSignals: ['Asked about specific go-live timeline - showing urgency', 'Values uptime guarantee (99.9%)', 'Willing to schedule implementation call'], CompetitorsMentioned: [{ name: 'Competitor X', context: 'Quoted $100k, but reportedly has poor support' }], DealRisk: 'Medium - Price objection is significant but can be overcome with value demonstration', NextAction: 'Send detailed 6-week project plan with ROI analysis comparing value vs Competitor X. Schedule call with CFO to address timeline concerns.', KeyQuotes: ['"When could we realistically go live if we signed next week?"', '"That matters to us" (regarding uptime)'] },
