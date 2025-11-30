@@ -225,6 +225,31 @@
     .dmo-field-group-count { font-size: 12px; color: #6b7280; margin-left: auto; }
     .input-field-group { margin-bottom: 12px; padding: 8px; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb; }
     .input-field-group-header { font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+
+    /* DMO Selector Styles */
+    .dmo-selector-section { margin-bottom: 16px; }
+    .dmo-selector-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .dmo-selector-title { font-size: 12px; font-weight: 600; color: #374151; text-transform: uppercase; }
+    .dmo-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 12px; margin: 2px; }
+    .dmo-chip.output { background: #f0fdf4; border-color: #bbf7d0; }
+    .dmo-chip .remove-btn { background: none; border: none; cursor: pointer; color: #6b7280; font-size: 14px; padding: 0 2px; }
+    .dmo-chip .remove-btn:hover { color: #dc2626; }
+    .subject-area-group { margin-bottom: 16px; }
+    .subject-area-header { font-size: 13px; font-weight: 600; color: #374151; padding: 8px 0; border-bottom: 1px solid #e5e7eb; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .dmo-select-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: all 0.15s; }
+    .dmo-select-card:hover { border-color: #d8b4fe; background: #faf5ff; }
+    .dmo-select-card.selected { border-color: #9333ea; background: #faf5ff; }
+    .dmo-select-card.disabled { opacity: 0.5; cursor: not-allowed; }
+    .dmo-select-icon { font-size: 20px; }
+    .dmo-select-info { flex: 1; }
+    .dmo-select-name { font-size: 14px; font-weight: 500; color: #1f2937; }
+    .dmo-select-meta { font-size: 11px; color: #6b7280; }
+    .dmo-select-checkbox { width: 18px; height: 18px; accent-color: #9333ea; }
+    .output-dmo-card { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px; }
+    .output-dmo-icon { font-size: 24px; }
+    .output-dmo-info { flex: 1; }
+    .output-dmo-name { font-size: 14px; font-weight: 600; color: #166534; }
+    .output-dmo-fields { font-size: 11px; color: #22c55e; margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -323,8 +348,166 @@
           { MessageId: 'PM-003', PatientName: 'James Wilson', PatientMRN: 'MRN-45233', PatientDOB: '1962-08-28', MessageText: 'URGENT - Severe chest pain for 1 hour, spreading to left arm. Sweating and nauseous. Should I go to ER? I am 62 with high cholesterol.', Timestamp: '2024-01-20 02:45 PM', Source: 'Patient Portal', Department: 'Cardiology', AssignedProvider: 'Dr. Williams', Priority: 'STAT', Category: 'Urgent Clinical', HasAttachment: false, ResponseRequired: true, ResponseDeadline: '2024-01-20', PreviousMessageId: '', InsuranceId: 'Medicare-A-11111', PharmacyName: 'Walgreens', PharmacyPhone: '(555) 500-5001' },
           { MessageId: 'PM-004', PatientName: 'Emily Brown', PatientMRN: 'MRN-45234', PatientDOB: '1990-04-17', MessageText: 'Can I schedule my annual physical? Available mornings next week except Wednesday. Do I need to fast for bloodwork?', Timestamp: '2024-01-20 04:00 PM', Source: 'Patient Portal', Department: 'Primary Care', AssignedProvider: 'Dr. Sarah Johnson', Priority: 'Low', Category: 'Scheduling', HasAttachment: false, ResponseRequired: true, ResponseDeadline: '2024-01-25', PreviousMessageId: '', InsuranceId: 'Aetna-HMO-22222', PharmacyName: 'CVS Pharmacy', PharmacyPhone: '(555) 400-4002' }
         ]
+      },
+
+      // ==================== PARTY SUBJECT AREA ====================
+      'Individual__dlm': {
+        cloud: 'sales', name: 'Individual', icon: '👤', subjectArea: 'Party',
+        records: [
+          { IndividualId: 'IND-001', FirstName: 'John', LastName: 'Smith', Email: 'john.smith@acmecorp.com', Phone: '(555) 101-1001', BirthDate: '1980-03-15', Gender: 'Male', Title: 'VP Engineering', PreferredChannel: 'Email', DoNotEmail: false, DoNotCall: false, DoNotTrack: false, CreatedDate: '2019-03-15' },
+          { IndividualId: 'IND-002', FirstName: 'Sarah', LastName: 'Jones', Email: 'sjones@techstart.io', Phone: '(555) 202-2002', BirthDate: '1985-07-22', Gender: 'Female', Title: 'CTO', PreferredChannel: 'Phone', DoNotEmail: false, DoNotCall: false, DoNotTrack: false, CreatedDate: '2022-08-01' },
+          { IndividualId: 'IND-003', FirstName: 'Michael', LastName: 'Chen', Email: 'mchen@globalfinance.com', Phone: '(555) 303-3003', BirthDate: '1975-11-08', Gender: 'Male', Title: 'CFO', PreferredChannel: 'Email', DoNotEmail: false, DoNotCall: true, DoNotTrack: false, CreatedDate: '2020-06-01' }
+        ]
+      },
+      'Contact__dlm': {
+        cloud: 'sales', name: 'Contact', icon: '📇', subjectArea: 'Party',
+        records: [
+          { ContactId: 'CON-601', FirstName: 'John', LastName: 'Smith', Email: 'john.smith@acmecorp.com', Phone: '(555) 101-1001', AccountId: 'ACC-1001', Title: 'VP Engineering', Department: 'Engineering', MailingCity: 'Chicago', MailingState: 'IL', LeadSource: 'Partner Referral', CreatedDate: '2019-03-15', LastActivityDate: '2024-01-18' },
+          { ContactId: 'CON-602', FirstName: 'Sarah', LastName: 'Jones', Email: 'sjones@techstart.io', Phone: '(555) 202-2002', AccountId: 'ACC-1002', Title: 'CTO', Department: 'Technology', MailingCity: 'San Francisco', MailingState: 'CA', LeadSource: 'Inbound', CreatedDate: '2022-08-01', LastActivityDate: '2024-01-19' },
+          { ContactId: 'CON-603', FirstName: 'Michael', LastName: 'Chen', Email: 'mchen@globalfinance.com', Phone: '(555) 303-3003', AccountId: 'ACC-1003', Title: 'CFO', Department: 'Finance', MailingCity: 'New York', MailingState: 'NY', LeadSource: 'Existing Customer', CreatedDate: '2020-06-01', LastActivityDate: '2024-01-15' }
+        ]
+      },
+      'Lead__dlm': {
+        cloud: 'sales', name: 'Lead', icon: '🎯', subjectArea: 'Party',
+        records: [
+          { LeadId: 'LEAD-001', FirstName: 'David', LastName: 'Wilson', Email: 'dwilson@newprospect.com', Phone: '(555) 501-5001', Company: 'New Prospect Inc', Title: 'Director of IT', Industry: 'Technology', LeadSource: 'Web', Status: 'Working', Rating: 'Hot', AnnualRevenue: 50000000, NumberOfEmployees: 200, CreatedDate: '2024-01-10' },
+          { LeadId: 'LEAD-002', FirstName: 'Emily', LastName: 'Davis', Email: 'edavis@startup.co', Phone: '(555) 502-5002', Company: 'Startup Co', Title: 'CEO', Industry: 'SaaS', LeadSource: 'Referral', Status: 'New', Rating: 'Warm', AnnualRevenue: 5000000, NumberOfEmployees: 25, CreatedDate: '2024-01-15' },
+          { LeadId: 'LEAD-003', FirstName: 'Robert', LastName: 'Taylor', Email: 'rtaylor@enterprise.org', Phone: '(555) 503-5003', Company: 'Enterprise Org', Title: 'VP Operations', Industry: 'Manufacturing', LeadSource: 'Trade Show', Status: 'Qualified', Rating: 'Hot', AnnualRevenue: 500000000, NumberOfEmployees: 5000, CreatedDate: '2024-01-05' }
+        ]
+      },
+
+      // ==================== CONTACT POINT SUBJECT AREA ====================
+      'ContactPointEmail__dlm': {
+        cloud: 'marketing', name: 'Contact Point Email', icon: '📧', subjectArea: 'Contact Point',
+        records: [
+          { ContactPointEmailId: 'CPE-001', EmailAddress: 'john.smith@acmecorp.com', EmailType: 'Work', IsPrimary: true, IsVerified: true, IndividualId: 'IND-001', ConsentStatus: 'OptIn', LastVerifiedDate: '2024-01-15' },
+          { ContactPointEmailId: 'CPE-002', EmailAddress: 'jsmith.personal@gmail.com', EmailType: 'Personal', IsPrimary: false, IsVerified: true, IndividualId: 'IND-001', ConsentStatus: 'OptIn', LastVerifiedDate: '2023-12-20' },
+          { ContactPointEmailId: 'CPE-003', EmailAddress: 'sjones@techstart.io', EmailType: 'Work', IsPrimary: true, IsVerified: true, IndividualId: 'IND-002', ConsentStatus: 'OptIn', LastVerifiedDate: '2024-01-10' }
+        ]
+      },
+      'ContactPointPhone__dlm': {
+        cloud: 'marketing', name: 'Contact Point Phone', icon: '📱', subjectArea: 'Contact Point',
+        records: [
+          { ContactPointPhoneId: 'CPP-001', PhoneNumber: '(555) 101-1001', PhoneType: 'Work', IsPrimary: true, IsSMSCapable: true, IndividualId: 'IND-001', ConsentStatus: 'OptIn', LastVerifiedDate: '2024-01-15' },
+          { ContactPointPhoneId: 'CPP-002', PhoneNumber: '(555) 101-1002', PhoneType: 'Mobile', IsPrimary: false, IsSMSCapable: true, IndividualId: 'IND-001', ConsentStatus: 'OptIn', LastVerifiedDate: '2024-01-10' },
+          { ContactPointPhoneId: 'CPP-003', PhoneNumber: '(555) 202-2002', PhoneType: 'Mobile', IsPrimary: true, IsSMSCapable: true, IndividualId: 'IND-002', ConsentStatus: 'OptOut', LastVerifiedDate: '2023-11-20' }
+        ]
+      },
+      'ContactPointAddress__dlm': {
+        cloud: 'marketing', name: 'Contact Point Address', icon: '🏠', subjectArea: 'Contact Point',
+        records: [
+          { ContactPointAddressId: 'CPA-001', Street: '123 Main St', City: 'Chicago', State: 'IL', PostalCode: '60601', Country: 'USA', AddressType: 'Billing', IsPrimary: true, IndividualId: 'IND-001', IsVerified: true },
+          { ContactPointAddressId: 'CPA-002', Street: '456 Oak Ave', City: 'San Francisco', State: 'CA', PostalCode: '94102', Country: 'USA', AddressType: 'Shipping', IsPrimary: true, IndividualId: 'IND-002', IsVerified: true },
+          { ContactPointAddressId: 'CPA-003', Street: '789 Wall St', City: 'New York', State: 'NY', PostalCode: '10005', Country: 'USA', AddressType: 'Billing', IsPrimary: true, IndividualId: 'IND-003', IsVerified: true }
+        ]
+      },
+
+      // ==================== SALES ORDER SUBJECT AREA ====================
+      'SalesOrder__dlm': {
+        cloud: 'sales', name: 'Sales Order', icon: '🧾', subjectArea: 'Sales Order',
+        records: [
+          { SalesOrderId: 'SO-001', OrderNumber: 'ORD-2024-0001', AccountId: 'ACC-1001', Status: 'Activated', TotalAmount: 150000, OrderDate: '2024-01-15', ShipDate: '2024-02-01', BillingCity: 'Chicago', BillingState: 'IL', PaymentTerms: 'Net 30', ContractId: 'CTR-001' },
+          { SalesOrderId: 'SO-002', OrderNumber: 'ORD-2024-0002', AccountId: 'ACC-1002', Status: 'Draft', TotalAmount: 75000, OrderDate: '2024-01-18', ShipDate: '', BillingCity: 'San Francisco', BillingState: 'CA', PaymentTerms: 'Net 15', ContractId: '' },
+          { SalesOrderId: 'SO-003', OrderNumber: 'ORD-2024-0003', AccountId: 'ACC-1003', Status: 'Submitted', TotalAmount: 320000, OrderDate: '2024-01-20', ShipDate: '', BillingCity: 'New York', BillingState: 'NY', PaymentTerms: 'Net 45', ContractId: 'CTR-003' }
+        ]
+      },
+      'SalesOrderProduct__dlm': {
+        cloud: 'sales', name: 'Sales Order Product', icon: '📦', subjectArea: 'Sales Order',
+        records: [
+          { SalesOrderProductId: 'SOP-001', SalesOrderId: 'SO-001', ProductId: 'PROD-001', ProductName: 'Enterprise Suite License', Quantity: 100, UnitPrice: 1200, TotalPrice: 120000, Discount: 0 },
+          { SalesOrderProductId: 'SOP-002', SalesOrderId: 'SO-001', ProductId: 'PROD-002', ProductName: 'Premium Support', Quantity: 1, UnitPrice: 30000, TotalPrice: 30000, Discount: 0 },
+          { SalesOrderProductId: 'SOP-003', SalesOrderId: 'SO-002', ProductId: 'PROD-003', ProductName: 'Platform License', Quantity: 50, UnitPrice: 800, TotalPrice: 40000, Discount: 5000 }
+        ]
+      },
+
+      // ==================== PRODUCT SUBJECT AREA ====================
+      'Product__dlm': {
+        cloud: 'sales', name: 'Product', icon: '🏷️', subjectArea: 'Product',
+        records: [
+          { ProductId: 'PROD-001', Name: 'Enterprise Suite License', ProductCode: 'ENT-LIC', Family: 'Licenses', IsActive: true, UnitPrice: 1200, Description: 'Full enterprise software license per user', Category: 'Software' },
+          { ProductId: 'PROD-002', Name: 'Premium Support', ProductCode: 'PREM-SUP', Family: 'Services', IsActive: true, UnitPrice: 30000, Description: '24/7 dedicated support with SLA', Category: 'Support' },
+          { ProductId: 'PROD-003', Name: 'Platform License', ProductCode: 'PLAT-LIC', Family: 'Licenses', IsActive: true, UnitPrice: 800, Description: 'Platform access license per user', Category: 'Software' },
+          { ProductId: 'PROD-004', Name: 'API Access', ProductCode: 'API-ACC', Family: 'Add-ons', IsActive: true, UnitPrice: 500, Description: 'API access for integrations', Category: 'Integration' }
+        ]
+      },
+
+      // ==================== CASE SUBJECT AREA ====================
+      'Case__dlm': {
+        cloud: 'service', name: 'Case', icon: '📁', subjectArea: 'Case',
+        records: [
+          { CaseId: 'CASE-001', CaseNumber: '00001234', Subject: 'Cannot login to dashboard', Status: 'Open', Priority: 'High', Origin: 'Email', AccountId: 'ACC-1001', ContactId: 'CON-601', OwnerId: 'AGT-101', CreatedDate: '2024-01-18', ClosedDate: '', Description: 'User reports being unable to access the dashboard after password reset', Type: 'Problem' },
+          { CaseId: 'CASE-002', CaseNumber: '00001235', Subject: 'Feature request: Dark mode', Status: 'Open', Priority: 'Low', Origin: 'Web', AccountId: 'ACC-1002', ContactId: 'CON-602', OwnerId: 'AGT-102', CreatedDate: '2024-01-19', ClosedDate: '', Description: 'Customer requesting dark mode for the application', Type: 'Feature Request' },
+          { CaseId: 'CASE-003', CaseNumber: '00001236', Subject: 'Billing discrepancy', Status: 'Escalated', Priority: 'Critical', Origin: 'Phone', AccountId: 'ACC-1003', ContactId: 'CON-603', OwnerId: 'AGT-103', CreatedDate: '2024-01-20', ClosedDate: '', Description: 'Customer charged twice for same invoice', Type: 'Problem' }
+        ]
+      },
+
+      // ==================== ENGAGEMENT SUBJECT AREA ====================
+      'EmailEngagement__dlm': {
+        cloud: 'marketing', name: 'Email Engagement', icon: '📩', subjectArea: 'Engagement',
+        records: [
+          { EngagementId: 'EE-001', CampaignId: 'CAMP-001', IndividualId: 'IND-001', EmailAddress: 'john.smith@acmecorp.com', EventType: 'Open', EventDate: '2024-01-15 10:32:00', EmailName: 'Q1 Product Launch', ClickedLink: '', DeviceType: 'Desktop' },
+          { EngagementId: 'EE-002', CampaignId: 'CAMP-001', IndividualId: 'IND-001', EmailAddress: 'john.smith@acmecorp.com', EventType: 'Click', EventDate: '2024-01-15 10:35:00', EmailName: 'Q1 Product Launch', ClickedLink: '/pricing', DeviceType: 'Desktop' },
+          { EngagementId: 'EE-003', CampaignId: 'CAMP-001', IndividualId: 'IND-002', EmailAddress: 'sjones@techstart.io', EventType: 'Open', EventDate: '2024-01-15 14:22:00', EmailName: 'Q1 Product Launch', ClickedLink: '', DeviceType: 'Mobile' },
+          { EngagementId: 'EE-004', CampaignId: 'CAMP-002', IndividualId: 'IND-003', EmailAddress: 'mchen@globalfinance.com', EventType: 'Unsubscribe', EventDate: '2024-01-16 09:10:00', EmailName: 'Newsletter', ClickedLink: '', DeviceType: 'Desktop' }
+        ]
+      },
+      'WebEngagement__dlm': {
+        cloud: 'marketing', name: 'Web Engagement', icon: '🌐', subjectArea: 'Engagement',
+        records: [
+          { WebEngagementId: 'WE-001', IndividualId: 'IND-001', SessionId: 'SESS-001', PageUrl: '/pricing', PageTitle: 'Pricing Plans', EventType: 'PageView', EventDate: '2024-01-15 10:40:00', Duration: 45, ReferrerUrl: '/products', DeviceType: 'Desktop' },
+          { WebEngagementId: 'WE-002', IndividualId: 'IND-001', SessionId: 'SESS-001', PageUrl: '/demo', PageTitle: 'Request Demo', EventType: 'FormSubmit', EventDate: '2024-01-15 10:42:00', Duration: 120, ReferrerUrl: '/pricing', DeviceType: 'Desktop' },
+          { WebEngagementId: 'WE-003', IndividualId: 'IND-002', SessionId: 'SESS-002', PageUrl: '/api-docs', PageTitle: 'API Documentation', EventType: 'PageView', EventDate: '2024-01-16 15:30:00', Duration: 300, ReferrerUrl: 'google.com', DeviceType: 'Desktop' }
+        ]
+      },
+      'CampaignMember__dlm': {
+        cloud: 'marketing', name: 'Campaign Member', icon: '📢', subjectArea: 'Engagement',
+        records: [
+          { CampaignMemberId: 'CM-001', CampaignId: 'CAMP-001', CampaignName: 'Q1 Product Launch', IndividualId: 'IND-001', Status: 'Responded', HasResponded: true, FirstRespondedDate: '2024-01-15', LeadSource: 'Email' },
+          { CampaignMemberId: 'CM-002', CampaignId: 'CAMP-001', CampaignName: 'Q1 Product Launch', IndividualId: 'IND-002', Status: 'Sent', HasResponded: false, FirstRespondedDate: '', LeadSource: 'Email' },
+          { CampaignMemberId: 'CM-003', CampaignId: 'CAMP-002', CampaignName: 'Webinar Series', IndividualId: 'IND-003', Status: 'Registered', HasResponded: true, FirstRespondedDate: '2024-01-10', LeadSource: 'Web' }
+        ]
+      },
+
+      // ==================== LOYALTY SUBJECT AREA ====================
+      'LoyaltyMember__dlm': {
+        cloud: 'marketing', name: 'Loyalty Member', icon: '⭐', subjectArea: 'Loyalty',
+        records: [
+          { LoyaltyMemberId: 'LM-001', MemberNumber: 'LOYAL-10001', IndividualId: 'IND-001', ProgramId: 'PROG-001', Tier: 'Gold', PointsBalance: 15000, LifetimePoints: 45000, JoinDate: '2020-03-15', TierExpirationDate: '2025-03-15', Status: 'Active' },
+          { LoyaltyMemberId: 'LM-002', MemberNumber: 'LOYAL-10002', IndividualId: 'IND-002', ProgramId: 'PROG-001', Tier: 'Platinum', PointsBalance: 52000, LifetimePoints: 128000, JoinDate: '2019-02-20', TierExpirationDate: '2025-02-20', Status: 'Active' },
+          { LoyaltyMemberId: 'LM-003', MemberNumber: 'LOYAL-10003', IndividualId: 'IND-003', ProgramId: 'PROG-001', Tier: 'Silver', PointsBalance: 3200, LifetimePoints: 8900, JoinDate: '2022-06-01', TierExpirationDate: '2025-06-01', Status: 'Active' }
+        ]
+      },
+      'LoyaltyProgram__dlm': {
+        cloud: 'marketing', name: 'Loyalty Program', icon: '🏆', subjectArea: 'Loyalty',
+        records: [
+          { LoyaltyProgramId: 'PROG-001', Name: 'Rewards Plus', Description: 'Our premier customer loyalty program', Status: 'Active', PointsExpirationMonths: 24, TierCount: 4, StartDate: '2018-01-01', EndDate: '' },
+          { LoyaltyProgramId: 'PROG-002', Name: 'Partner Program', Description: 'Loyalty program for channel partners', Status: 'Active', PointsExpirationMonths: 12, TierCount: 3, StartDate: '2020-06-01', EndDate: '' }
+        ]
       }
     };
+
+    // Subject Areas for organizing DMOs
+    var SUBJECT_AREAS = {
+      'Party': { icon: '👥', name: 'Party', desc: 'Individuals, contacts, and party identification' },
+      'Contact Point': { icon: '📍', name: 'Contact Point', desc: 'Email, phone, and address data' },
+      'Sales Order': { icon: '🛒', name: 'Sales Order', desc: 'Orders and order products' },
+      'Product': { icon: '📦', name: 'Product', desc: 'Products and pricing' },
+      'Case': { icon: '🎫', name: 'Case', desc: 'Support cases and interactions' },
+      'Engagement': { icon: '📊', name: 'Engagement', desc: 'Email, web, and campaign engagement' },
+      'Loyalty': { icon: '🏆', name: 'Loyalty', desc: 'Loyalty programs and members' }
+    };
+
+    // Get DMOs by Subject Area
+    function getDMOsBySubjectArea() {
+      var result = {};
+      for (var dmoKey in DMOs) {
+        var dmo = DMOs[dmoKey];
+        var area = dmo.subjectArea || 'Other';
+        if (!result[area]) result[area] = [];
+        result[area].push({ key: dmoKey, ...dmo });
+      }
+      return result;
+    }
 
     var TEMPLATES = [
       {
@@ -528,10 +711,14 @@
     // Custom templates storage (will persist in localStorage)
     var CUSTOM_TEMPLATES = JSON.parse(localStorage.getItem('customTemplates') || '[]');
 
-    var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured', bulkMode: false, bulkProgress: 0, bulkResults: [], fieldSelectorOpen: false };
+    var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured', bulkMode: false, bulkProgress: 0, bulkResults: [], fieldSelectorOpen: false, inputDMOSelectorOpen: false, outputDMOSelectorOpen: false };
 
     // Runtime selected fields per template (allows customization)
     var selectedFieldsByTemplate = {};
+
+    // Runtime selected DMOs per template
+    var selectedInputDMOsByTemplate = {};
+    var selectedOutputDMOByTemplate = {};
 
     // Template Builder State
     var builder = {
@@ -757,7 +944,7 @@
       if (!state.fieldSelectorOpen) return '';
 
       var selectedFields = getSelectedFields();
-      var allDMOs = [state.template.primaryDMO].concat(state.template.relatedDMOs || []);
+      var allDMOs = getSelectedInputDMOs();
 
       var bodyHtml = '';
       allDMOs.forEach(function(dmoKey) {
@@ -782,6 +969,236 @@
         '<div class="modal-header"><div class="modal-title">📥 Select Input Fields</div><button class="modal-close" onclick="closeFieldSelector()">×</button></div>' +
         '<div class="modal-body">' + bodyHtml + '</div>' +
         '<div class="modal-footer"><span style="font-size:12px;color:#6b7280;">' + getTotalSelectedFieldCount() + ' fields selected</span><button class="btn-next" onclick="closeFieldSelector()">Done</button></div>' +
+        '</div></div>';
+    }
+
+    // Input DMO Selector Functions
+    function openInputDMOSelector() {
+      state.inputDMOSelectorOpen = true;
+      // Initialize selected input DMOs for this template if not exists
+      if (!selectedInputDMOsByTemplate[state.template.id]) {
+        var defaultDMOs = [state.template.primaryDMO].concat(state.template.relatedDMOs || []);
+        selectedInputDMOsByTemplate[state.template.id] = defaultDMOs.slice();
+      }
+      render();
+    }
+
+    function closeInputDMOSelector() {
+      state.inputDMOSelectorOpen = false;
+      render();
+    }
+
+    function toggleInputDMO(dmoKey) {
+      var tplId = state.template.id;
+      if (!selectedInputDMOsByTemplate[tplId]) selectedInputDMOsByTemplate[tplId] = [];
+
+      var idx = selectedInputDMOsByTemplate[tplId].indexOf(dmoKey);
+      if (idx > -1) {
+        // Don't allow removing the primary DMO
+        if (dmoKey === state.template.primaryDMO) return;
+        selectedInputDMOsByTemplate[tplId].splice(idx, 1);
+        // Also remove fields for this DMO
+        if (selectedFieldsByTemplate[tplId] && selectedFieldsByTemplate[tplId][dmoKey]) {
+          delete selectedFieldsByTemplate[tplId][dmoKey];
+        }
+      } else {
+        selectedInputDMOsByTemplate[tplId].push(dmoKey);
+        // Initialize fields for this DMO with all fields
+        if (!selectedFieldsByTemplate[tplId]) selectedFieldsByTemplate[tplId] = {};
+        var dmo = DMOs[dmoKey];
+        if (dmo && dmo.records[0]) {
+          selectedFieldsByTemplate[tplId][dmoKey] = Object.keys(dmo.records[0]).slice(0, 5); // Default to first 5 fields
+        }
+      }
+      render();
+    }
+
+    function getSelectedInputDMOs() {
+      var tplId = state.template.id;
+      if (selectedInputDMOsByTemplate[tplId]) return selectedInputDMOsByTemplate[tplId];
+      return [state.template.primaryDMO].concat(state.template.relatedDMOs || []);
+    }
+
+    function renderInputDMOSelectorModal() {
+      if (!state.inputDMOSelectorOpen) return '';
+
+      var selectedDMOs = getSelectedInputDMOs();
+      var dmosByArea = getDMOsBySubjectArea();
+
+      var bodyHtml = '<div style="font-size:13px;color:#6b7280;margin-bottom:16px;">Select which Data Model Objects to use as inputs for this pipeline. The primary DMO cannot be removed.</div>';
+
+      // Render DMOs by Subject Area
+      for (var area in SUBJECT_AREAS) {
+        var areaDMOs = dmosByArea[area] || [];
+        if (areaDMOs.length === 0) continue;
+
+        bodyHtml += '<div class="subject-area-group">';
+        bodyHtml += '<div class="subject-area-header">' + SUBJECT_AREAS[area].icon + ' ' + SUBJECT_AREAS[area].name + '</div>';
+
+        areaDMOs.forEach(function(dmo) {
+          var isSelected = selectedDMOs.indexOf(dmo.key) > -1;
+          var isPrimary = dmo.key === state.template.primaryDMO;
+          var fieldCount = dmo.records[0] ? Object.keys(dmo.records[0]).length : 0;
+
+          bodyHtml += '<div class="dmo-select-card' + (isSelected ? ' selected' : '') + (isPrimary ? ' disabled' : '') + '" onclick="' + (isPrimary ? '' : 'toggleInputDMO(\'' + dmo.key + '\')') + '">';
+          bodyHtml += '<span class="dmo-select-icon">' + dmo.icon + '</span>';
+          bodyHtml += '<div class="dmo-select-info"><div class="dmo-select-name">' + dmo.name + (isPrimary ? ' <span style="font-size:10px;background:#9333ea;color:white;padding:2px 6px;border-radius:4px;">PRIMARY</span>' : '') + '</div>';
+          bodyHtml += '<div class="dmo-select-meta">' + CLOUDS[dmo.cloud].icon + ' ' + CLOUDS[dmo.cloud].name + ' • ' + fieldCount + ' fields</div></div>';
+          bodyHtml += '<input type="checkbox" class="dmo-select-checkbox" ' + (isSelected ? 'checked' : '') + (isPrimary ? ' disabled' : '') + '>';
+          bodyHtml += '</div>';
+        });
+
+        bodyHtml += '</div>';
+      }
+
+      // Also show "Other" DMOs without subject area
+      var otherDMOs = dmosByArea['Other'] || [];
+      if (otherDMOs.length > 0) {
+        bodyHtml += '<div class="subject-area-group">';
+        bodyHtml += '<div class="subject-area-header">📄 Other</div>';
+        otherDMOs.forEach(function(dmo) {
+          var isSelected = selectedDMOs.indexOf(dmo.key) > -1;
+          var isPrimary = dmo.key === state.template.primaryDMO;
+          var fieldCount = dmo.records[0] ? Object.keys(dmo.records[0]).length : 0;
+
+          bodyHtml += '<div class="dmo-select-card' + (isSelected ? ' selected' : '') + (isPrimary ? ' disabled' : '') + '" onclick="' + (isPrimary ? '' : 'toggleInputDMO(\'' + dmo.key + '\')') + '">';
+          bodyHtml += '<span class="dmo-select-icon">' + dmo.icon + '</span>';
+          bodyHtml += '<div class="dmo-select-info"><div class="dmo-select-name">' + dmo.name + (isPrimary ? ' <span style="font-size:10px;background:#9333ea;color:white;padding:2px 6px;border-radius:4px;">PRIMARY</span>' : '') + '</div>';
+          bodyHtml += '<div class="dmo-select-meta">' + CLOUDS[dmo.cloud].icon + ' ' + CLOUDS[dmo.cloud].name + ' • ' + fieldCount + ' fields</div></div>';
+          bodyHtml += '<input type="checkbox" class="dmo-select-checkbox" ' + (isSelected ? 'checked' : '') + (isPrimary ? ' disabled' : '') + '>';
+          bodyHtml += '</div>';
+        });
+        bodyHtml += '</div>';
+      }
+
+      return '<div class="modal-overlay" onclick="if(event.target===this)closeInputDMOSelector()">' +
+        '<div class="modal" style="width:700px;max-height:80vh;">' +
+        '<div class="modal-header"><div class="modal-title">📥 Select Input DMOs</div><button class="modal-close" onclick="closeInputDMOSelector()">×</button></div>' +
+        '<div class="modal-body" style="max-height:60vh;overflow-y:auto;">' + bodyHtml + '</div>' +
+        '<div class="modal-footer"><span style="font-size:12px;color:#6b7280;">' + selectedDMOs.length + ' DMOs selected</span><button class="btn-next" onclick="closeInputDMOSelector()">Done</button></div>' +
+        '</div></div>';
+    }
+
+    // Output DMO Selector Functions
+    function openOutputDMOSelector() {
+      state.outputDMOSelectorOpen = true;
+      // Initialize selected output DMO for this template if not exists
+      if (!selectedOutputDMOByTemplate[state.template.id]) {
+        selectedOutputDMOByTemplate[state.template.id] = {
+          dmoKey: state.template.primaryDMO,
+          mode: 'update', // 'update' existing or 'create' new
+          newDMOName: ''
+        };
+      }
+      render();
+    }
+
+    function closeOutputDMOSelector() {
+      state.outputDMOSelectorOpen = false;
+      render();
+    }
+
+    function selectOutputDMO(dmoKey) {
+      var tplId = state.template.id;
+      if (!selectedOutputDMOByTemplate[tplId]) {
+        selectedOutputDMOByTemplate[tplId] = { mode: 'update' };
+      }
+      selectedOutputDMOByTemplate[tplId].dmoKey = dmoKey;
+      selectedOutputDMOByTemplate[tplId].mode = 'update';
+      render();
+    }
+
+    function setOutputDMOMode(mode) {
+      var tplId = state.template.id;
+      if (!selectedOutputDMOByTemplate[tplId]) {
+        selectedOutputDMOByTemplate[tplId] = { dmoKey: state.template.primaryDMO };
+      }
+      selectedOutputDMOByTemplate[tplId].mode = mode;
+      render();
+    }
+
+    function getSelectedOutputDMO() {
+      var tplId = state.template.id;
+      if (selectedOutputDMOByTemplate[tplId]) return selectedOutputDMOByTemplate[tplId];
+      return { dmoKey: state.template.primaryDMO, mode: 'update', newDMOName: '' };
+    }
+
+    function renderOutputDMOSelectorModal() {
+      if (!state.outputDMOSelectorOpen) return '';
+
+      var outputConfig = getSelectedOutputDMO();
+      var dmosByArea = getDMOsBySubjectArea();
+      var outputFields = state.template.outputFields || state.template.fields || [];
+
+      var bodyHtml = '<div style="font-size:13px;color:#6b7280;margin-bottom:16px;">Choose where the generated output fields will be stored.</div>';
+
+      // Mode selection
+      bodyHtml += '<div style="display:flex;gap:12px;margin-bottom:20px;">';
+      bodyHtml += '<button class="bulk-toggle-btn' + (outputConfig.mode === 'update' ? ' active' : '') + '" style="flex:1;padding:12px;" onclick="setOutputDMOMode(\'update\')">📝 Update Existing DMO</button>';
+      bodyHtml += '<button class="bulk-toggle-btn' + (outputConfig.mode === 'create' ? ' active' : '') + '" style="flex:1;padding:12px;" onclick="setOutputDMOMode(\'create\')">✨ Create New DMO</button>';
+      bodyHtml += '</div>';
+
+      if (outputConfig.mode === 'update') {
+        // Show DMO selection grid
+        bodyHtml += '<div style="max-height:300px;overflow-y:auto;">';
+        for (var area in SUBJECT_AREAS) {
+          var areaDMOs = dmosByArea[area] || [];
+          if (areaDMOs.length === 0) continue;
+
+          bodyHtml += '<div class="subject-area-group">';
+          bodyHtml += '<div class="subject-area-header">' + SUBJECT_AREAS[area].icon + ' ' + SUBJECT_AREAS[area].name + '</div>';
+
+          areaDMOs.forEach(function(dmo) {
+            var isSelected = outputConfig.dmoKey === dmo.key;
+            var fieldCount = dmo.records[0] ? Object.keys(dmo.records[0]).length : 0;
+
+            bodyHtml += '<div class="dmo-select-card' + (isSelected ? ' selected' : '') + '" onclick="selectOutputDMO(\'' + dmo.key + '\')">';
+            bodyHtml += '<span class="dmo-select-icon">' + dmo.icon + '</span>';
+            bodyHtml += '<div class="dmo-select-info"><div class="dmo-select-name">' + dmo.name + '</div>';
+            bodyHtml += '<div class="dmo-select-meta">' + CLOUDS[dmo.cloud].icon + ' ' + CLOUDS[dmo.cloud].name + ' • ' + fieldCount + ' fields</div></div>';
+            bodyHtml += '<input type="radio" name="outputDMO" ' + (isSelected ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#9333ea;">';
+            bodyHtml += '</div>';
+          });
+
+          bodyHtml += '</div>';
+        }
+        bodyHtml += '</div>';
+      } else {
+        // Create new DMO form
+        var suggestedName = state.template.name.replace(/[^a-zA-Z0-9]/g, '') + 'Output__dlm';
+        bodyHtml += '<div class="form-group"><label class="form-label">New DMO Name</label>';
+        bodyHtml += '<input type="text" class="form-input" placeholder="e.g., GeneratedEmail__dlm" value="' + (outputConfig.newDMOName || suggestedName) + '" onchange="selectedOutputDMOByTemplate[\'' + state.template.id + '\'].newDMOName=this.value">';
+        bodyHtml += '</div>';
+
+        // Preview fields
+        bodyHtml += '<div class="form-group"><label class="form-label">Output Fields (' + outputFields.length + ')</label>';
+        bodyHtml += '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;">';
+        outputFields.forEach(function(f) {
+          bodyHtml += '<span class="field-tag output">' + f + '</span>';
+        });
+        bodyHtml += '</div></div>';
+      }
+
+      // Show current selection summary
+      var selectedDMO = outputConfig.mode === 'update' ? DMOs[outputConfig.dmoKey] : null;
+      bodyHtml += '<div style="margin-top:16px;padding:12px;background:#f9fafb;border-radius:8px;">';
+      bodyHtml += '<div style="font-size:11px;color:#6b7280;text-transform:uppercase;margin-bottom:8px;">Output Configuration</div>';
+      if (outputConfig.mode === 'update' && selectedDMO) {
+        bodyHtml += '<div class="output-dmo-card"><span class="output-dmo-icon">' + selectedDMO.icon + '</span>';
+        bodyHtml += '<div class="output-dmo-info"><div class="output-dmo-name">' + selectedDMO.name + '</div>';
+        bodyHtml += '<div class="output-dmo-fields">Will add ' + outputFields.length + ' new fields</div></div></div>';
+      } else {
+        bodyHtml += '<div class="output-dmo-card"><span class="output-dmo-icon">✨</span>';
+        bodyHtml += '<div class="output-dmo-info"><div class="output-dmo-name">' + (outputConfig.newDMOName || suggestedName) + '</div>';
+        bodyHtml += '<div class="output-dmo-fields">New DMO with ' + outputFields.length + ' fields</div></div></div>';
+      }
+      bodyHtml += '</div>';
+
+      return '<div class="modal-overlay" onclick="if(event.target===this)closeOutputDMOSelector()">' +
+        '<div class="modal" style="width:700px;max-height:85vh;">' +
+        '<div class="modal-header"><div class="modal-title">📤 Configure Output DMO</div><button class="modal-close" onclick="closeOutputDMOSelector()">×</button></div>' +
+        '<div class="modal-body" style="max-height:65vh;overflow-y:auto;">' + bodyHtml + '</div>' +
+        '<div class="modal-footer"><button class="btn-secondary" onclick="closeOutputDMOSelector()">Cancel</button><button class="btn-next" onclick="closeOutputDMOSelector()">Save Configuration</button></div>' +
         '</div></div>';
     }
 
@@ -1004,8 +1421,17 @@
       html += '</select><div class="sidebar-desc">' + state.template.desc + (state.template.type === 'custom' ? '<span class="template-type-badge custom">Custom</span>' : '') + '</div><div class="cloud-badge badge-' + state.template.cloud + '">' + CLOUDS[state.template.cloud].icon + ' ' + CLOUDS[state.template.cloud].name + '</div>' +
         (state.template.type === 'custom' ? '<button style="margin-top:8px;font-size:12px;color:#dc2626;background:none;border:none;cursor:pointer;text-decoration:underline;" onclick="if(confirm(\'Delete this custom template?\'))deleteCustomTemplate(\'' + state.template.id + '\')">Delete Template</button>' : '') +
         '</div>' +
-        '<div class="sidebar-section"><div class="sidebar-title">📊 Data Source</div><div class="dmo-info"><span class="dmo-primary">' + dmo.icon + ' ' + dmo.name + '</span> <span style="font-size:12px;color:#6b7280">(' + dmoFields.length + ' fields)</span></div>';
-      if (state.template.relatedDMOs.length) { state.template.relatedDMOs.forEach(function(rd) { var d = DMOs[rd]; var rdFields = d.records[0] ? Object.keys(d.records[0]).length : 0; html += '<div class="dmo-related">+ ' + d.icon + ' ' + d.name + ' (' + rdFields + ' fields)</div>'; }); }
+        '<div class="sidebar-section"><div class="sidebar-title" style="display:flex;justify-content:space-between;align-items:center;">📊 Input DMOs<button class="field-selector-btn" onclick="openInputDMOSelector()">Edit</button></div>';
+
+      // Show selected Input DMOs
+      var selectedInputDMOs = getSelectedInputDMOs();
+      selectedInputDMOs.forEach(function(dmoKey) {
+        var d = DMOs[dmoKey];
+        if (!d) return;
+        var dFields = d.records[0] ? Object.keys(d.records[0]).length : 0;
+        var isPrimary = dmoKey === state.template.primaryDMO;
+        html += '<div class="dmo-info" style="margin-bottom:4px;"><span class="dmo-primary">' + d.icon + ' ' + d.name + '</span> <span style="font-size:12px;color:#6b7280">(' + dFields + ' fields)</span>' + (isPrimary ? ' <span style="font-size:9px;background:#9333ea;color:white;padding:1px 4px;border-radius:3px;">PRIMARY</span>' : '') + '</div>';
+      });
 
       // Show Input Fields mapping with PII indicators - grouped by DMO
       var selectedFields = getSelectedFields();
@@ -1017,7 +1443,7 @@
       html += '<div class="mapping-header">📥 Input Fields (' + totalFieldCount + ')' + (piiCount > 0 ? ' <span class="pii-badge">🔒 ' + piiCount + ' PII</span>' : '') + '<button class="field-selector-btn" onclick="openFieldSelector()">Edit</button></div>';
 
       // Show fields grouped by DMO
-      var allDMOsForFields = [state.template.primaryDMO].concat(state.template.relatedDMOs || []);
+      var allDMOsForFields = getSelectedInputDMOs();
       allDMOsForFields.forEach(function(dmoKey) {
         var dmoInfo = DMOs[dmoKey];
         if (!dmoInfo) return;
@@ -1054,7 +1480,15 @@
         '<main class="center-panel"><div class="center-header"><span class="center-title">' + state.template.name + '</span><div style="display:flex;align-items:center;gap:8px;"><div class="bulk-mode-toggle"><span style="font-size:12px;color:#6b7280;">Mode:</span><button class="bulk-toggle-btn' + (!state.bulkMode ? ' active' : '') + '" onclick="if(state.bulkMode)toggleBulkMode()">Single</button><button class="bulk-toggle-btn' + (state.bulkMode ? ' active' : '') + '" onclick="if(!state.bulkMode)toggleBulkMode()">Bulk (' + recs.length + ')</button></div><button class="run-btn" onclick="' + (state.bulkMode ? 'runBulk()' : 'run()') + '"' + (state.running ? ' disabled' : '') + '>' + (state.running ? '<svg class="spinner" width="16" height="16" viewBox="0 0 24 24"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Running...' : (state.bulkMode ? '▶ Run All (' + recs.length + ')' : '▶ Test Run')) + '</button></div></div>' +
         (state.bulkMode ? renderBulkMode(recs) : '<div class="panels"><div class="panel"><div class="panel-header"><span class="panel-title">📝 Resolved Prompt</span><span class="panel-tokens">' + inTok + ' tokens</span></div><div class="panel-content"><pre class="prompt-box">' + esc(prompt) + '</pre></div></div>' +
         '<div class="panel"><div class="panel-header"><span class="panel-title">✨ Generated Output</span><div class="format-btns"><button class="format-btn' + (state.format === 'structured' ? ' active' : '') + '" onclick="state.format=\'structured\';render()">Structured</button><button class="format-btn' + (state.format === 'raw' ? ' active' : '') + '" onclick="state.format=\'raw\';render()">JSON</button></div></div><div class="panel-content">' + renderOutput() + '</div></div></div>') + '</main>' +
-        '<aside class="sidebar-right"><div class="sidebar-section"><div class="sidebar-title">📤 Output Mapping</div><div class="sidebar-desc">Map fields to target DMO</div></div><div class="sidebar-section"><div style="font-size:12px;color:#6b7280;margin-bottom:4px">Target DMO</div><select class="sidebar-select"><option>' + dmo.icon + ' ' + dmo.name + ' (Update)</option><option>📊 ' + dmo.name + '_Enriched (New)</option></select></div><div class="fields-list"><div style="font-size:12px;color:#6b7280;text-transform:uppercase;margin-bottom:8px">Output Fields (' + state.template.fields.length + ')</div>';
+        '<aside class="sidebar-right"><div class="sidebar-section"><div class="sidebar-title" style="display:flex;justify-content:space-between;align-items:center;">📤 Output DMO<button class="field-selector-btn" onclick="openOutputDMOSelector()">Edit</button></div>';
+      var outputConfig = getSelectedOutputDMO();
+      var outputDMO = outputConfig.mode === 'update' && DMOs[outputConfig.dmoKey] ? DMOs[outputConfig.dmoKey] : null;
+      if (outputDMO) {
+        html += '<div class="output-dmo-card" style="margin-top:8px;"><span class="output-dmo-icon">' + outputDMO.icon + '</span><div class="output-dmo-info"><div class="output-dmo-name">' + outputDMO.name + '</div><div class="output-dmo-fields">Adding ' + (state.template.outputFields || state.template.fields).length + ' fields</div></div></div>';
+      } else {
+        html += '<div class="output-dmo-card" style="margin-top:8px;"><span class="output-dmo-icon">✨</span><div class="output-dmo-info"><div class="output-dmo-name">' + (outputConfig.newDMOName || 'New DMO') + '</div><div class="output-dmo-fields">New DMO with ' + (state.template.outputFields || state.template.fields).length + ' fields</div></div></div>';
+      }
+      html += '</div><div class="fields-list"><div style="font-size:12px;color:#6b7280;text-transform:uppercase;margin-bottom:8px">Output Fields (' + state.template.fields.length + ')</div>';
       state.template.fields.forEach(function(f) { html += '<div class="field-item"><span class="field-name">' + f + '</span><span class="field-status ' + (state.done ? 'done' : 'pending') + '">' + (state.done ? '✓' : '...') + '</span></div>'; });
       html += '</div>' + (state.done ? '<div class="complete-panel"><div class="complete-title">✓ Test Complete</div><div class="complete-sub">All ' + state.template.fields.length + ' fields extracted</div></div>' : '') + '</aside></div></div>';
 
@@ -1063,6 +1497,12 @@
 
       // Add the Field Selector Modal
       html += renderFieldSelectorModal();
+
+      // Add the Input DMO Selector Modal
+      html += renderInputDMOSelectorModal();
+
+      // Add the Output DMO Selector Modal
+      html += renderOutputDMOSelectorModal();
 
       document.getElementById('app').innerHTML = html;
     }
