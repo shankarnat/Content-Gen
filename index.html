@@ -182,6 +182,38 @@
     .template-type-badge.builtin { background: #dbeafe; color: #1e40af; }
 
     .use-case-header { display: flex; align-items: center; justify-content: space-between; }
+
+    /* Safety Rails & PII Indicators */
+    .safety-flag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+    .safety-flag.warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .safety-flag.safe { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .safety-flag.review { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    .confidence-bar { height: 6px; border-radius: 3px; background: #e5e7eb; overflow: hidden; margin-top: 4px; }
+    .confidence-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+    .confidence-fill.high { background: #22c55e; }
+    .confidence-fill.medium { background: #f59e0b; }
+    .confidence-fill.low { background: #ef4444; }
+    .pii-badge { display: inline-block; font-size: 9px; padding: 1px 4px; border-radius: 3px; background: #fef3c7; color: #92400e; margin-left: 4px; vertical-align: middle; }
+    .field-tag.pii { background: #fef3c7; color: #92400e; border: 1px dashed #f59e0b; }
+    .grounding-source { font-size: 11px; color: #6b7280; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; margin: 2px; display: inline-block; }
+    .language-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; padding: 4px 8px; border-radius: 4px; background: #eff6ff; color: #1e40af; }
+    .alternative-reply { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 8px; cursor: pointer; transition: all 0.15s; }
+    .alternative-reply:hover { border-color: #9333ea; background: #faf5ff; }
+    .alternative-reply-header { font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 4px; }
+
+    /* Bulk Mode */
+    .bulk-mode-toggle { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #f9fafb; border-radius: 6px; margin-bottom: 12px; }
+    .bulk-toggle-btn { padding: 6px 12px; border: 1px solid #e5e7eb; background: white; border-radius: 4px; cursor: pointer; font-size: 12px; transition: all 0.15s; }
+    .bulk-toggle-btn.active { background: #9333ea; color: white; border-color: #9333ea; }
+    .bulk-progress { margin-top: 12px; }
+    .bulk-progress-bar { height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+    .bulk-progress-fill { height: 100%; background: linear-gradient(90deg, #9333ea, #3b82f6); border-radius: 4px; transition: width 0.3s; }
+    .bulk-stats { display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: #6b7280; }
+    .bulk-result-item { padding: 8px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+    .bulk-result-item:last-child { border-bottom: none; }
+    .bulk-result-status { font-size: 11px; padding: 2px 6px; border-radius: 4px; }
+    .bulk-result-status.success { background: #dcfce7; color: #166534; }
+    .bulk-result-status.warning { background: #fef3c7; color: #92400e; }
   </style>
 </head>
 <body>
@@ -313,12 +345,12 @@
       },
       {
         id: 'email-followup', cloud: 'sales', name: '✉️ Follow-Up Email',
-        desc: 'Generate personalized follow-ups',
+        desc: 'Generate personalized follow-ups with safety rails & multi-language support',
         primaryDMO: 'Account__dlm', relatedDMOs: ['Opportunity__dlm'],
         inputFields: ['Name', 'Industry', 'AnnualRevenue', 'EmployeeCount', 'SupportTier', 'HealthScore'],
-        outputFields: ['SubjectLine', 'EmailBody', 'CallToAction', 'Tone', 'PersonalizationNotes'],
-        fields: ['SubjectLine', 'EmailBody', 'CallToAction', 'Tone', 'PersonalizationNotes'],
-        prompt: '=== INPUT FIELDS (from Account__dlm) ===\nAccount: {{Account.Name}}\nIndustry: {{Account.Industry}}\nAnnual Revenue: {{Account.AnnualRevenue}}\nEmployee Count: {{Account.EmployeeCount}}\nSupport Tier: {{Account.SupportTier}}\nHealth Score: {{Account.HealthScore}}\n\n=== INPUT FIELDS (from Opportunity__dlm) ===\nOpportunity: {{Opportunity.Name}}\nAmount: ${{Opportunity.Amount}}\nStage: {{Opportunity.Stage}}\nClose Date: {{Opportunity.CloseDate}}\nNext Step: {{Opportunity.NextStep}}\n\n=== INSTRUCTIONS ===\nDraft a personalized follow-up email. Keep under 150 words.\n\n=== OUTPUT FIELDS (to generate) ===\n1. SubjectLine: (Compelling subject < 50 chars)\n2. EmailBody: (Professional email body)\n3. CallToAction: (Clear next step)\n4. Tone: (Consultative | Urgent | Friendly)\n5. PersonalizationNotes: (What was personalized and why)\n\nRespond in JSON format.'
+        outputFields: ['SubjectLine', 'EmailBody', 'CallToAction', 'Tone', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'AlternativeReplies', 'PersonalizationNotes'],
+        fields: ['SubjectLine', 'EmailBody', 'CallToAction', 'Tone', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'AlternativeReplies', 'PersonalizationNotes'],
+        prompt: '=== INPUT FIELDS (from Account__dlm) ===\nAccount: {{Account.Name}}\nIndustry: {{Account.Industry}}\nAnnual Revenue: {{Account.AnnualRevenue}}\nEmployee Count: {{Account.EmployeeCount}}\nSupport Tier: {{Account.SupportTier}}\nHealth Score: {{Account.HealthScore}}\n\n=== INPUT FIELDS (from Opportunity__dlm) ===\nOpportunity: {{Opportunity.Name}}\nAmount: ${{Opportunity.Amount}}\nStage: {{Opportunity.Stage}}\nClose Date: {{Opportunity.CloseDate}}\nNext Step: {{Opportunity.NextStep}}\n\n=== INSTRUCTIONS ===\nDraft a personalized follow-up email. Keep under 150 words.\nDetect input language and respond in same language.\nFlag any content that may need human review.\n\n=== OUTPUT FIELDS (to generate) ===\n1. SubjectLine: (Compelling subject < 50 chars)\n2. EmailBody: (Professional email body)\n3. CallToAction: (Clear next step)\n4. Tone: (Consultative | Urgent | Friendly)\n5. ConfidenceScore: (0-100 confidence in appropriateness)\n6. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n7. DetectedLanguage: { input: "en", output: "en", name: "English" }\n8. GroundingSources: (Array of fields used to generate response)\n9. AlternativeReplies: (Array of 2 alternative email approaches)\n10. PersonalizationNotes: (What was personalized and why)\n\nRespond in JSON format.'
       },
       {
         id: 'voc-analysis', cloud: 'marketing', name: '🎯 VoC Analysis',
@@ -378,10 +410,66 @@
         'CALL-004': { Objections: ['Currently using Competitor Y and satisfied', 'Only interested in specific Salesforce integration capability'], BuyingSignals: ['Took inbound call despite being happy with competitor', 'Interested in Salesforce integration demo', 'Pain point identified with current solution'], CompetitorsMentioned: [{ name: 'Competitor Y', context: 'Currently used, struggles with Salesforce sync' }], DealRisk: 'Medium - Established competitor relationship but clear pain point identified', NextAction: 'Schedule focused technical demo showing Salesforce integration. Prepare comparison doc vs Competitor Y integration capabilities. Invite their Salesforce admin to demo.', KeyQuotes: ['"Your integration capabilities" (reason for call)', '"Competitor Y struggles with our Salesforce sync"'] }
       },
       'email-followup': {
-        'ACC-1001': { SubjectLine: 'Acme Enterprise Deployment - 6-Week Timeline Attached', EmailBody: 'Hi John,\n\nThank you for the productive conversation yesterday. As promised, I have attached our detailed 6-week implementation roadmap specifically designed for manufacturing environments like Acme.\n\nGiven your team\'s concerns about previous vendor downtime, I wanted to highlight our Enterprise tier includes:\n• 99.9% uptime SLA with financial guarantees\n• 24/7 dedicated engineering support\n• Your own Customer Success Manager\n\nI would love to schedule a brief call with your CFO to walk through the timeline and ROI analysis. Does Thursday at 2pm work?\n\nBest regards', CallToAction: 'Schedule CFO call for Thursday at 2pm', Tone: 'Consultative', PersonalizationNotes: 'Referenced previous conversation, manufacturing-specific timeline, addressed downtime concerns from call, mentioned CFO involvement' },
-        'ACC-1002': { SubjectLine: 'TechStart + Platform - Let\'s Finalize This Week?', EmailBody: 'Hi Sarah,\n\nGreat speaking with you! Your team\'s enthusiasm about our API flexibility tells me we are a perfect fit for TechStart\'s multi-cloud strategy.\n\nAs discussed, we integrate natively with both AWS and Azure, and our monthly true-up model means you can scale those 50 users anytime without waiting for renewal.\n\nCan we get your procurement team on a call Monday or Tuesday to finalize terms?\n\nLooking forward to partnering with you!', CallToAction: 'Book procurement call Monday or Tuesday', Tone: 'Friendly', PersonalizationNotes: 'Mentioned API flexibility enthusiasm, addressed multi-cloud need, referenced 50-user expansion discussion' },
-        'ACC-1003': { SubjectLine: 'Global Finance ROI Analysis - Board-Ready Materials', EmailBody: 'Hi Michael,\n\nI understand the board has concerns after your previous vendor experience. That is completely fair, and I want to make sure you have everything needed to present a compelling case.\n\nAttached you will find:\n• 3 case studies from financial services clients with measurable ROI\n• Detailed pilot program structure with minimal risk\n• Quarterly billing options to ease cash flow concerns\n\nWould it be helpful if I joined your board presentation to address technical questions directly?\n\nBest regards', CallToAction: 'Offer to join board presentation', Tone: 'Consultative', PersonalizationNotes: 'Addressed board skepticism, referenced previous vendor failure concern, offered pilot and quarterly billing per CFO request' },
-        'ACC-1004': { SubjectLine: 'HealthFirst - Salesforce Integration Demo Invite', EmailBody: 'Hi Lisa,\n\nThank you for your interest in our Salesforce integration capabilities. I know you mentioned that is a pain point with your current solution.\n\nI have set up a focused 30-minute technical demo specifically showing:\n• Real-time bi-directional Salesforce sync\n• Healthcare-specific data mapping\n• HIPAA-compliant data handling\n\nWould next Tuesday or Wednesday afternoon work for you and your Salesforce admin?\n\nLooking forward to showing you what sets us apart.', CallToAction: 'Schedule Salesforce integration demo', Tone: 'Consultative', PersonalizationNotes: 'Focused on specific pain point mentioned (Salesforce sync), healthcare industry considerations, invited Salesforce admin' }
+        'ACC-1001': {
+          SubjectLine: 'Acme Enterprise Deployment - 6-Week Timeline Attached',
+          EmailBody: 'Hi John,\n\nThank you for the productive conversation yesterday. As promised, I have attached our detailed 6-week implementation roadmap specifically designed for manufacturing environments like Acme.\n\nGiven your team\'s concerns about previous vendor downtime, I wanted to highlight our Enterprise tier includes:\n• 99.9% uptime SLA with financial guarantees\n• 24/7 dedicated engineering support\n• Your own Customer Success Manager\n\nI would love to schedule a brief call with your CFO to walk through the timeline and ROI analysis. Does Thursday at 2pm work?\n\nBest regards',
+          CallToAction: 'Schedule CFO call for Thursday at 2pm',
+          Tone: 'Consultative',
+          ConfidenceScore: 92,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { input: 'en', output: 'en', name: 'English' },
+          GroundingSources: ['Account.Name', 'Account.Industry', 'Account.SupportTier', 'Opportunity.Stage', 'Opportunity.NextStep'],
+          AlternativeReplies: [
+            { tone: 'Urgent', subject: 'Time-Sensitive: Acme Implementation Window Closing', preview: 'John, I wanted to flag that our Q1 implementation slots are filling up...' },
+            { tone: 'Friendly', subject: 'Quick follow-up from our chat, John!', preview: 'Hey John! Loved our conversation yesterday. Wanted to send over that timeline we discussed...' }
+          ],
+          PersonalizationNotes: 'Referenced previous conversation, manufacturing-specific timeline, addressed downtime concerns from call, mentioned CFO involvement'
+        },
+        'ACC-1002': {
+          SubjectLine: 'TechStart + Platform - Let\'s Finalize This Week?',
+          EmailBody: 'Hi Sarah,\n\nGreat speaking with you! Your team\'s enthusiasm about our API flexibility tells me we are a perfect fit for TechStart\'s multi-cloud strategy.\n\nAs discussed, we integrate natively with both AWS and Azure, and our monthly true-up model means you can scale those 50 users anytime without waiting for renewal.\n\nCan we get your procurement team on a call Monday or Tuesday to finalize terms?\n\nLooking forward to partnering with you!',
+          CallToAction: 'Book procurement call Monday or Tuesday',
+          Tone: 'Friendly',
+          ConfidenceScore: 95,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { input: 'en', output: 'en', name: 'English' },
+          GroundingSources: ['Account.Name', 'Account.Industry', 'Account.EmployeeCount', 'Opportunity.Stage', 'Opportunity.Amount'],
+          AlternativeReplies: [
+            { tone: 'Consultative', subject: 'TechStart Partnership: Next Steps & Pricing Details', preview: 'Sarah, following our discussion, I wanted to provide a detailed breakdown of our partnership tiers...' },
+            { tone: 'Urgent', subject: 'TechStart: End-of-Quarter Pricing Expires Friday', preview: 'Sarah, quick heads up - our current pricing promotion ends this Friday...' }
+          ],
+          PersonalizationNotes: 'Mentioned API flexibility enthusiasm, addressed multi-cloud need, referenced 50-user expansion discussion'
+        },
+        'ACC-1003': {
+          SubjectLine: 'Global Finance ROI Analysis - Board-Ready Materials',
+          EmailBody: 'Hi Michael,\n\nI understand the board has concerns after your previous vendor experience. That is completely fair, and I want to make sure you have everything needed to present a compelling case.\n\nAttached you will find:\n• 3 case studies from financial services clients with measurable ROI\n• Detailed pilot program structure with minimal risk\n• Quarterly billing options to ease cash flow concerns\n\nWould it be helpful if I joined your board presentation to address technical questions directly?\n\nBest regards',
+          CallToAction: 'Offer to join board presentation',
+          Tone: 'Consultative',
+          ConfidenceScore: 78,
+          SafetyFlags: { needsReview: true, reasons: ['References competitor failure - verify details', 'Board presentation offer may need manager approval'], riskLevel: 'warning' },
+          DetectedLanguage: { input: 'en', output: 'en', name: 'English' },
+          GroundingSources: ['Account.Name', 'Account.Industry', 'Account.HealthScore', 'Opportunity.Stage', 'Opportunity.Amount'],
+          AlternativeReplies: [
+            { tone: 'Friendly', subject: 'Michael - Here to help with your board prep!', preview: 'Michael, I know board presentations can be stressful. Happy to help however I can...' },
+            { tone: 'Urgent', subject: 'Global Finance: Critical ROI Data for Your Board', preview: 'Michael, given the timeline for your board meeting, I wanted to prioritize getting you...' }
+          ],
+          PersonalizationNotes: 'Addressed board skepticism, referenced previous vendor failure concern, offered pilot and quarterly billing per CFO request'
+        },
+        'ACC-1004': {
+          SubjectLine: 'HealthFirst - Salesforce Integration Demo Invite',
+          EmailBody: 'Hi Lisa,\n\nThank you for your interest in our Salesforce integration capabilities. I know you mentioned that is a pain point with your current solution.\n\nI have set up a focused 30-minute technical demo specifically showing:\n• Real-time bi-directional Salesforce sync\n• Healthcare-specific data mapping\n• HIPAA-compliant data handling\n\nWould next Tuesday or Wednesday afternoon work for you and your Salesforce admin?\n\nLooking forward to showing you what sets us apart.',
+          CallToAction: 'Schedule Salesforce integration demo',
+          Tone: 'Consultative',
+          ConfidenceScore: 88,
+          SafetyFlags: { needsReview: true, reasons: ['HIPAA mentioned - ensure compliance team has approved messaging'], riskLevel: 'warning' },
+          DetectedLanguage: { input: 'en', output: 'en', name: 'English' },
+          GroundingSources: ['Account.Name', 'Account.Industry', 'Opportunity.ProductInterest', 'Opportunity.CompetitorPresence'],
+          AlternativeReplies: [
+            { tone: 'Friendly', subject: 'Lisa - Let\'s solve that Salesforce headache!', preview: 'Lisa! I totally get the frustration with sync issues. Let me show you how we make it painless...' },
+            { tone: 'Urgent', subject: 'HealthFirst: Salesforce Integration - Limited Demo Slots', preview: 'Lisa, our solutions engineer has limited availability next week. Wanted to grab a slot for you...' }
+          ],
+          PersonalizationNotes: 'Focused on specific pain point mentioned (Salesforce sync), healthcare industry considerations, invited Salesforce admin'
+        }
       },
       'voc-analysis': {
         'SURV-001': { SentimentScore: -0.8, KeyThemes: ['Website UI', 'Customer Service Response Time'], ProductFeatures: ['Website navigation', 'Support email response'], ChurnRisk: 'High - NPS dropped 5 points, multiple negative themes', RecommendedAction: 'Immediate outreach from Customer Success Manager. Offer guided walkthrough of new navigation. Escalate to support management regarding 3-day response time.', FollowUpPriority: 'Immediate' },
@@ -406,10 +494,26 @@
       }
     };
 
+    // PII/Sensitive field definitions
+    var PII_FIELDS = {
+      // Personal identifiers
+      'Email': true, 'Phone': true, 'Name': true, 'PatientName': true, 'ContactName': true,
+      'FromAddress': true, 'ToAddress': true, 'CcAddress': true, 'Address': true,
+      'PatientMRN': true, 'PatientDOB': true, 'DOB': true, 'SSN': true,
+      // Financial
+      'AnnualRevenue': true, 'Amount': true, 'TotalContractValue': true, 'LTV': true,
+      // Health
+      'ClinicalText': true, 'VitalSigns': true, 'MessageText': true, 'PrimaryDiagnosis': true,
+      // Contact info
+      'BillingCity': true, 'BillingState': true, 'Website': true, 'PharmacyPhone': true,
+      // IDs that could identify
+      'AccountId': true, 'ContactId': true, 'InsuranceId': true, 'ProfileId': true
+    };
+
     // Custom templates storage (will persist in localStorage)
     var CUSTOM_TEMPLATES = JSON.parse(localStorage.getItem('customTemplates') || '[]');
 
-    var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured' };
+    var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured', bulkMode: false, bulkProgress: 0, bulkResults: [] };
 
     // Template Builder State
     var builder = {
@@ -718,6 +822,60 @@
       }, 1500);
     }
 
+    function toggleBulkMode() {
+      state.bulkMode = !state.bulkMode;
+      state.bulkResults = [];
+      state.bulkProgress = 0;
+      render();
+    }
+
+    function runBulk() {
+      var recs = DMOs[state.template.primaryDMO].records;
+      state.running = true;
+      state.bulkResults = [];
+      state.bulkProgress = 0;
+      render();
+
+      var processRecord = function(idx) {
+        if (idx >= recs.length) {
+          state.running = false;
+          state.done = true;
+          render();
+          return;
+        }
+
+        var rec = recs[idx];
+        var idKey = Object.keys(rec).find(function(k) { return k.indexOf('Id') > -1; });
+        var id = rec[idKey];
+        var mockOutput = (MOCK_OUTPUTS[state.template.id] || {})[id];
+
+        // Generate mock if not exists
+        if (!mockOutput && state.template.outputFields) {
+          mockOutput = {};
+          state.template.outputFields.forEach(function(field) {
+            var lowerField = field.toLowerCase();
+            if (lowerField.includes('confidence')) mockOutput[field] = 70 + Math.floor(Math.random() * 25);
+            else if (lowerField.includes('safety')) mockOutput[field] = { needsReview: Math.random() > 0.7, reasons: [], riskLevel: Math.random() > 0.7 ? 'warning' : 'safe' };
+            else mockOutput[field] = 'Generated for ' + field;
+          });
+        }
+
+        var safetyFlag = mockOutput && mockOutput.SafetyFlags ? mockOutput.SafetyFlags : { riskLevel: 'safe' };
+        state.bulkResults.push({
+          id: id,
+          title: rec.Subject || rec.Name || rec.NoteType || 'Record ' + (idx + 1),
+          status: safetyFlag.riskLevel === 'warning' ? 'warning' : 'success',
+          output: mockOutput
+        });
+        state.bulkProgress = ((idx + 1) / recs.length) * 100;
+        render();
+
+        setTimeout(function() { processRecord(idx + 1); }, 400);
+      };
+
+      processRecord(0);
+    }
+
     function render() {
       var allTpls = getAllTemplates();
       var tpls = state.cloud === 'all' ? allTpls : allTpls.filter(function(t) { return t.cloud === state.cloud; });
@@ -749,9 +907,13 @@
         '<div class="sidebar-section"><div class="sidebar-title">📊 Data Source</div><div class="dmo-info"><span class="dmo-primary">' + dmo.icon + ' ' + dmo.name + '</span> <span style="font-size:12px;color:#6b7280">(' + dmoFields.length + ' fields)</span></div>';
       if (state.template.relatedDMOs.length) { state.template.relatedDMOs.forEach(function(rd) { var d = DMOs[rd]; var rdFields = d.records[0] ? Object.keys(d.records[0]).length : 0; html += '<div class="dmo-related">+ ' + d.icon + ' ' + d.name + ' (' + rdFields + ' fields)</div>'; }); }
 
-      // Show Input Fields mapping
-      html += '<div class="mapping-header">📥 Input Fields (' + inputFields.length + ')</div><div class="input-fields-box fields-section">';
-      inputFields.forEach(function(f) { html += '<span class="field-tag input">' + f + '</span>'; });
+      // Show Input Fields mapping with PII indicators
+      var piiCount = inputFields.filter(function(f) { return PII_FIELDS[f]; }).length;
+      html += '<div class="mapping-header">📥 Input Fields (' + inputFields.length + ')' + (piiCount > 0 ? ' <span class="pii-badge">🔒 ' + piiCount + ' PII</span>' : '') + '</div><div class="input-fields-box fields-section">';
+      inputFields.forEach(function(f) {
+        var isPII = PII_FIELDS[f];
+        html += '<span class="field-tag input' + (isPII ? ' pii' : '') + '">' + f + (isPII ? ' 🔒' : '') + '</span>';
+      });
       html += '</div>';
 
       // Show Output Fields mapping
@@ -759,11 +921,12 @@
       outputFields.forEach(function(f) { html += '<span class="field-tag output">' + f + '</span>'; });
       html += '</div>';
 
-      // Show all available DMO fields
+      // Show all available DMO fields with PII indicators
       html += '<div class="mapping-header">📋 All DMO Fields (' + dmoFields.length + ')</div><div class="fields-section" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px;">';
       dmoFields.forEach(function(f) {
         var isInput = inputFields.indexOf(f) > -1;
-        html += '<span class="field-tag ' + (isInput ? 'input' : 'available') + '">' + f + '</span>';
+        var isPII = PII_FIELDS[f];
+        html += '<span class="field-tag ' + (isInput ? 'input' : 'available') + (isPII ? ' pii' : '') + '">' + f + (isPII ? ' 🔒' : '') + '</span>';
       });
       html += '</div></div><div class="records-list"><div class="records-title">Test Records (' + recs.length + ')</div>';
       recs.forEach(function(r, i) {
@@ -772,9 +935,9 @@
         html += '<div class="record-item' + (state.recordIdx === i ? ' active' : '') + '" onclick="state.recordIdx=' + i + ';state.done=false;state.output=null;render()"><div class="record-title">' + esc(title) + '</div><div class="record-id">' + id + '</div></div>';
       });
       html += '</div><div class="usage-panel"><div class="usage-title">Estimated Usage</div><div class="usage-row"><span class="usage-label">Input</span><span class="usage-value">' + inTok + ' tokens</span></div><div class="usage-row"><span class="usage-label">Output</span><span class="usage-value">~' + outTok + ' tokens</span></div><div class="usage-row" style="border-top:1px solid #e5e7eb;padding-top:8px;margin-top:8px"><span class="usage-label">Est. Cost</span><span class="usage-value usage-cost">$' + ((inTok * 0.00001) + (outTok * 0.00003)).toFixed(4) + '</span></div></div></aside>' +
-        '<main class="center-panel"><div class="center-header"><span class="center-title">' + state.template.name + '</span><button class="run-btn" onclick="run()"' + (state.running ? ' disabled' : '') + '>' + (state.running ? '<svg class="spinner" width="16" height="16" viewBox="0 0 24 24"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Running...' : '▶ Test Run') + '</button></div>' +
-        '<div class="panels"><div class="panel"><div class="panel-header"><span class="panel-title">📝 Resolved Prompt</span><span class="panel-tokens">' + inTok + ' tokens</span></div><div class="panel-content"><pre class="prompt-box">' + esc(prompt) + '</pre></div></div>' +
-        '<div class="panel"><div class="panel-header"><span class="panel-title">✨ Generated Output</span><div class="format-btns"><button class="format-btn' + (state.format === 'structured' ? ' active' : '') + '" onclick="state.format=\'structured\';render()">Structured</button><button class="format-btn' + (state.format === 'raw' ? ' active' : '') + '" onclick="state.format=\'raw\';render()">JSON</button></div></div><div class="panel-content">' + renderOutput() + '</div></div></div></main>' +
+        '<main class="center-panel"><div class="center-header"><span class="center-title">' + state.template.name + '</span><div style="display:flex;align-items:center;gap:8px;"><div class="bulk-mode-toggle"><span style="font-size:12px;color:#6b7280;">Mode:</span><button class="bulk-toggle-btn' + (!state.bulkMode ? ' active' : '') + '" onclick="if(state.bulkMode)toggleBulkMode()">Single</button><button class="bulk-toggle-btn' + (state.bulkMode ? ' active' : '') + '" onclick="if(!state.bulkMode)toggleBulkMode()">Bulk (' + recs.length + ')</button></div><button class="run-btn" onclick="' + (state.bulkMode ? 'runBulk()' : 'run()') + '"' + (state.running ? ' disabled' : '') + '>' + (state.running ? '<svg class="spinner" width="16" height="16" viewBox="0 0 24 24"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Running...' : (state.bulkMode ? '▶ Run All (' + recs.length + ')' : '▶ Test Run')) + '</button></div></div>' +
+        (state.bulkMode ? renderBulkMode(recs) : '<div class="panels"><div class="panel"><div class="panel-header"><span class="panel-title">📝 Resolved Prompt</span><span class="panel-tokens">' + inTok + ' tokens</span></div><div class="panel-content"><pre class="prompt-box">' + esc(prompt) + '</pre></div></div>' +
+        '<div class="panel"><div class="panel-header"><span class="panel-title">✨ Generated Output</span><div class="format-btns"><button class="format-btn' + (state.format === 'structured' ? ' active' : '') + '" onclick="state.format=\'structured\';render()">Structured</button><button class="format-btn' + (state.format === 'raw' ? ' active' : '') + '" onclick="state.format=\'raw\';render()">JSON</button></div></div><div class="panel-content">' + renderOutput() + '</div></div></div>') + '</main>' +
         '<aside class="sidebar-right"><div class="sidebar-section"><div class="sidebar-title">📤 Output Mapping</div><div class="sidebar-desc">Map fields to target DMO</div></div><div class="sidebar-section"><div style="font-size:12px;color:#6b7280;margin-bottom:4px">Target DMO</div><select class="sidebar-select"><option>' + dmo.icon + ' ' + dmo.name + ' (Update)</option><option>📊 ' + dmo.name + '_Enriched (New)</option></select></div><div class="fields-list"><div style="font-size:12px;color:#6b7280;text-transform:uppercase;margin-bottom:8px">Output Fields (' + state.template.fields.length + ')</div>';
       state.template.fields.forEach(function(f) { html += '<div class="field-item"><span class="field-name">' + f + '</span><span class="field-status ' + (state.done ? 'done' : 'pending') + '">' + (state.done ? '✓' : '...') + '</span></div>'; });
       html += '</div>' + (state.done ? '<div class="complete-panel"><div class="complete-title">✓ Test Complete</div><div class="complete-sub">All ' + state.template.fields.length + ' fields extracted</div></div>' : '') + '</aside></div></div>';
@@ -785,12 +948,77 @@
       document.getElementById('app').innerHTML = html;
     }
 
+    function renderBulkMode(recs) {
+      var html = '<div class="panels" style="flex-direction:column;">';
+
+      // Progress section
+      if (state.running || state.bulkResults.length > 0) {
+        var successCount = state.bulkResults.filter(function(r) { return r.status === 'success'; }).length;
+        var warningCount = state.bulkResults.filter(function(r) { return r.status === 'warning'; }).length;
+
+        html += '<div class="panel" style="flex:none;"><div class="panel-header"><span class="panel-title">📊 Bulk Processing Progress</span></div><div class="panel-content">' +
+          '<div class="bulk-progress"><div class="bulk-progress-bar"><div class="bulk-progress-fill" style="width:' + state.bulkProgress + '%"></div></div>' +
+          '<div class="bulk-stats"><span>✅ ' + successCount + ' Safe</span><span>⚠️ ' + warningCount + ' Need Review</span><span>📄 ' + state.bulkResults.length + '/' + recs.length + ' Processed</span></div></div></div></div>';
+      }
+
+      // Results list
+      html += '<div class="panel" style="flex:1;overflow:auto;"><div class="panel-header"><span class="panel-title">📋 Results</span></div><div class="panel-content" style="padding:0;">';
+
+      if (state.bulkResults.length === 0 && !state.running) {
+        html += '<div class="output-placeholder"><div class="output-placeholder-icon">▶</div><div>Click "Run All" to process ' + recs.length + ' records</div></div>';
+      } else {
+        state.bulkResults.forEach(function(result, idx) {
+          html += '<div class="bulk-result-item">' +
+            '<div><div style="font-weight:500;font-size:14px;">' + esc(result.title) + '</div><div style="font-size:12px;color:#6b7280;">' + result.id + '</div></div>' +
+            '<span class="bulk-result-status ' + result.status + '">' + (result.status === 'success' ? '✓ Safe' : '⚠️ Review') + '</span></div>';
+        });
+      }
+
+      html += '</div></div></div>';
+      return html;
+    }
+
     function renderOutput() {
       if (state.running) return '<div class="output-placeholder"><svg class="spinner" width="40" height="40" viewBox="0 0 24 24" style="color:#9333ea"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg><div>Generating with ' + state.model + '...</div></div>';
       if (!state.done) return '<div class="output-placeholder"><div class="output-placeholder-icon">▶</div><div>Click "Test Run" to generate</div></div>';
       if (state.format === 'raw') return '<pre class="output-json">' + JSON.stringify(state.output, null, 2) + '</pre>';
       var html = '';
+
+      // Render special fields first (safety, confidence, language)
+      if (state.output.SafetyFlags || state.output.ConfidenceScore || state.output.DetectedLanguage) {
+        html += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;padding:12px;background:#f9fafb;border-radius:8px;">';
+        if (state.output.ConfidenceScore !== undefined) {
+          var confLevel = state.output.ConfidenceScore >= 85 ? 'high' : (state.output.ConfidenceScore >= 70 ? 'medium' : 'low');
+          html += '<div style="flex:1;min-width:150px;"><div style="font-size:11px;color:#6b7280;margin-bottom:4px;">Confidence Score</div><div style="font-size:20px;font-weight:600;color:' + (confLevel === 'high' ? '#22c55e' : confLevel === 'medium' ? '#f59e0b' : '#ef4444') + ';">' + state.output.ConfidenceScore + '%</div><div class="confidence-bar"><div class="confidence-fill ' + confLevel + '" style="width:' + state.output.ConfidenceScore + '%;"></div></div></div>';
+        }
+        if (state.output.SafetyFlags) {
+          var sf = state.output.SafetyFlags;
+          html += '<div style="flex:1;min-width:150px;"><div style="font-size:11px;color:#6b7280;margin-bottom:4px;">Safety Status</div><div class="safety-flag ' + sf.riskLevel + '">' + (sf.riskLevel === 'safe' ? '✓ Safe to Send' : sf.riskLevel === 'warning' ? '⚠️ Review Recommended' : '🚨 Needs Review') + '</div>';
+          if (sf.reasons && sf.reasons.length > 0) {
+            html += '<ul style="font-size:11px;color:#6b7280;margin:8px 0 0 16px;">';
+            sf.reasons.forEach(function(r) { html += '<li>' + esc(r) + '</li>'; });
+            html += '</ul>';
+          }
+          html += '</div>';
+        }
+        if (state.output.DetectedLanguage) {
+          var dl = state.output.DetectedLanguage;
+          html += '<div style="flex:1;min-width:150px;"><div style="font-size:11px;color:#6b7280;margin-bottom:4px;">Language</div><div class="language-badge">🌐 ' + dl.name + ' (' + dl.output + ')</div></div>';
+        }
+        html += '</div>';
+      }
+
+      // Render grounding sources
+      if (state.output.GroundingSources && state.output.GroundingSources.length > 0) {
+        html += '<div class="output-card"><div class="output-label">📌 Grounding Sources</div><div>';
+        state.output.GroundingSources.forEach(function(src) { html += '<span class="grounding-source">' + esc(src) + '</span>'; });
+        html += '</div></div>';
+      }
+
       for (var k in state.output) {
+        // Skip special fields already rendered
+        if (['SafetyFlags', 'ConfidenceScore', 'DetectedLanguage', 'GroundingSources', 'AlternativeReplies'].indexOf(k) > -1) continue;
+
         var v = state.output[k];
         var cls = '';
         if (k === 'Urgency' && String(v).indexOf('URGENT') > -1) cls = 'urgent';
@@ -812,6 +1040,16 @@
         }
         html += '</div>';
       }
+
+      // Render alternative replies at the end
+      if (state.output.AlternativeReplies && state.output.AlternativeReplies.length > 0) {
+        html += '<div class="output-card"><div class="output-label">💡 Alternative Approaches</div>';
+        state.output.AlternativeReplies.forEach(function(alt, i) {
+          html += '<div class="alternative-reply"><div class="alternative-reply-header">Option ' + (i + 1) + ' - ' + alt.tone + ' tone</div><div style="font-weight:500;margin-bottom:4px;">' + esc(alt.subject) + '</div><div style="font-size:13px;color:#6b7280;">' + esc(alt.preview) + '</div></div>';
+        });
+        html += '</div>';
+      }
+
       return html;
     }
 
