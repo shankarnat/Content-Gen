@@ -214,6 +214,17 @@
     .bulk-result-status { font-size: 11px; padding: 2px 6px; border-radius: 4px; }
     .bulk-result-status.success { background: #dcfce7; color: #166534; }
     .bulk-result-status.warning { background: #fef3c7; color: #92400e; }
+
+    /* Field Selector Modal */
+    .field-selector-btn { font-size: 11px; color: #9333ea; background: none; border: none; cursor: pointer; text-decoration: underline; margin-left: 4px; }
+    .field-selector-btn:hover { color: #7e22ce; }
+    .dmo-field-group { margin-bottom: 16px; }
+    .dmo-field-group-header { display: flex; align-items: center; gap: 8px; padding: 8px; background: #f3f4f6; border-radius: 6px; margin-bottom: 8px; }
+    .dmo-field-group-icon { font-size: 18px; }
+    .dmo-field-group-name { font-weight: 500; color: #374151; }
+    .dmo-field-group-count { font-size: 12px; color: #6b7280; margin-left: auto; }
+    .input-field-group { margin-bottom: 12px; padding: 8px; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb; }
+    .input-field-group-header { font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
   </style>
 </head>
 <body>
@@ -348,9 +359,13 @@
         desc: 'Generate personalized follow-ups with safety rails & multi-language support',
         primaryDMO: 'Account__dlm', relatedDMOs: ['Opportunity__dlm'],
         inputFields: ['Name', 'Industry', 'AnnualRevenue', 'EmployeeCount', 'SupportTier', 'HealthScore'],
+        inputFieldsByDMO: {
+          'Account__dlm': ['Name', 'Industry', 'AnnualRevenue', 'EmployeeCount', 'SupportTier', 'HealthScore'],
+          'Opportunity__dlm': ['Name', 'Amount', 'Stage', 'CloseDate', 'NextStep', 'Probability', 'CompetitorPresence']
+        },
         outputFields: ['SubjectLine', 'EmailBody', 'CallToAction', 'Tone', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'AlternativeReplies', 'PersonalizationNotes'],
         fields: ['SubjectLine', 'EmailBody', 'CallToAction', 'Tone', 'ConfidenceScore', 'SafetyFlags', 'DetectedLanguage', 'GroundingSources', 'AlternativeReplies', 'PersonalizationNotes'],
-        prompt: '=== INPUT FIELDS (from Account__dlm) ===\nAccount: {{Account.Name}}\nIndustry: {{Account.Industry}}\nAnnual Revenue: {{Account.AnnualRevenue}}\nEmployee Count: {{Account.EmployeeCount}}\nSupport Tier: {{Account.SupportTier}}\nHealth Score: {{Account.HealthScore}}\n\n=== INPUT FIELDS (from Opportunity__dlm) ===\nOpportunity: {{Opportunity.Name}}\nAmount: ${{Opportunity.Amount}}\nStage: {{Opportunity.Stage}}\nClose Date: {{Opportunity.CloseDate}}\nNext Step: {{Opportunity.NextStep}}\n\n=== INSTRUCTIONS ===\nDraft a personalized follow-up email. Keep under 150 words.\nDetect input language and respond in same language.\nFlag any content that may need human review.\n\n=== OUTPUT FIELDS (to generate) ===\n1. SubjectLine: (Compelling subject < 50 chars)\n2. EmailBody: (Professional email body)\n3. CallToAction: (Clear next step)\n4. Tone: (Consultative | Urgent | Friendly)\n5. ConfidenceScore: (0-100 confidence in appropriateness)\n6. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n7. DetectedLanguage: { input: "en", output: "en", name: "English" }\n8. GroundingSources: (Array of fields used to generate response)\n9. AlternativeReplies: (Array of 2 alternative email approaches)\n10. PersonalizationNotes: (What was personalized and why)\n\nRespond in JSON format.'
+        prompt: '=== INPUT FIELDS (from Account__dlm) ===\nAccount: {{Account.Name}}\nIndustry: {{Account.Industry}}\nAnnual Revenue: {{Account.AnnualRevenue}}\nEmployee Count: {{Account.EmployeeCount}}\nSupport Tier: {{Account.SupportTier}}\nHealth Score: {{Account.HealthScore}}\n\n=== INPUT FIELDS (from Opportunity__dlm) ===\nOpportunity: {{Opportunity.Name}}\nAmount: ${{Opportunity.Amount}}\nStage: {{Opportunity.Stage}}\nClose Date: {{Opportunity.CloseDate}}\nNext Step: {{Opportunity.NextStep}}\nProbability: {{Opportunity.Probability}}%\nCompetitor: {{Opportunity.CompetitorPresence}}\n\n=== INSTRUCTIONS ===\nDraft a personalized follow-up email. Keep under 150 words.\nDetect input language and respond in same language.\nFlag any content that may need human review.\n\n=== OUTPUT FIELDS (to generate) ===\n1. SubjectLine: (Compelling subject < 50 chars)\n2. EmailBody: (Professional email body)\n3. CallToAction: (Clear next step)\n4. Tone: (Consultative | Urgent | Friendly)\n5. ConfidenceScore: (0-100 confidence in appropriateness)\n6. SafetyFlags: { needsReview: boolean, reasons: [], riskLevel: "safe|warning|review" }\n7. DetectedLanguage: { input: "en", output: "en", name: "English" }\n8. GroundingSources: (Array of fields used to generate response)\n9. AlternativeReplies: (Array of 2 alternative email approaches)\n10. PersonalizationNotes: (What was personalized and why)\n\nRespond in JSON format.'
       },
       {
         id: 'voc-analysis', cloud: 'marketing', name: '🎯 VoC Analysis',
@@ -513,7 +528,10 @@
     // Custom templates storage (will persist in localStorage)
     var CUSTOM_TEMPLATES = JSON.parse(localStorage.getItem('customTemplates') || '[]');
 
-    var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured', bulkMode: false, bulkProgress: 0, bulkResults: [] };
+    var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured', bulkMode: false, bulkProgress: 0, bulkResults: [], fieldSelectorOpen: false };
+
+    // Runtime selected fields per template (allows customization)
+    var selectedFieldsByTemplate = {};
 
     // Template Builder State
     var builder = {
@@ -683,6 +701,88 @@
         state.template = TEMPLATES[0];
       }
       render();
+    }
+
+    // Field Selector Functions
+    function openFieldSelector() {
+      state.fieldSelectorOpen = true;
+      // Initialize selected fields for this template if not exists
+      if (!selectedFieldsByTemplate[state.template.id]) {
+        selectedFieldsByTemplate[state.template.id] = JSON.parse(JSON.stringify(state.template.inputFieldsByDMO || {}));
+        // For templates without inputFieldsByDMO, create from inputFields
+        if (!state.template.inputFieldsByDMO && state.template.inputFields) {
+          selectedFieldsByTemplate[state.template.id] = {};
+          selectedFieldsByTemplate[state.template.id][state.template.primaryDMO] = state.template.inputFields.slice();
+        }
+      }
+      render();
+    }
+
+    function closeFieldSelector() {
+      state.fieldSelectorOpen = false;
+      render();
+    }
+
+    function toggleFieldSelection(dmoKey, field) {
+      var tplId = state.template.id;
+      if (!selectedFieldsByTemplate[tplId]) selectedFieldsByTemplate[tplId] = {};
+      if (!selectedFieldsByTemplate[tplId][dmoKey]) selectedFieldsByTemplate[tplId][dmoKey] = [];
+
+      var idx = selectedFieldsByTemplate[tplId][dmoKey].indexOf(field);
+      if (idx > -1) {
+        selectedFieldsByTemplate[tplId][dmoKey].splice(idx, 1);
+      } else {
+        selectedFieldsByTemplate[tplId][dmoKey].push(field);
+      }
+      render();
+    }
+
+    function getSelectedFields() {
+      var tplId = state.template.id;
+      if (selectedFieldsByTemplate[tplId]) return selectedFieldsByTemplate[tplId];
+      if (state.template.inputFieldsByDMO) return state.template.inputFieldsByDMO;
+      var result = {};
+      result[state.template.primaryDMO] = state.template.inputFields || [];
+      return result;
+    }
+
+    function getTotalSelectedFieldCount() {
+      var fields = getSelectedFields();
+      var count = 0;
+      for (var dmo in fields) { count += fields[dmo].length; }
+      return count;
+    }
+
+    function renderFieldSelectorModal() {
+      if (!state.fieldSelectorOpen) return '';
+
+      var selectedFields = getSelectedFields();
+      var allDMOs = [state.template.primaryDMO].concat(state.template.relatedDMOs || []);
+
+      var bodyHtml = '';
+      allDMOs.forEach(function(dmoKey) {
+        var dmo = DMOs[dmoKey];
+        if (!dmo) return;
+        var allFields = dmo.records[0] ? Object.keys(dmo.records[0]) : [];
+        var selected = selectedFields[dmoKey] || [];
+
+        bodyHtml += '<div class="dmo-field-group">';
+        bodyHtml += '<div class="dmo-field-group-header"><span class="dmo-field-group-icon">' + dmo.icon + '</span><span class="dmo-field-group-name">' + dmo.name + '</span><span class="dmo-field-group-count">' + selected.length + '/' + allFields.length + ' selected</span></div>';
+        bodyHtml += '<div class="field-checkbox-list" style="max-height:200px;">';
+        allFields.forEach(function(f) {
+          var isSelected = selected.indexOf(f) > -1;
+          var isPII = PII_FIELDS[f];
+          bodyHtml += '<label class="field-checkbox"><input type="checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="toggleFieldSelection(\'' + dmoKey + '\', \'' + f + '\')"><span class="field-checkbox-label">' + f + (isPII ? ' <span class="pii-badge">🔒 PII</span>' : '') + '</span></label>';
+        });
+        bodyHtml += '</div></div>';
+      });
+
+      return '<div class="modal-overlay" onclick="if(event.target===this)closeFieldSelector()">' +
+        '<div class="modal" style="width:600px;">' +
+        '<div class="modal-header"><div class="modal-title">📥 Select Input Fields</div><button class="modal-close" onclick="closeFieldSelector()">×</button></div>' +
+        '<div class="modal-body">' + bodyHtml + '</div>' +
+        '<div class="modal-footer"><span style="font-size:12px;color:#6b7280;">' + getTotalSelectedFieldCount() + ' fields selected</span><button class="btn-next" onclick="closeFieldSelector()">Done</button></div>' +
+        '</div></div>';
     }
 
     function renderBuilderModal() {
@@ -907,14 +1007,30 @@
         '<div class="sidebar-section"><div class="sidebar-title">📊 Data Source</div><div class="dmo-info"><span class="dmo-primary">' + dmo.icon + ' ' + dmo.name + '</span> <span style="font-size:12px;color:#6b7280">(' + dmoFields.length + ' fields)</span></div>';
       if (state.template.relatedDMOs.length) { state.template.relatedDMOs.forEach(function(rd) { var d = DMOs[rd]; var rdFields = d.records[0] ? Object.keys(d.records[0]).length : 0; html += '<div class="dmo-related">+ ' + d.icon + ' ' + d.name + ' (' + rdFields + ' fields)</div>'; }); }
 
-      // Show Input Fields mapping with PII indicators
-      var piiCount = inputFields.filter(function(f) { return PII_FIELDS[f]; }).length;
-      html += '<div class="mapping-header">📥 Input Fields (' + inputFields.length + ')' + (piiCount > 0 ? ' <span class="pii-badge">🔒 ' + piiCount + ' PII</span>' : '') + '</div><div class="input-fields-box fields-section">';
-      inputFields.forEach(function(f) {
-        var isPII = PII_FIELDS[f];
-        html += '<span class="field-tag input' + (isPII ? ' pii' : '') + '">' + f + (isPII ? ' 🔒' : '') + '</span>';
+      // Show Input Fields mapping with PII indicators - grouped by DMO
+      var selectedFields = getSelectedFields();
+      var totalFieldCount = getTotalSelectedFieldCount();
+      var allSelectedFieldsList = [];
+      for (var sfDmo in selectedFields) { allSelectedFieldsList = allSelectedFieldsList.concat(selectedFields[sfDmo]); }
+      var piiCount = allSelectedFieldsList.filter(function(f) { return PII_FIELDS[f]; }).length;
+
+      html += '<div class="mapping-header">📥 Input Fields (' + totalFieldCount + ')' + (piiCount > 0 ? ' <span class="pii-badge">🔒 ' + piiCount + ' PII</span>' : '') + '<button class="field-selector-btn" onclick="openFieldSelector()">Edit</button></div>';
+
+      // Show fields grouped by DMO
+      var allDMOsForFields = [state.template.primaryDMO].concat(state.template.relatedDMOs || []);
+      allDMOsForFields.forEach(function(dmoKey) {
+        var dmoInfo = DMOs[dmoKey];
+        if (!dmoInfo) return;
+        var fieldsForDmo = selectedFields[dmoKey] || [];
+        if (fieldsForDmo.length === 0) return;
+
+        html += '<div class="input-field-group"><div class="input-field-group-header">' + dmoInfo.icon + ' ' + dmoInfo.name + ' (' + fieldsForDmo.length + ')</div>';
+        fieldsForDmo.forEach(function(f) {
+          var isPII = PII_FIELDS[f];
+          html += '<span class="field-tag input' + (isPII ? ' pii' : '') + '">' + f + (isPII ? ' 🔒' : '') + '</span>';
+        });
+        html += '</div>';
       });
-      html += '</div>';
 
       // Show Output Fields mapping
       html += '<div class="mapping-header">📤 Output Fields (' + outputFields.length + ')</div><div class="output-fields-box fields-section">';
@@ -944,6 +1060,9 @@
 
       // Add the Template Builder Modal
       html += renderBuilderModal();
+
+      // Add the Field Selector Modal
+      html += renderFieldSelectorModal();
 
       document.getElementById('app').innerHTML = html;
     }
