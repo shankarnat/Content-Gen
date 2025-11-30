@@ -976,7 +976,7 @@
     // Custom templates storage (will persist in localStorage)
     var CUSTOM_TEMPLATES = JSON.parse(localStorage.getItem('customTemplates') || '[]');
 
-    var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured', bulkMode: false, bulkProgress: 0, bulkResults: [], fieldSelectorOpen: false, inputDMOSelectorOpen: false, outputDMOSelectorOpen: false, publishModalOpen: false };
+    var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured', bulkMode: false, bulkProgress: 0, bulkResults: [], fieldSelectorOpen: false, inputDMOSelectorOpen: false, outputDMOSelectorOpen: false, publishModalOpen: false, outputTab: 'structured' };
 
     // Publish configuration
     var publishConfig = {
@@ -1925,8 +1925,152 @@
       return t;
     }
 
+    // Generate mock UDMO content based on template and record
+    function generateMockUDMOContent(templateId, rec) {
+      var udmoContent = {};
+      var customerName = rec.ContactName || rec.Name || rec.CustomerName || 'Customer';
+      var caseSubject = rec.Subject || rec.Description || 'Your Recent Inquiry';
+      var caseId = rec.CaseId || rec.Id || '12847';
+
+      // Case Triage UDMOs
+      if (templateId === 'case-triage') {
+        udmoContent['DraftResponse__udmo'] = {
+          subject: 'Re: ' + caseSubject + ' - Case #' + caseId,
+          greeting: 'Dear ' + customerName.split(' ')[0] + ',',
+          body: '<p>Thank you for reaching out to us regarding your concern.</p>' +
+            '<p>We have reviewed your case and identified the issue. Our billing system experienced a synchronization delay that caused the duplicate charge you mentioned.</p>' +
+            '<p><strong>Resolution:</strong> We have processed a refund of $50.00 to your original payment method. Please allow 3-5 business days for the credit to appear on your statement.</p>' +
+            '<p>We sincerely apologize for any inconvenience this may have caused. As a gesture of goodwill, we have also applied a 10% discount to your next billing cycle.</p>',
+          closing: 'If you have any further questions, please don\'t hesitate to reach out.',
+          signature: 'Best regards,<br/>Customer Support Team<br/>1-800-SUPPORT'
+        };
+        udmoContent['InternalNote__udmo'] = {
+          title: 'Case Analysis - #' + caseId,
+          content: '## Root Cause Analysis\n\n' +
+            '**Issue Type:** Billing Discrepancy\n\n' +
+            '**Customer Sentiment:** Frustrated but cooperative\n\n' +
+            '### Investigation Summary\n' +
+            '- Duplicate charge detected on ' + (new Date().toLocaleDateString()) + '\n' +
+            '- Caused by payment gateway timeout and retry\n' +
+            '- Customer has been with us for 3+ years (high value)\n\n' +
+            '### Actions Taken\n' +
+            '1. Refund processed: $50.00\n' +
+            '2. Goodwill credit applied: 10% next cycle\n' +
+            '3. Flagged for billing team review\n\n' +
+            '### Recommendations\n' +
+            '- Monitor for similar issues in batch processing\n' +
+            '- Consider proactive outreach to affected customers',
+          priority: 'Medium',
+          tags: ['billing', 'refund', 'duplicate-charge', 'resolved']
+        };
+      }
+
+      // KB Generator UDMOs
+      else if (templateId === 'knowledge-gen') {
+        udmoContent['KnowledgeArticle__udmo'] = {
+          title: 'How to Resolve Billing Discrepancies',
+          summary: 'A comprehensive guide for customers experiencing billing issues, including duplicate charges and refund requests.',
+          tableOfContents: ['Overview', 'Common Causes', 'Step-by-Step Resolution', 'Prevention Tips', 'Contact Support'],
+          content: '# How to Resolve Billing Discrepancies\n\n' +
+            '## Overview\n' +
+            'Billing discrepancies can occur for various reasons. This guide will help you identify and resolve common billing issues quickly.\n\n' +
+            '## Common Causes\n' +
+            '- **Duplicate charges**: Often caused by payment processing timeouts\n' +
+            '- **Incorrect amounts**: May result from plan changes mid-cycle\n' +
+            '- **Unauthorized charges**: Could indicate account security issues\n\n' +
+            '## Step-by-Step Resolution\n\n' +
+            '### Step 1: Review Your Statement\n' +
+            'Log into your account and navigate to Billing > Transaction History to review all recent charges.\n\n' +
+            '### Step 2: Gather Information\n' +
+            'Note the date, amount, and transaction ID of the disputed charge.\n\n' +
+            '### Step 3: Submit a Dispute\n' +
+            'Use our online dispute form or contact support with the transaction details.\n\n' +
+            '## Prevention Tips\n' +
+            '- Enable transaction notifications\n' +
+            '- Review statements monthly\n' +
+            '- Keep payment methods up to date\n\n' +
+            '## Contact Support\n' +
+            'If you need further assistance, our support team is available 24/7.',
+          metadata: { category: 'Billing', visibility: 'Public', language: 'en-US' }
+        };
+        udmoContent['FAQDocument__udmo'] = {
+          title: 'Billing FAQ',
+          questions: [
+            { q: 'How long do refunds take to process?', a: 'Refunds typically appear within 3-5 business days, depending on your financial institution.' },
+            { q: 'Can I dispute a charge online?', a: 'Yes, you can submit disputes through your account dashboard under Billing > Dispute a Charge.' },
+            { q: 'What if I see an unauthorized charge?', a: 'Contact us immediately at 1-800-SUPPORT. We recommend also reviewing your account security settings.' }
+          ]
+        };
+        udmoContent['VideoScript__udmo'] = {
+          title: 'Resolving Billing Issues - Video Tutorial',
+          duration: '3:45',
+          script: '[INTRO - 0:00]\n' +
+            'Welcome to our billing support tutorial. Today we\'ll show you how to quickly resolve common billing issues.\n\n' +
+            '[SCENE 1 - 0:15]\n' +
+            'First, log into your account and click on the Billing tab in the main navigation.\n\n' +
+            '[SCENE 2 - 0:45]\n' +
+            'Here you can see your complete transaction history. Look for any charges that seem incorrect.\n\n' +
+            '[SCENE 3 - 1:30]\n' +
+            'To dispute a charge, simply click the three dots next to the transaction and select "Dispute".\n\n' +
+            '[OUTRO - 3:30]\n' +
+            'That\'s it! Our team will review your dispute within 24 hours. Thanks for watching!'
+        };
+      }
+
+      // Email Follow-Up UDMOs
+      else if (templateId === 'email-followup') {
+        var contactName = rec.ContactName || rec.Name || 'Valued Customer';
+        var company = rec.Company || rec.AccountName || 'your company';
+        udmoContent['EmailDraft__udmo'] = {
+          to: rec.Email || 'customer@example.com',
+          subject: 'Following Up: ' + (rec.Subject || 'Our Recent Conversation'),
+          greeting: 'Hi ' + contactName.split(' ')[0] + ',',
+          body: '<p>I hope this email finds you well. I wanted to follow up on our recent conversation about ' + company + '\'s needs.</p>' +
+            '<p>Based on our discussion, I believe our Enterprise Solution would be an excellent fit for your team. Here are the key benefits we discussed:</p>' +
+            '<ul>' +
+            '<li><strong>Increased Efficiency:</strong> 40% reduction in manual processes</li>' +
+            '<li><strong>Cost Savings:</strong> Average ROI of 250% in the first year</li>' +
+            '<li><strong>Scalability:</strong> Grows with your business needs</li>' +
+            '</ul>' +
+            '<p>I\'ve attached the proposal we discussed, along with a few case studies from similar companies in your industry.</p>' +
+            '<p>Would you be available for a 30-minute call this week to discuss next steps? I\'m free Tuesday or Thursday afternoon.</p>',
+          closing: 'Looking forward to hearing from you.',
+          signature: 'Best regards,<br/>Sales Team'
+        };
+        udmoContent['ProposalDocument__udmo'] = {
+          title: 'Enterprise Solution Proposal for ' + company,
+          sections: [
+            { heading: 'Executive Summary', content: 'This proposal outlines our recommended solution to address ' + company + '\'s operational challenges...' },
+            { heading: 'Proposed Solution', content: 'Our Enterprise platform provides end-to-end automation with AI-powered insights...' },
+            { heading: 'Pricing', content: 'Annual subscription: $45,000\nImplementation: $12,000\nTraining: Included' },
+            { heading: 'Timeline', content: 'Week 1-2: Discovery & Planning\nWeek 3-4: Implementation\nWeek 5: Training & Go-Live' }
+          ],
+          validUntil: new Date(Date.now() + 30*24*60*60*1000).toLocaleDateString()
+        };
+        udmoContent['MeetingAgenda__udmo'] = {
+          title: 'Solution Review Meeting',
+          date: 'TBD',
+          duration: '30 minutes',
+          attendees: [contactName, 'Sales Representative', 'Solution Architect'],
+          agenda: [
+            { time: '5 min', topic: 'Introductions & Objectives' },
+            { time: '10 min', topic: 'Proposal Review & Q&A' },
+            { time: '10 min', topic: 'Demo of Key Features' },
+            { time: '5 min', topic: 'Next Steps & Timeline' }
+          ]
+        };
+      }
+
+      return udmoContent;
+    }
+
+    function selectOutputTab(tabKey) {
+      state.outputTab = tabKey;
+      render();
+    }
+
     function run() {
-      state.running = true; state.done = false; state.output = null; render();
+      state.running = true; state.done = false; state.output = null; state.outputTab = 'structured'; render();
       setTimeout(function() {
         var recs = DMOs[state.template.primaryDMO].records;
         var rec = recs[state.recordIdx];
@@ -1964,7 +2108,14 @@
           });
         }
 
+        // Generate UDMO content for templates that have outputUDMOs configured
+        var udmoContent = {};
+        if (state.template.outputUDMOs && state.template.outputUDMOs.length > 0) {
+          udmoContent = generateMockUDMOContent(state.template.id, rec);
+        }
+
         state.output = mockOutput || { message: 'No mock output available' };
+        state.output._udmoContent = udmoContent;
         state.running = false; state.done = true; render();
       }, 1500);
     }
@@ -2194,6 +2345,58 @@
       if (state.running) return '<div class="output-placeholder"><svg class="spinner" width="40" height="40" viewBox="0 0 24 24" style="color:#9333ea"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg><div>Generating with ' + state.model + '...</div></div>';
       if (!state.done) return '<div class="output-placeholder"><div class="output-placeholder-icon">▶</div><div>Click "Test Run" to generate</div></div>';
       if (state.format === 'raw') return '<pre class="output-json">' + JSON.stringify(state.output, null, 2) + '</pre>';
+
+      var templateUDMOs = state.template.outputUDMOs || [];
+      var hasUDMOs = templateUDMOs.length > 0 && state.output._udmoContent && Object.keys(state.output._udmoContent).length > 0;
+
+      // If no UDMOs, render original output
+      if (!hasUDMOs) {
+        return renderStructuredOutput();
+      }
+
+      // Render with vertical tabs
+      var html = '<div style="display:flex;gap:0;height:100%;min-height:400px;">';
+
+      // LEFT: Vertical tabs
+      html += '<div style="width:100px;flex-shrink:0;background:#f9fafb;border-right:1px solid #e5e7eb;padding:8px 0;">';
+
+      // Structured tab
+      var isStructuredActive = state.outputTab === 'structured';
+      html += '<div onclick="selectOutputTab(\'structured\')" style="padding:10px 8px;cursor:pointer;border-left:3px solid ' + (isStructuredActive ? '#9333ea' : 'transparent') + ';background:' + (isStructuredActive ? 'white' : 'transparent') + ';margin-bottom:4px;">';
+      html += '<div style="font-size:16px;text-align:center;margin-bottom:2px;">📊</div>';
+      html += '<div style="font-size:10px;text-align:center;color:' + (isStructuredActive ? '#9333ea' : '#6b7280') + ';font-weight:' + (isStructuredActive ? '600' : '400') + ';">Structured</div>';
+      html += '</div>';
+
+      // UDMO tabs
+      templateUDMOs.forEach(function(udmoKey) {
+        var udmo = UDMOs[udmoKey];
+        if (!udmo) return;
+        var isActive = state.outputTab === udmoKey;
+        var hasContent = state.output._udmoContent && state.output._udmoContent[udmoKey];
+        html += '<div onclick="selectOutputTab(\'' + udmoKey + '\')" style="padding:10px 8px;cursor:pointer;border-left:3px solid ' + (isActive ? '#9333ea' : 'transparent') + ';background:' + (isActive ? 'white' : 'transparent') + ';margin-bottom:4px;opacity:' + (hasContent ? '1' : '0.5') + ';">';
+        html += '<div style="font-size:16px;text-align:center;margin-bottom:2px;">' + udmo.icon + '</div>';
+        html += '<div style="font-size:9px;text-align:center;color:' + (isActive ? '#9333ea' : '#6b7280') + ';font-weight:' + (isActive ? '600' : '400') + ';line-height:1.2;">' + udmo.name.split(' ').slice(0, 2).join(' ') + '</div>';
+        html += '</div>';
+      });
+
+      html += '</div>';
+
+      // RIGHT: Content area
+      html += '<div style="flex:1;overflow-y:auto;padding:12px;">';
+
+      if (state.outputTab === 'structured') {
+        html += renderStructuredOutput();
+      } else {
+        html += renderUDMOContent(state.outputTab);
+      }
+
+      html += '</div>';
+      html += '</div>';
+
+      return html;
+    }
+
+    function renderStructuredOutput() {
       var html = '';
 
       // Render special fields first (safety, confidence, language)
@@ -2228,8 +2431,8 @@
       }
 
       for (var k in state.output) {
-        // Skip special fields already rendered
-        if (['SafetyFlags', 'ConfidenceScore', 'DetectedLanguage', 'GroundingSources', 'AlternativeReplies'].indexOf(k) > -1) continue;
+        // Skip special fields already rendered and internal fields
+        if (['SafetyFlags', 'ConfidenceScore', 'DetectedLanguage', 'GroundingSources', 'AlternativeReplies', '_udmoContent'].indexOf(k) > -1) continue;
 
         var v = state.output[k];
         var cls = '';
@@ -2259,6 +2462,171 @@
         state.output.AlternativeReplies.forEach(function(alt, i) {
           html += '<div class="alternative-reply"><div class="alternative-reply-header">Option ' + (i + 1) + ' - ' + alt.tone + ' tone</div><div style="font-weight:500;margin-bottom:4px;">' + esc(alt.subject) + '</div><div style="font-size:13px;color:#6b7280;">' + esc(alt.preview) + '</div></div>';
         });
+        html += '</div>';
+      }
+
+      return html;
+    }
+
+    function renderUDMOContent(udmoKey) {
+      var udmo = UDMOs[udmoKey];
+      var content = state.output._udmoContent ? state.output._udmoContent[udmoKey] : null;
+
+      if (!content) {
+        return '<div class="output-placeholder"><div style="font-size:48px;margin-bottom:12px;">📄</div><div>No content generated for this UDMO</div></div>';
+      }
+
+      var html = '';
+
+      // Render based on UDMO type
+      if (udmoKey === 'DraftResponse__udmo' || udmoKey === 'EmailDraft__udmo') {
+        // Email-style rendering
+        html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">';
+
+        // Email header
+        html += '<div style="background:#f9fafb;padding:12px 16px;border-bottom:1px solid #e5e7eb;">';
+        if (content.to) {
+          html += '<div style="font-size:12px;color:#6b7280;margin-bottom:4px;"><strong>To:</strong> ' + esc(content.to) + '</div>';
+        }
+        html += '<div style="font-size:14px;font-weight:600;color:#111827;">📧 ' + esc(content.subject) + '</div>';
+        html += '</div>';
+
+        // Email body
+        html += '<div style="padding:16px;">';
+        html += '<div style="font-size:14px;color:#374151;margin-bottom:12px;">' + content.greeting + '</div>';
+        html += '<div style="font-size:14px;color:#374151;line-height:1.6;">' + content.body + '</div>';
+        html += '<div style="font-size:14px;color:#374151;margin-top:16px;">' + content.closing + '</div>';
+        html += '<div style="font-size:14px;color:#6b7280;margin-top:12px;padding-top:12px;border-top:1px solid #e5e7eb;">' + content.signature + '</div>';
+        html += '</div>';
+
+        html += '</div>';
+      }
+
+      else if (udmoKey === 'InternalNote__udmo') {
+        // Internal note rendering
+        html += '<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;overflow:hidden;">';
+        html += '<div style="background:#fef3c7;padding:12px 16px;border-bottom:1px solid #fcd34d;">';
+        html += '<div style="font-size:14px;font-weight:600;color:#92400e;">📝 ' + esc(content.title) + '</div>';
+        if (content.priority) {
+          html += '<span style="font-size:10px;padding:2px 8px;background:#fbbf24;color:#78350f;border-radius:10px;margin-left:8px;">' + content.priority + ' Priority</span>';
+        }
+        html += '</div>';
+        html += '<div style="padding:16px;">';
+        // Simple markdown-like rendering
+        var mdContent = content.content.replace(/## (.*)/g, '<h3 style="font-size:14px;font-weight:600;color:#78350f;margin:12px 0 8px 0;">$1</h3>')
+          .replace(/### (.*)/g, '<h4 style="font-size:13px;font-weight:600;color:#92400e;margin:10px 0 6px 0;">$1</h4>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/- (.*)/g, '<div style="padding-left:16px;position:relative;"><span style="position:absolute;left:4px;">•</span>$1</div>')
+          .replace(/\d\. (.*)/g, '<div style="padding-left:16px;">$&</div>')
+          .replace(/\n\n/g, '<br/><br/>');
+        html += '<div style="font-size:13px;color:#78350f;line-height:1.6;">' + mdContent + '</div>';
+        if (content.tags && content.tags.length > 0) {
+          html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #fcd34d;">';
+          content.tags.forEach(function(tag) {
+            html += '<span style="display:inline-block;font-size:10px;padding:2px 8px;background:#fef3c7;color:#92400e;border-radius:10px;margin-right:4px;">#' + tag + '</span>';
+          });
+          html += '</div>';
+        }
+        html += '</div></div>';
+      }
+
+      else if (udmoKey === 'KnowledgeArticle__udmo') {
+        // Knowledge article rendering
+        html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">';
+        html += '<div style="background:#eff6ff;padding:16px;border-bottom:1px solid #bfdbfe;">';
+        html += '<div style="font-size:18px;font-weight:600;color:#1e40af;">📚 ' + esc(content.title) + '</div>';
+        html += '<div style="font-size:13px;color:#3b82f6;margin-top:8px;">' + esc(content.summary) + '</div>';
+        if (content.tableOfContents) {
+          html += '<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;">';
+          content.tableOfContents.forEach(function(item) {
+            html += '<span style="font-size:11px;padding:3px 10px;background:#dbeafe;color:#1d4ed8;border-radius:12px;">' + item + '</span>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+        html += '<div style="padding:16px;">';
+        // Simple markdown rendering
+        var articleContent = content.content.replace(/# (.*)/g, '<h2 style="font-size:16px;font-weight:600;color:#1e40af;margin:16px 0 8px 0;padding-bottom:4px;border-bottom:1px solid #e5e7eb;">$1</h2>')
+          .replace(/## (.*)/g, '<h3 style="font-size:14px;font-weight:600;color:#1d4ed8;margin:12px 0 6px 0;">$1</h3>')
+          .replace(/### (.*)/g, '<h4 style="font-size:13px;font-weight:500;color:#3b82f6;margin:10px 0 4px 0;">$1</h4>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/- (.*)/g, '<div style="padding-left:16px;margin:4px 0;"><span style="color:#3b82f6;margin-right:8px;">•</span>$1</div>')
+          .replace(/\n\n/g, '<br/>');
+        html += '<div style="font-size:13px;color:#374151;line-height:1.7;">' + articleContent + '</div>';
+        html += '</div></div>';
+      }
+
+      else if (udmoKey === 'FAQDocument__udmo') {
+        // FAQ rendering
+        html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">';
+        html += '<div style="background:#f0fdf4;padding:12px 16px;border-bottom:1px solid #86efac;">';
+        html += '<div style="font-size:16px;font-weight:600;color:#166534;">❓ ' + esc(content.title) + '</div>';
+        html += '</div>';
+        html += '<div style="padding:8px;">';
+        content.questions.forEach(function(faq, i) {
+          html += '<div style="padding:12px;border-bottom:1px solid #f3f4f6;">';
+          html += '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">Q' + (i + 1) + ': ' + esc(faq.q) + '</div>';
+          html += '<div style="font-size:13px;color:#6b7280;padding-left:20px;">' + esc(faq.a) + '</div>';
+          html += '</div>';
+        });
+        html += '</div></div>';
+      }
+
+      else if (udmoKey === 'VideoScript__udmo') {
+        // Video script rendering
+        html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">';
+        html += '<div style="background:#faf5ff;padding:12px 16px;border-bottom:1px solid #d8b4fe;">';
+        html += '<div style="font-size:16px;font-weight:600;color:#7c3aed;">🎬 ' + esc(content.title) + '</div>';
+        html += '<div style="font-size:12px;color:#9333ea;margin-top:4px;">Duration: ' + content.duration + '</div>';
+        html += '</div>';
+        html += '<div style="padding:16px;">';
+        var scriptContent = content.script.replace(/\[(.*?)\]/g, '<div style="font-size:11px;font-weight:600;color:#7c3aed;background:#ede9fe;padding:4px 8px;border-radius:4px;margin:12px 0 6px 0;display:inline-block;">$1</div><br/>')
+          .replace(/\n\n/g, '<br/>');
+        html += '<div style="font-size:13px;color:#374151;line-height:1.6;font-family:\'Courier New\',monospace;">' + scriptContent + '</div>';
+        html += '</div></div>';
+      }
+
+      else if (udmoKey === 'ProposalDocument__udmo') {
+        // Proposal rendering
+        html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">';
+        html += '<div style="background:linear-gradient(135deg,#1e40af,#7c3aed);padding:20px;color:white;">';
+        html += '<div style="font-size:18px;font-weight:600;">📋 ' + esc(content.title) + '</div>';
+        html += '<div style="font-size:12px;opacity:0.8;margin-top:6px;">Valid until: ' + content.validUntil + '</div>';
+        html += '</div>';
+        html += '<div style="padding:8px;">';
+        content.sections.forEach(function(section) {
+          html += '<div style="padding:16px;border-bottom:1px solid #f3f4f6;">';
+          html += '<div style="font-size:14px;font-weight:600;color:#1e40af;margin-bottom:8px;">' + esc(section.heading) + '</div>';
+          html += '<div style="font-size:13px;color:#374151;white-space:pre-line;">' + esc(section.content) + '</div>';
+          html += '</div>';
+        });
+        html += '</div></div>';
+      }
+
+      else if (udmoKey === 'MeetingAgenda__udmo') {
+        // Meeting agenda rendering
+        html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">';
+        html += '<div style="background:#f0f9ff;padding:12px 16px;border-bottom:1px solid #7dd3fc;">';
+        html += '<div style="font-size:16px;font-weight:600;color:#0369a1;">📅 ' + esc(content.title) + '</div>';
+        html += '<div style="font-size:12px;color:#0284c7;margin-top:4px;">Duration: ' + content.duration + '</div>';
+        html += '</div>';
+        html += '<div style="padding:12px 16px;">';
+        html += '<div style="font-size:12px;color:#6b7280;margin-bottom:8px;"><strong>Attendees:</strong> ' + content.attendees.join(', ') + '</div>';
+        html += '<div style="border-top:1px solid #e5e7eb;padding-top:12px;">';
+        content.agenda.forEach(function(item, i) {
+          html += '<div style="display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid #f3f4f6;">';
+          html += '<div style="font-size:11px;color:white;background:#0ea5e9;padding:2px 8px;border-radius:4px;flex-shrink:0;">' + item.time + '</div>';
+          html += '<div style="font-size:13px;color:#374151;">' + esc(item.topic) + '</div>';
+          html += '</div>';
+        });
+        html += '</div></div></div>';
+      }
+
+      else {
+        // Generic UDMO content rendering
+        html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:16px;">';
+        html += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:12px;">' + (udmo ? udmo.icon + ' ' + udmo.name : udmoKey) + '</div>';
+        html += '<pre style="font-size:12px;color:#6b7280;white-space:pre-wrap;">' + JSON.stringify(content, null, 2) + '</pre>';
         html += '</div>';
       }
 
