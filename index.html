@@ -976,7 +976,17 @@
     // Custom templates storage (will persist in localStorage)
     var CUSTOM_TEMPLATES = JSON.parse(localStorage.getItem('customTemplates') || '[]');
 
-    var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured', bulkMode: false, bulkProgress: 0, bulkResults: [], fieldSelectorOpen: false, inputDMOSelectorOpen: false, outputDMOSelectorOpen: false };
+    var state = { cloud: 'all', template: TEMPLATES[0], recordIdx: 0, running: false, done: false, output: null, model: 'gpt-4o', format: 'structured', bulkMode: false, bulkProgress: 0, bulkResults: [], fieldSelectorOpen: false, inputDMOSelectorOpen: false, outputDMOSelectorOpen: false, publishModalOpen: false };
+
+    // Publish configuration
+    var publishConfig = {
+      pipelineName: '',
+      trigger: 'manual',
+      environment: 'sandbox',
+      model: 'gpt-4o',
+      dailyLimit: 1000,
+      autoPublish: false
+    };
 
     // Runtime selected fields per template (allows customization)
     var selectedFieldsByTemplate = {};
@@ -1363,6 +1373,161 @@
       render();
     }
 
+    // Publish Modal Functions
+    function openPublishModal() {
+      // Initialize publish config with template defaults
+      publishConfig.pipelineName = state.template.name.replace(/[^a-zA-Z0-9_]/g, '_') + '_Pipeline';
+      publishConfig.model = state.model;
+      state.publishModalOpen = true;
+      render();
+    }
+
+    function closePublishModal() {
+      state.publishModalOpen = false;
+      render();
+    }
+
+    function updatePublishConfig(key, value) {
+      publishConfig[key] = value;
+      render();
+    }
+
+    function getPublishConfigJSON() {
+      var outputConfig = getSelectedOutputDMO();
+      var inputFields = getSelectedFields();
+      var templateUDMOs = state.template.outputUDMOs || [];
+
+      return {
+        pipeline: {
+          name: publishConfig.pipelineName,
+          templateId: state.template.id,
+          templateName: state.template.name,
+          cloud: state.template.cloud
+        },
+        trigger: {
+          type: publishConfig.trigger,
+          schedule: publishConfig.trigger === 'scheduled' ? 'daily' : null
+        },
+        runtime: {
+          environment: publishConfig.environment,
+          model: publishConfig.model,
+          dailyLimit: parseInt(publishConfig.dailyLimit) || 1000,
+          autoPublish: publishConfig.autoPublish
+        },
+        input: {
+          dmo: state.template.primaryDMO,
+          fields: inputFields
+        },
+        output: {
+          structured: {
+            dmo: outputConfig.mode === 'create' ? outputConfig.newDMOName : outputConfig.dmoKey,
+            mode: outputConfig.mode,
+            fields: state.template.outputFields || state.template.fields || []
+          },
+          unstructured: templateUDMOs.map(function(udmoKey) {
+            var udmo = UDMOs[udmoKey];
+            return {
+              key: udmoKey,
+              name: udmo ? udmo.name : udmoKey,
+              contentType: udmo ? udmo.contentType : 'Text'
+            };
+          })
+        },
+        createdAt: new Date().toISOString()
+      };
+    }
+
+    function publishPipeline() {
+      var config = getPublishConfigJSON();
+      console.log('Publishing pipeline:', config);
+      alert('Pipeline "' + publishConfig.pipelineName + '" published successfully!\\n\\nEnvironment: ' + publishConfig.environment + '\\nTrigger: ' + publishConfig.trigger);
+      closePublishModal();
+    }
+
+    function renderPublishModal() {
+      if (!state.publishModalOpen) return '';
+
+      var configJSON = getPublishConfigJSON();
+      var jsonPreview = JSON.stringify(configJSON, null, 2);
+
+      var bodyHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">';
+
+      // LEFT COLUMN: Parameter Selection
+      bodyHtml += '<div style="border-right:1px solid #e5e7eb;padding-right:24px;">';
+      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:16px;">⚙️ Pipeline Parameters</div>';
+
+      // Pipeline Name
+      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
+      bodyHtml += '<label class="form-label" style="font-size:12px;font-weight:500;color:#374151;">Pipeline Name</label>';
+      bodyHtml += '<input type="text" class="form-input" style="font-size:13px;" value="' + esc(publishConfig.pipelineName) + '" onchange="updatePublishConfig(\'pipelineName\', this.value)">';
+      bodyHtml += '</div>';
+
+      // Trigger Type
+      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
+      bodyHtml += '<label class="form-label" style="font-size:12px;font-weight:500;color:#374151;">Trigger</label>';
+      bodyHtml += '<div style="display:flex;gap:8px;">';
+      ['manual', 'scheduled', 'event'].forEach(function(t) {
+        var icons = { manual: '👆', scheduled: '⏰', event: '⚡' };
+        var labels = { manual: 'Manual', scheduled: 'Scheduled', event: 'Event-Driven' };
+        bodyHtml += '<button class="bulk-toggle-btn' + (publishConfig.trigger === t ? ' active' : '') + '" style="flex:1;padding:10px 8px;font-size:11px;" onclick="updatePublishConfig(\'trigger\', \'' + t + '\')">' + icons[t] + ' ' + labels[t] + '</button>';
+      });
+      bodyHtml += '</div></div>';
+
+      // Environment
+      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
+      bodyHtml += '<label class="form-label" style="font-size:12px;font-weight:500;color:#374151;">Environment</label>';
+      bodyHtml += '<div style="display:flex;gap:8px;">';
+      ['sandbox', 'production'].forEach(function(e) {
+        var icons = { sandbox: '🧪', production: '🚀' };
+        var labels = { sandbox: 'Sandbox', production: 'Production' };
+        bodyHtml += '<button class="bulk-toggle-btn' + (publishConfig.environment === e ? ' active' : '') + '" style="flex:1;padding:10px 8px;font-size:12px;" onclick="updatePublishConfig(\'environment\', \'' + e + '\')">' + icons[e] + ' ' + labels[e] + '</button>';
+      });
+      bodyHtml += '</div></div>';
+
+      // Model
+      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
+      bodyHtml += '<label class="form-label" style="font-size:12px;font-weight:500;color:#374151;">AI Model</label>';
+      bodyHtml += '<select class="form-input" style="font-size:13px;" onchange="updatePublishConfig(\'model\', this.value)">';
+      ['gpt-4o', 'gpt-4o-mini', 'claude-3-5-sonnet'].forEach(function(m) {
+        bodyHtml += '<option value="' + m + '"' + (publishConfig.model === m ? ' selected' : '') + '>' + m + '</option>';
+      });
+      bodyHtml += '</select></div>';
+
+      // Daily Limit
+      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
+      bodyHtml += '<label class="form-label" style="font-size:12px;font-weight:500;color:#374151;">Daily Record Limit</label>';
+      bodyHtml += '<input type="number" class="form-input" style="font-size:13px;" value="' + publishConfig.dailyLimit + '" min="1" max="100000" onchange="updatePublishConfig(\'dailyLimit\', this.value)">';
+      bodyHtml += '<div style="font-size:11px;color:#6b7280;margin-top:4px;">Maximum records to process per day</div>';
+      bodyHtml += '</div>';
+
+      // Auto-publish Toggle
+      bodyHtml += '<div class="form-group" style="margin-bottom:16px;">';
+      bodyHtml += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">';
+      bodyHtml += '<input type="checkbox" style="width:16px;height:16px;accent-color:#9333ea;"' + (publishConfig.autoPublish ? ' checked' : '') + ' onchange="updatePublishConfig(\'autoPublish\', this.checked)">';
+      bodyHtml += '<span style="font-size:13px;color:#374151;">Auto-publish outputs to downstream apps</span>';
+      bodyHtml += '</label>';
+      bodyHtml += '<div style="font-size:11px;color:#6b7280;margin-top:4px;margin-left:24px;">Skip manual review for high-confidence outputs</div>';
+      bodyHtml += '</div>';
+
+      bodyHtml += '</div>';
+
+      // RIGHT COLUMN: JSON Preview
+      bodyHtml += '<div>';
+      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:16px;">📋 Configuration Preview</div>';
+      bodyHtml += '<div style="font-size:11px;color:#6b7280;margin-bottom:8px;">This JSON will be saved when you publish the pipeline:</div>';
+      bodyHtml += '<pre style="background:#1f2937;color:#e5e7eb;padding:16px;border-radius:8px;font-size:11px;line-height:1.5;max-height:400px;overflow:auto;font-family:\'Monaco\',\'Menlo\',monospace;white-space:pre-wrap;word-break:break-word;">' + esc(jsonPreview) + '</pre>';
+      bodyHtml += '</div>';
+
+      bodyHtml += '</div>'; // Close grid
+
+      return '<div class="modal-overlay" onclick="if(event.target===this)closePublishModal()">' +
+        '<div class="modal" style="width:900px;max-height:85vh;">' +
+        '<div class="modal-header"><div class="modal-title">🚀 Publish Pipeline</div><button class="modal-close" onclick="closePublishModal()">×</button></div>' +
+        '<div class="modal-body" style="max-height:65vh;overflow-y:auto;">' + bodyHtml + '</div>' +
+        '<div class="modal-footer"><button class="btn-secondary" onclick="closePublishModal()">Cancel</button><button class="btn-next" onclick="publishPipeline()">🚀 Publish Pipeline</button></div>' +
+        '</div></div>';
+    }
+
     function selectOutputDMO(dmoKey) {
       var tplId = state.template.id;
       if (!selectedOutputDMOByTemplate[tplId]) {
@@ -1701,7 +1866,7 @@
 
       var html = '<div class="container">' +
         '<header class="header"><div class="logo"><div class="logo-box"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></div><span class="logo-text">Content Foundry</span><span class="logo-sub">Playground</span></div>' +
-        '<div class="header-right"><div class="model-select"><span style="color:#6b7280">Model:</span><select onchange="state.model=this.value"><option>gpt-4o</option><option>gpt-4o-mini</option><option>claude-3-5-sonnet</option></select></div><button class="btn-primary">Save Pipeline</button></div></header>' +
+        '<div class="header-right"><div class="model-select"><span style="color:#6b7280">Model:</span><select onchange="state.model=this.value"><option>gpt-4o</option><option>gpt-4o-mini</option><option>claude-3-5-sonnet</option></select></div><button class="btn-secondary" style="margin-right:8px;">Save Pipeline</button><button class="btn-primary" onclick="openPublishModal()">🚀 Publish</button></div></header>' +
         '<div class="cloud-tabs"><button class="cloud-tab' + (state.cloud === 'all' ? ' active' : '') + '" onclick="state.cloud=\'all\';state.recordIdx=0;state.done=false;render()">All Clouds</button>';
       for (var c in CLOUDS) { html += '<button class="cloud-tab' + (state.cloud === c ? ' active' : '') + '" onclick="state.cloud=\'' + c + '\';state.recordIdx=0;state.done=false;render()">' + CLOUDS[c].icon + ' ' + CLOUDS[c].name + '</button>'; }
       // Get all fields from DMO
@@ -1819,6 +1984,9 @@
 
       // Add the Output DMO Selector Modal
       html += renderOutputDMOSelectorModal();
+
+      // Add the Publish Modal
+      html += renderPublishModal();
 
       document.getElementById('app').innerHTML = html;
     }
