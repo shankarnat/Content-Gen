@@ -266,7 +266,7 @@
     var DMOs = {
       // ==================== SERVICE CLOUD ====================
       'EmailMessage__dlm': {
-        cloud: 'service', name: 'Email Message', icon: '📧',
+        cloud: 'service', name: 'Email Message', displayName: 'Email Messages', icon: '📧',
         records: [
           { EmailId: 'EMAIL-001', Subject: 'Error uploading files', Body: 'Hi Support,\n\nI keep getting error code E-5502 when uploading files larger than 25MB. My account is john.smith@acmecorp.com.\n\nThis is blocking our quarterly report. Please help!\n\n- John Smith', FromAddress: 'john.smith@acmecorp.com', ToAddress: 'support@company.com', CcAddress: 'manager@acmecorp.com', SentDate: '2024-01-15 09:32:00', HasAttachment: true, ThreadId: 'THR-8821', CaseId: 'CASE-004', AccountId: 'ACC-1001', ContactId: 'CON-501', Channel: 'Email', Status: 'New' },
           { EmailId: 'EMAIL-002', Subject: 'Love your product!', Body: 'Just wanted to say your new dashboard is amazing! Saved our team 5 hours per week.\n\nCould you add PDF export?\n\nThanks!\nSarah', FromAddress: 'sarah@happycustomer.com', ToAddress: 'support@company.com', CcAddress: '', SentDate: '2024-01-16 14:22:00', HasAttachment: false, ThreadId: 'THR-8834', CaseId: 'CASE-005', AccountId: 'ACC-1002', ContactId: 'CON-502', Channel: 'Email', Status: 'New' },
@@ -275,7 +275,7 @@
         ]
       },
       'ResolvedCase__dlm': {
-        cloud: 'service', name: 'Resolved Case', icon: '✅',
+        cloud: 'service', name: 'Resolved Case', displayName: 'Resolved Cases', icon: '✅',
         records: [
           { CaseId: 'CASE-R001', Subject: 'Cannot connect API to Salesforce', Resolution: 'Resolved - OAuth token expired', Comments: 'Steps:\n1. Setup > Connected Apps\n2. Generate new key\n3. Update credentials\n4. Test connection', Category: 'Technical', Priority: 'High', CreatedDate: '2024-01-10', ClosedDate: '2024-01-11', AgentId: 'AGT-101', AgentName: 'Mike Thompson', CustomerSatisfactionScore: 5, FirstResponseTime: '2 hours', ResolutionTime: '18 hours', AccountId: 'ACC-1001', ProductArea: 'API Integration', RootCause: 'Expired credentials' },
           { CaseId: 'CASE-R002', Subject: 'Reports wrong timezone', Resolution: 'Updated timezone settings', Comments: 'Changed from UTC to America/New_York in Settings > Time & Language', Category: 'Configuration', Priority: 'Medium', CreatedDate: '2024-01-12', ClosedDate: '2024-01-12', AgentId: 'AGT-102', AgentName: 'Lisa Park', CustomerSatisfactionScore: 4, FirstResponseTime: '30 mins', ResolutionTime: '2 hours', AccountId: 'ACC-1002', ProductArea: 'Reporting', RootCause: 'User settings misconfiguration' },
@@ -286,7 +286,7 @@
 
       // ==================== SALES CLOUD ====================
       'VoiceCall__dlm': {
-        cloud: 'sales', name: 'Voice Call', icon: '📞',
+        cloud: 'sales', name: 'Voice Call', displayName: 'Voice Calls', icon: '📞',
         records: [
           { CallId: 'CALL-001', Duration: '32:15', ContactName: 'John Smith, VP Engineering', Transcript: 'Sales Rep: Thanks for the time today.\n\nJohn: Your price is higher than Competitor X - they quoted $100k.\n\nSales Rep: We include 24/7 support and 99.9% uptime.\n\nJohn: That matters. When could we go live?\n\nSales Rep: 6 weeks with full deployment.', OpportunityId: 'OPP-001', Direction: 'Outbound', CallDate: '2024-01-18 10:00:00', CallType: 'Discovery', Sentiment: 'Positive', AgentId: 'REP-201', AgentName: 'Alex Johnson', RecordingUrl: '/recordings/CALL-001.mp3', AccountId: 'ACC-1001', ContactId: 'CON-601', NextSteps: 'Send proposal', DispositionCode: 'Interested' },
           { CallId: 'CALL-002', Duration: '18:45', ContactName: 'Sarah Jones, CTO', Transcript: 'Sarah: We love the demo. The API flexibility is huge.\n\nSales Rep: Do you need AWS and Azure integration?\n\nSarah: Yes! Can we schedule procurement next week?', OpportunityId: 'OPP-002', Direction: 'Outbound', CallDate: '2024-01-19 14:30:00', CallType: 'Follow-up', Sentiment: 'Very Positive', AgentId: 'REP-202', AgentName: 'Maria Garcia', RecordingUrl: '/recordings/CALL-002.mp3', AccountId: 'ACC-1002', ContactId: 'CON-602', NextSteps: 'Schedule procurement', DispositionCode: 'Ready to Buy' },
@@ -295,7 +295,7 @@
         ]
       },
       'Account__dlm': {
-        cloud: 'sales', name: 'Account', icon: '🏢',
+        cloud: 'sales', name: 'Account', displayName: 'Accounts', icon: '🏢',
         records: [
           { AccountId: 'ACC-1001', Name: 'Acme Corporation', Industry: 'Manufacturing', AnnualRevenue: '$2.4B', Website: 'www.acmecorp.com', Phone: '(555) 100-1001', BillingCity: 'Chicago', BillingState: 'IL', BillingCountry: 'USA', EmployeeCount: 12000, SupportTier: 'Premium', CustomerSince: '2019-03-15', AccountOwner: 'Alex Johnson', AccountType: 'Enterprise', ParentAccountId: '', HealthScore: 85, LastActivityDate: '2024-01-18', OpenOpportunities: 2, TotalContractValue: '$450,000' },
           { AccountId: 'ACC-1002', Name: 'TechStart Inc', Industry: 'Technology', AnnualRevenue: '$180M', Website: 'www.techstart.io', Phone: '(555) 200-2002', BillingCity: 'San Francisco', BillingState: 'CA', BillingCountry: 'USA', EmployeeCount: 450, SupportTier: 'Standard', CustomerSince: '2022-08-01', AccountOwner: 'Maria Garcia', AccountType: 'Mid-Market', ParentAccountId: '', HealthScore: 92, LastActivityDate: '2024-01-19', OpenOpportunities: 1, TotalContractValue: '$75,000' },
@@ -304,7 +304,7 @@
         ]
       },
       'Opportunity__dlm': {
-        cloud: 'sales', name: 'Opportunity', icon: '💰',
+        cloud: 'sales', name: 'Opportunity', displayName: 'Opportunities', icon: '💰',
         records: [
           { OpportunityId: 'OPP-001', Name: 'Acme - Enterprise License', Amount: 150000, Stage: 'Negotiation', AccountId: 'ACC-1001', CloseDate: '2024-03-15', Probability: 65, NextStep: 'Send revised proposal', LeadSource: 'Partner Referral', ForecastCategory: 'Pipeline', Type: 'New Business', ProductInterest: 'Enterprise Suite', CompetitorPresence: 'Competitor X', DecisionMaker: 'John Smith', BudgetConfirmed: true, CreatedDate: '2023-11-01', LastStageChangeDate: '2024-01-10', DaysInStage: 8 },
           { OpportunityId: 'OPP-002', Name: 'TechStart - Expansion', Amount: 75000, Stage: 'Proposal', AccountId: 'ACC-1002', CloseDate: '2024-02-28', Probability: 80, NextStep: 'Procurement call', LeadSource: 'Inbound', ForecastCategory: 'Commit', Type: 'Expansion', ProductInterest: 'Platform + API', CompetitorPresence: 'None', DecisionMaker: 'Sarah Jones', BudgetConfirmed: true, CreatedDate: '2023-12-15', LastStageChangeDate: '2024-01-15', DaysInStage: 4 },
@@ -315,7 +315,7 @@
 
       // ==================== MARKETING CLOUD ====================
       'SurveyResponse__dlm': {
-        cloud: 'marketing', name: 'Survey Response', icon: '📊',
+        cloud: 'marketing', name: 'Survey Response', displayName: 'Survey Responses', icon: '📊',
         records: [
           { ResponseId: 'SURV-001', SurveyName: 'Q4 NPS', Rating: 2, OpenEndedFeedback: 'Website redesign is terrible. Customer service took 3 days to respond. Very disappointed.', ContactId: 'CON-101', SubmittedDate: '2024-01-10 15:32:00', Channel: 'Email', ProductPurchased: 'Premium Plan', ResponseTime: '3 days', CustomerSegment: 'At Risk', Region: 'Northeast', DeviceType: 'Mobile', CompletionRate: 100, PreviousNPS: 7, NPSChange: -5, FollowUpStatus: 'Pending' },
           { ResponseId: 'SURV-002', SurveyName: 'Q4 NPS', Rating: 9, OpenEndedFeedback: 'Love the new product! Shipping is fast. Customer service went above and beyond!', ContactId: 'CON-102', SubmittedDate: '2024-01-11 09:15:00', Channel: 'In-App', ProductPurchased: 'Standard Plan', ResponseTime: '1 day', CustomerSegment: 'Promoter', Region: 'West', DeviceType: 'Desktop', CompletionRate: 100, PreviousNPS: 8, NPSChange: 1, FollowUpStatus: 'None Needed' },
@@ -323,7 +323,7 @@
         ]
       },
       'UnifiedProfile__dlm': {
-        cloud: 'marketing', name: 'Unified Profile', icon: '👤',
+        cloud: 'marketing', name: 'Unified Profile', displayName: 'Customer Profiles', icon: '👤',
         records: [
           { ProfileId: 'UP-001', Name: 'Jennifer Martinez', Email: 'j.martinez@email.com', Phone: '(555) 301-3001', LoyaltyStatus: 'Gold', LTV: '$4,250', LastInteraction: '1-star review (shipping delay)', Preferences: 'Eco-friendly, Fast shipping', Segment: 'High Value At Risk', ChurnScore: 72, EngagementScore: 45, FirstPurchaseDate: '2021-06-15', TotalOrders: 28, AverageOrderValue: '$152', LastPurchaseDate: '2024-01-05', PreferredChannel: 'Email', BirthMonth: 'March', City: 'Austin', State: 'TX', OptInEmail: true, OptInSMS: false },
           { ProfileId: 'UP-002', Name: 'Robert Chen', Email: 'rchen@business.com', Phone: '(555) 302-3002', LoyaltyStatus: 'Platinum', LTV: '$12,800', LastInteraction: 'Purchased Premium Bundle', Preferences: 'Tech gadgets, Early access', Segment: 'VIP', ChurnScore: 8, EngagementScore: 95, FirstPurchaseDate: '2019-02-20', TotalOrders: 67, AverageOrderValue: '$191', LastPurchaseDate: '2024-01-18', PreferredChannel: 'App', BirthMonth: 'September', City: 'Seattle', State: 'WA', OptInEmail: true, OptInSMS: true },
@@ -334,14 +334,14 @@
 
       // ==================== HEALTH CLOUD ====================
       'ClinicalNote__dlm': {
-        cloud: 'health', name: 'Clinical Note', icon: '📋',
+        cloud: 'health', name: 'Clinical Note', displayName: 'Clinical Notes', icon: '📋',
         records: [
           { NoteId: 'CN-001', NoteType: 'Progress Note', Provider: 'Dr. Sarah Johnson', ProviderId: 'NPI-1234567', Specialty: 'Internal Medicine', Department: 'Primary Care', FacilityName: 'Springfield Medical Center', EncounterDate: '2024-01-15', EncounterType: 'Office Visit', ChiefComplaint: 'Diabetes/HTN follow-up', ClinicalText: 'Patient: John Smith, DOB 03/15/1965, MRN 78432\nAddress: 123 Oak St, Springfield\n\nDiabetes and Hypertension follow-up.\n\nMedications:\n- Metformin 1000mg BID\n- Lisinopril 20mg daily\n\nVitals: BP 138/82, Weight 198 lbs\n\nAssessment: DM improving, HTN at goal\nPlan: Continue meds, follow up 3 months', VitalSigns: 'BP 138/82, HR 76, Temp 98.6, Weight 198 lbs', PrimaryDiagnosis: 'E11.9 - Type 2 Diabetes', SecondaryDiagnosis: 'I10 - Hypertension', BillingCodes: 'CPT 99214', SignedDate: '2024-01-15', CoSignRequired: false },
           { NoteId: 'CN-002', NoteType: 'Visit Summary', Provider: 'Dr. Michael Lee', ProviderId: 'NPI-2345678', Specialty: 'Psychiatry', Department: 'Behavioral Health', FacilityName: 'Wellness Clinic', EncounterDate: '2024-01-18', EncounterType: 'New Patient', ChiefComplaint: 'Anxiety', ClinicalText: 'Patient: Mary Johnson, DOB 07/22/1978\nPhone: (555) 876-5432\n\nAnxiety management - new patient\n\n45 y/o with worsening anxiety, difficulty sleeping.\n\nAssessment: GAD, Insomnia\nPlan: Start Sertraline 25mg, refer to behavioral health', VitalSigns: 'BP 122/78, HR 88, Temp 98.4, Weight 145 lbs', PrimaryDiagnosis: 'F41.1 - Generalized Anxiety', SecondaryDiagnosis: 'G47.00 - Insomnia', BillingCodes: 'CPT 99205', SignedDate: '2024-01-18', CoSignRequired: false }
         ]
       },
       'PatientMessage__dlm': {
-        cloud: 'health', name: 'Patient Message', icon: '💬',
+        cloud: 'health', name: 'Patient Message', displayName: 'Patient Messages', icon: '💬',
         records: [
           { MessageId: 'PM-001', PatientName: 'Robert Garcia', PatientMRN: 'MRN-45231', PatientDOB: '1958-05-12', MessageText: 'Need to refill Lisinopril 10mg. 5 pills left. CVS on Main St. Also having dizziness when standing - is that from the medication?', Timestamp: '2024-01-20 09:15 AM', Source: 'Patient Portal', Department: 'Primary Care', AssignedProvider: 'Dr. Sarah Johnson', Priority: 'Medium', Category: 'Medication', HasAttachment: false, ResponseRequired: true, ResponseDeadline: '2024-01-22', PreviousMessageId: '', InsuranceId: 'BCBS-12345', PharmacyName: 'CVS Main St', PharmacyPhone: '(555) 400-4001' },
           { MessageId: 'PM-002', PatientName: 'Susan Miller', PatientMRN: 'MRN-45232', PatientDOB: '1975-11-03', MessageText: 'Got a bill for $450 but thought preventive care was covered. I have BlueCross PPO. Can someone explain?', Timestamp: '2024-01-20 11:30 AM', Source: 'Patient Portal', Department: 'Billing', AssignedProvider: '', Priority: 'Low', Category: 'Billing', HasAttachment: true, ResponseRequired: true, ResponseDeadline: '2024-01-25', PreviousMessageId: '', InsuranceId: 'BCBS-PPO-67890', PharmacyName: '', PharmacyPhone: '' },
@@ -352,7 +352,7 @@
 
       // ==================== PARTY SUBJECT AREA ====================
       'Individual__dlm': {
-        cloud: 'sales', name: 'Individual', icon: '👤', subjectArea: 'Party',
+        cloud: 'sales', name: 'Individual', displayName: 'Individuals', icon: '👤', subjectArea: 'Party',
         records: [
           { IndividualId: 'IND-001', FirstName: 'John', LastName: 'Smith', Email: 'john.smith@acmecorp.com', Phone: '(555) 101-1001', BirthDate: '1980-03-15', Gender: 'Male', Title: 'VP Engineering', PreferredChannel: 'Email', DoNotEmail: false, DoNotCall: false, DoNotTrack: false, CreatedDate: '2019-03-15' },
           { IndividualId: 'IND-002', FirstName: 'Sarah', LastName: 'Jones', Email: 'sjones@techstart.io', Phone: '(555) 202-2002', BirthDate: '1985-07-22', Gender: 'Female', Title: 'CTO', PreferredChannel: 'Phone', DoNotEmail: false, DoNotCall: false, DoNotTrack: false, CreatedDate: '2022-08-01' },
@@ -360,7 +360,7 @@
         ]
       },
       'Contact__dlm': {
-        cloud: 'sales', name: 'Contact', icon: '📇', subjectArea: 'Party',
+        cloud: 'sales', name: 'Contact', displayName: 'Contacts', icon: '📇', subjectArea: 'Party',
         records: [
           { ContactId: 'CON-601', FirstName: 'John', LastName: 'Smith', Email: 'john.smith@acmecorp.com', Phone: '(555) 101-1001', AccountId: 'ACC-1001', Title: 'VP Engineering', Department: 'Engineering', MailingCity: 'Chicago', MailingState: 'IL', LeadSource: 'Partner Referral', CreatedDate: '2019-03-15', LastActivityDate: '2024-01-18' },
           { ContactId: 'CON-602', FirstName: 'Sarah', LastName: 'Jones', Email: 'sjones@techstart.io', Phone: '(555) 202-2002', AccountId: 'ACC-1002', Title: 'CTO', Department: 'Technology', MailingCity: 'San Francisco', MailingState: 'CA', LeadSource: 'Inbound', CreatedDate: '2022-08-01', LastActivityDate: '2024-01-19' },
@@ -368,7 +368,7 @@
         ]
       },
       'Lead__dlm': {
-        cloud: 'sales', name: 'Lead', icon: '🎯', subjectArea: 'Party',
+        cloud: 'sales', name: 'Lead', displayName: 'Leads', icon: '🎯', subjectArea: 'Party',
         records: [
           { LeadId: 'LEAD-001', FirstName: 'David', LastName: 'Wilson', Email: 'dwilson@newprospect.com', Phone: '(555) 501-5001', Company: 'New Prospect Inc', Title: 'Director of IT', Industry: 'Technology', LeadSource: 'Web', Status: 'Working', Rating: 'Hot', AnnualRevenue: 50000000, NumberOfEmployees: 200, CreatedDate: '2024-01-10' },
           { LeadId: 'LEAD-002', FirstName: 'Emily', LastName: 'Davis', Email: 'edavis@startup.co', Phone: '(555) 502-5002', Company: 'Startup Co', Title: 'CEO', Industry: 'SaaS', LeadSource: 'Referral', Status: 'New', Rating: 'Warm', AnnualRevenue: 5000000, NumberOfEmployees: 25, CreatedDate: '2024-01-15' },
@@ -378,7 +378,7 @@
 
       // ==================== CONTACT POINT SUBJECT AREA ====================
       'ContactPointEmail__dlm': {
-        cloud: 'marketing', name: 'Contact Point Email', icon: '📧', subjectArea: 'Contact Point',
+        cloud: 'marketing', name: 'Contact Point Email', displayName: 'Email Addresses', icon: '📧', subjectArea: 'Contact Point',
         records: [
           { ContactPointEmailId: 'CPE-001', EmailAddress: 'john.smith@acmecorp.com', EmailType: 'Work', IsPrimary: true, IsVerified: true, IndividualId: 'IND-001', ConsentStatus: 'OptIn', LastVerifiedDate: '2024-01-15' },
           { ContactPointEmailId: 'CPE-002', EmailAddress: 'jsmith.personal@gmail.com', EmailType: 'Personal', IsPrimary: false, IsVerified: true, IndividualId: 'IND-001', ConsentStatus: 'OptIn', LastVerifiedDate: '2023-12-20' },
@@ -386,7 +386,7 @@
         ]
       },
       'ContactPointPhone__dlm': {
-        cloud: 'marketing', name: 'Contact Point Phone', icon: '📱', subjectArea: 'Contact Point',
+        cloud: 'marketing', name: 'Contact Point Phone', displayName: 'Phone Numbers', icon: '📱', subjectArea: 'Contact Point',
         records: [
           { ContactPointPhoneId: 'CPP-001', PhoneNumber: '(555) 101-1001', PhoneType: 'Work', IsPrimary: true, IsSMSCapable: true, IndividualId: 'IND-001', ConsentStatus: 'OptIn', LastVerifiedDate: '2024-01-15' },
           { ContactPointPhoneId: 'CPP-002', PhoneNumber: '(555) 101-1002', PhoneType: 'Mobile', IsPrimary: false, IsSMSCapable: true, IndividualId: 'IND-001', ConsentStatus: 'OptIn', LastVerifiedDate: '2024-01-10' },
@@ -394,7 +394,7 @@
         ]
       },
       'ContactPointAddress__dlm': {
-        cloud: 'marketing', name: 'Contact Point Address', icon: '🏠', subjectArea: 'Contact Point',
+        cloud: 'marketing', name: 'Contact Point Address', displayName: 'Addresses', icon: '🏠', subjectArea: 'Contact Point',
         records: [
           { ContactPointAddressId: 'CPA-001', Street: '123 Main St', City: 'Chicago', State: 'IL', PostalCode: '60601', Country: 'USA', AddressType: 'Billing', IsPrimary: true, IndividualId: 'IND-001', IsVerified: true },
           { ContactPointAddressId: 'CPA-002', Street: '456 Oak Ave', City: 'San Francisco', State: 'CA', PostalCode: '94102', Country: 'USA', AddressType: 'Shipping', IsPrimary: true, IndividualId: 'IND-002', IsVerified: true },
@@ -404,7 +404,7 @@
 
       // ==================== SALES ORDER SUBJECT AREA ====================
       'SalesOrder__dlm': {
-        cloud: 'sales', name: 'Sales Order', icon: '🧾', subjectArea: 'Sales Order',
+        cloud: 'sales', name: 'Sales Order', displayName: 'Sales Orders', icon: '🧾', subjectArea: 'Sales Order',
         records: [
           { SalesOrderId: 'SO-001', OrderNumber: 'ORD-2024-0001', AccountId: 'ACC-1001', Status: 'Activated', TotalAmount: 150000, OrderDate: '2024-01-15', ShipDate: '2024-02-01', BillingCity: 'Chicago', BillingState: 'IL', PaymentTerms: 'Net 30', ContractId: 'CTR-001' },
           { SalesOrderId: 'SO-002', OrderNumber: 'ORD-2024-0002', AccountId: 'ACC-1002', Status: 'Draft', TotalAmount: 75000, OrderDate: '2024-01-18', ShipDate: '', BillingCity: 'San Francisco', BillingState: 'CA', PaymentTerms: 'Net 15', ContractId: '' },
@@ -412,7 +412,7 @@
         ]
       },
       'SalesOrderProduct__dlm': {
-        cloud: 'sales', name: 'Sales Order Product', icon: '📦', subjectArea: 'Sales Order',
+        cloud: 'sales', name: 'Sales Order Product', displayName: 'Order Line Items', icon: '📦', subjectArea: 'Sales Order',
         records: [
           { SalesOrderProductId: 'SOP-001', SalesOrderId: 'SO-001', ProductId: 'PROD-001', ProductName: 'Enterprise Suite License', Quantity: 100, UnitPrice: 1200, TotalPrice: 120000, Discount: 0 },
           { SalesOrderProductId: 'SOP-002', SalesOrderId: 'SO-001', ProductId: 'PROD-002', ProductName: 'Premium Support', Quantity: 1, UnitPrice: 30000, TotalPrice: 30000, Discount: 0 },
@@ -422,7 +422,7 @@
 
       // ==================== PRODUCT SUBJECT AREA ====================
       'Product__dlm': {
-        cloud: 'sales', name: 'Product', icon: '🏷️', subjectArea: 'Product',
+        cloud: 'sales', name: 'Product', displayName: 'Products', icon: '🏷️', subjectArea: 'Product',
         records: [
           { ProductId: 'PROD-001', Name: 'Enterprise Suite License', ProductCode: 'ENT-LIC', Family: 'Licenses', IsActive: true, UnitPrice: 1200, Description: 'Full enterprise software license per user', Category: 'Software' },
           { ProductId: 'PROD-002', Name: 'Premium Support', ProductCode: 'PREM-SUP', Family: 'Services', IsActive: true, UnitPrice: 30000, Description: '24/7 dedicated support with SLA', Category: 'Support' },
@@ -433,7 +433,7 @@
 
       // ==================== CASE SUBJECT AREA ====================
       'Case__dlm': {
-        cloud: 'service', name: 'Case', icon: '📁', subjectArea: 'Case',
+        cloud: 'service', name: 'Case', displayName: 'Cases', icon: '📁', subjectArea: 'Case',
         records: [
           { CaseId: 'CASE-001', CaseNumber: '00001234', Subject: 'Cannot login to dashboard', Status: 'Open', Priority: 'High', Origin: 'Email', AccountId: 'ACC-1001', ContactId: 'CON-601', OwnerId: 'AGT-101', CreatedDate: '2024-01-18', ClosedDate: '', Description: 'User reports being unable to access the dashboard after password reset', Type: 'Problem' },
           { CaseId: 'CASE-002', CaseNumber: '00001235', Subject: 'Feature request: Dark mode', Status: 'Open', Priority: 'Low', Origin: 'Web', AccountId: 'ACC-1002', ContactId: 'CON-602', OwnerId: 'AGT-102', CreatedDate: '2024-01-19', ClosedDate: '', Description: 'Customer requesting dark mode for the application', Type: 'Feature Request' },
@@ -443,7 +443,7 @@
 
       // ==================== ENGAGEMENT SUBJECT AREA ====================
       'EmailEngagement__dlm': {
-        cloud: 'marketing', name: 'Email Engagement', icon: '📩', subjectArea: 'Engagement',
+        cloud: 'marketing', name: 'Email Engagement', displayName: 'Email Activity', icon: '📩', subjectArea: 'Engagement',
         records: [
           { EngagementId: 'EE-001', CampaignId: 'CAMP-001', IndividualId: 'IND-001', EmailAddress: 'john.smith@acmecorp.com', EventType: 'Open', EventDate: '2024-01-15 10:32:00', EmailName: 'Q1 Product Launch', ClickedLink: '', DeviceType: 'Desktop' },
           { EngagementId: 'EE-002', CampaignId: 'CAMP-001', IndividualId: 'IND-001', EmailAddress: 'john.smith@acmecorp.com', EventType: 'Click', EventDate: '2024-01-15 10:35:00', EmailName: 'Q1 Product Launch', ClickedLink: '/pricing', DeviceType: 'Desktop' },
@@ -452,7 +452,7 @@
         ]
       },
       'WebEngagement__dlm': {
-        cloud: 'marketing', name: 'Web Engagement', icon: '🌐', subjectArea: 'Engagement',
+        cloud: 'marketing', name: 'Web Engagement', displayName: 'Web Activity', icon: '🌐', subjectArea: 'Engagement',
         records: [
           { WebEngagementId: 'WE-001', IndividualId: 'IND-001', SessionId: 'SESS-001', PageUrl: '/pricing', PageTitle: 'Pricing Plans', EventType: 'PageView', EventDate: '2024-01-15 10:40:00', Duration: 45, ReferrerUrl: '/products', DeviceType: 'Desktop' },
           { WebEngagementId: 'WE-002', IndividualId: 'IND-001', SessionId: 'SESS-001', PageUrl: '/demo', PageTitle: 'Request Demo', EventType: 'FormSubmit', EventDate: '2024-01-15 10:42:00', Duration: 120, ReferrerUrl: '/pricing', DeviceType: 'Desktop' },
@@ -460,7 +460,7 @@
         ]
       },
       'CampaignMember__dlm': {
-        cloud: 'marketing', name: 'Campaign Member', icon: '📢', subjectArea: 'Engagement',
+        cloud: 'marketing', name: 'Campaign Member', displayName: 'Campaign Members', icon: '📢', subjectArea: 'Engagement',
         records: [
           { CampaignMemberId: 'CM-001', CampaignId: 'CAMP-001', CampaignName: 'Q1 Product Launch', IndividualId: 'IND-001', Status: 'Responded', HasResponded: true, FirstRespondedDate: '2024-01-15', LeadSource: 'Email' },
           { CampaignMemberId: 'CM-002', CampaignId: 'CAMP-001', CampaignName: 'Q1 Product Launch', IndividualId: 'IND-002', Status: 'Sent', HasResponded: false, FirstRespondedDate: '', LeadSource: 'Email' },
@@ -470,7 +470,7 @@
 
       // ==================== LOYALTY SUBJECT AREA ====================
       'LoyaltyMember__dlm': {
-        cloud: 'marketing', name: 'Loyalty Member', icon: '⭐', subjectArea: 'Loyalty',
+        cloud: 'marketing', name: 'Loyalty Member', displayName: 'Loyalty Members', icon: '⭐', subjectArea: 'Loyalty',
         records: [
           { LoyaltyMemberId: 'LM-001', MemberNumber: 'LOYAL-10001', IndividualId: 'IND-001', ProgramId: 'PROG-001', Tier: 'Gold', PointsBalance: 15000, LifetimePoints: 45000, JoinDate: '2020-03-15', TierExpirationDate: '2025-03-15', Status: 'Active' },
           { LoyaltyMemberId: 'LM-002', MemberNumber: 'LOYAL-10002', IndividualId: 'IND-002', ProgramId: 'PROG-001', Tier: 'Platinum', PointsBalance: 52000, LifetimePoints: 128000, JoinDate: '2019-02-20', TierExpirationDate: '2025-02-20', Status: 'Active' },
@@ -478,7 +478,7 @@
         ]
       },
       'LoyaltyProgram__dlm': {
-        cloud: 'marketing', name: 'Loyalty Program', icon: '🏆', subjectArea: 'Loyalty',
+        cloud: 'marketing', name: 'Loyalty Program', displayName: 'Loyalty Programs', icon: '🏆', subjectArea: 'Loyalty',
         records: [
           { LoyaltyProgramId: 'PROG-001', Name: 'Rewards Plus', Description: 'Our premier customer loyalty program', Status: 'Active', PointsExpirationMonths: 24, TierCount: 4, StartDate: '2018-01-01', EndDate: '' },
           { LoyaltyProgramId: 'PROG-002', Name: 'Partner Program', Description: 'Loyalty program for channel partners', Status: 'Active', PointsExpirationMonths: 12, TierCount: 3, StartDate: '2020-06-01', EndDate: '' }
@@ -488,12 +488,12 @@
 
     // Subject Areas for organizing DMOs
     var SUBJECT_AREAS = {
-      'Party': { icon: '👥', name: 'Party', desc: 'Individuals, contacts, and party identification' },
-      'Contact Point': { icon: '📍', name: 'Contact Point', desc: 'Email, phone, and address data' },
-      'Sales Order': { icon: '🛒', name: 'Sales Order', desc: 'Orders and order products' },
-      'Product': { icon: '📦', name: 'Product', desc: 'Products and pricing' },
-      'Case': { icon: '🎫', name: 'Case', desc: 'Support cases and interactions' },
-      'Engagement': { icon: '📊', name: 'Engagement', desc: 'Email, web, and campaign engagement' },
+      'Party': { icon: '👥', name: 'People & Accounts', desc: 'Individuals, contacts, leads, and accounts' },
+      'Contact Point': { icon: '📍', name: 'Contact Information', desc: 'Email addresses, phone numbers, and addresses' },
+      'Sales Order': { icon: '🛒', name: 'Orders', desc: 'Sales orders and line items' },
+      'Product': { icon: '📦', name: 'Products', desc: 'Product catalog and pricing' },
+      'Case': { icon: '🎫', name: 'Cases & Service', desc: 'Support cases and service interactions' },
+      'Engagement': { icon: '📊', name: 'Engagement', desc: 'Email, web, and campaign interactions' },
       'Loyalty': { icon: '🏆', name: 'Loyalty', desc: 'Loyalty programs and members' }
     };
 
@@ -1300,7 +1300,7 @@
       var selectedDMOs = getSelectedInputDMOs();
       var dmosByArea = getDMOsBySubjectArea();
 
-      var bodyHtml = '<div style="font-size:13px;color:#6b7280;margin-bottom:16px;">Select which Data Model Objects to use as inputs for this pipeline. The primary DMO cannot be removed.</div>';
+      var bodyHtml = '<div style="font-size:13px;color:#6b7280;margin-bottom:16px;">Select which data sources to use as inputs for this pipeline. The primary data source cannot be removed.</div>';
 
       // Render DMOs by Subject Area
       for (var area in SUBJECT_AREAS) {
@@ -1317,7 +1317,7 @@
 
           bodyHtml += '<div class="dmo-select-card' + (isSelected ? ' selected' : '') + (isPrimary ? ' disabled' : '') + '" onclick="' + (isPrimary ? '' : 'toggleInputDMO(\'' + dmo.key + '\')') + '">';
           bodyHtml += '<span class="dmo-select-icon">' + dmo.icon + '</span>';
-          bodyHtml += '<div class="dmo-select-info"><div class="dmo-select-name">' + dmo.name + (isPrimary ? ' <span style="font-size:10px;background:#9333ea;color:white;padding:2px 6px;border-radius:4px;">PRIMARY</span>' : '') + '</div>';
+          bodyHtml += '<div class="dmo-select-info"><div class="dmo-select-name">' + (dmo.displayName || dmo.name) + (isPrimary ? ' <span style="font-size:10px;background:#9333ea;color:white;padding:2px 6px;border-radius:4px;">PRIMARY</span>' : '') + '</div>';
           bodyHtml += '<div class="dmo-select-meta">' + CLOUDS[dmo.cloud].icon + ' ' + CLOUDS[dmo.cloud].name + ' • ' + fieldCount + ' fields</div></div>';
           bodyHtml += '<input type="checkbox" class="dmo-select-checkbox" ' + (isSelected ? 'checked' : '') + (isPrimary ? ' disabled' : '') + '>';
           bodyHtml += '</div>';
@@ -1326,7 +1326,7 @@
         bodyHtml += '</div>';
       }
 
-      // Also show "Other" DMOs without subject area
+      // Also show "Other" data sources without subject area
       var otherDMOs = dmosByArea['Other'] || [];
       if (otherDMOs.length > 0) {
         bodyHtml += '<div class="subject-area-group">';
@@ -1338,7 +1338,7 @@
 
           bodyHtml += '<div class="dmo-select-card' + (isSelected ? ' selected' : '') + (isPrimary ? ' disabled' : '') + '" onclick="' + (isPrimary ? '' : 'toggleInputDMO(\'' + dmo.key + '\')') + '">';
           bodyHtml += '<span class="dmo-select-icon">' + dmo.icon + '</span>';
-          bodyHtml += '<div class="dmo-select-info"><div class="dmo-select-name">' + dmo.name + (isPrimary ? ' <span style="font-size:10px;background:#9333ea;color:white;padding:2px 6px;border-radius:4px;">PRIMARY</span>' : '') + '</div>';
+          bodyHtml += '<div class="dmo-select-info"><div class="dmo-select-name">' + (dmo.displayName || dmo.name) + (isPrimary ? ' <span style="font-size:10px;background:#9333ea;color:white;padding:2px 6px;border-radius:4px;">PRIMARY</span>' : '') + '</div>';
           bodyHtml += '<div class="dmo-select-meta">' + CLOUDS[dmo.cloud].icon + ' ' + CLOUDS[dmo.cloud].name + ' • ' + fieldCount + ' fields</div></div>';
           bodyHtml += '<input type="checkbox" class="dmo-select-checkbox" ' + (isSelected ? 'checked' : '') + (isPrimary ? ' disabled' : '') + '>';
           bodyHtml += '</div>';
@@ -1348,9 +1348,9 @@
 
       return '<div class="modal-overlay" onclick="if(event.target===this)closeInputDMOSelector()">' +
         '<div class="modal" style="width:700px;max-height:80vh;">' +
-        '<div class="modal-header"><div class="modal-title">📥 Select Input DMOs</div><button class="modal-close" onclick="closeInputDMOSelector()">×</button></div>' +
+        '<div class="modal-header"><div class="modal-title">📥 Select Input Data</div><button class="modal-close" onclick="closeInputDMOSelector()">×</button></div>' +
         '<div class="modal-body" style="max-height:60vh;overflow-y:auto;">' + bodyHtml + '</div>' +
-        '<div class="modal-footer"><span style="font-size:12px;color:#6b7280;">' + selectedDMOs.length + ' DMOs selected</span><button class="btn-next" onclick="closeInputDMOSelector()">Done</button></div>' +
+        '<div class="modal-footer"><span style="font-size:12px;color:#6b7280;">' + selectedDMOs.length + ' data sources selected</span><button class="btn-next" onclick="closeInputDMOSelector()">Done</button></div>' +
         '</div></div>';
     }
 
@@ -1564,9 +1564,9 @@
       bodyHtml += '<span style="font-size:11px;color:#374151;">Auto-publish high-confidence outputs</span>';
       bodyHtml += '</label>';
 
-      // INPUT DMOs Section
+      // INPUT Data Section
       bodyHtml += '<div style="border-top:1px solid #e5e7eb;padding-top:12px;margin-top:4px;">';
-      bodyHtml += '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px;">📥 Input DMOs</div>';
+      bodyHtml += '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px;">📥 Input Data</div>';
 
       var inputDMOKeys = Object.keys(inputFieldsByDMO);
       if (inputDMOKeys.length > 0) {
@@ -1576,7 +1576,7 @@
           bodyHtml += '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 10px;margin-bottom:6px;">';
           bodyHtml += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">';
           bodyHtml += '<span style="font-size:14px;">' + (dmo ? dmo.icon : '📊') + '</span>';
-          bodyHtml += '<span style="font-size:12px;font-weight:500;color:#1d4ed8;">' + (dmo ? dmo.name : dmoKey) + '</span>';
+          bodyHtml += '<span style="font-size:12px;font-weight:500;color:#1d4ed8;">' + (dmo ? (dmo.displayName || dmo.name) : dmoKey) + '</span>';
           bodyHtml += '<span style="font-size:10px;color:#6b7280;margin-left:auto;">' + fields.length + ' fields</span>';
           bodyHtml += '</div>';
           bodyHtml += '<div style="display:flex;flex-wrap:wrap;gap:3px;">';
@@ -1589,14 +1589,14 @@
         bodyHtml += '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 10px;">';
         bodyHtml += '<div style="display:flex;align-items:center;gap:6px;">';
         bodyHtml += '<span style="font-size:14px;">' + (primaryDMO ? primaryDMO.icon : '📊') + '</span>';
-        bodyHtml += '<span style="font-size:12px;font-weight:500;color:#1d4ed8;">' + (primaryDMO ? primaryDMO.name : state.template.primaryDMO) + '</span>';
+        bodyHtml += '<span style="font-size:12px;font-weight:500;color:#1d4ed8;">' + (primaryDMO ? (primaryDMO.displayName || primaryDMO.name) : state.template.primaryDMO) + '</span>';
         bodyHtml += '</div></div>';
       }
       bodyHtml += '</div>';
 
-      // OUTPUT DMOs Section
+      // OUTPUT Section
       bodyHtml += '<div style="border-top:1px solid #e5e7eb;padding-top:12px;margin-top:12px;">';
-      bodyHtml += '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px;">📤 Output DMOs</div>';
+      bodyHtml += '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px;">📤 Outputs</div>';
 
       // Structured Output DMO
       var outputDMOKey = outputConfig.mode === 'create' ? outputConfig.newDMOName : outputConfig.dmoKey;
@@ -1606,7 +1606,7 @@
       bodyHtml += '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 10px;margin-bottom:6px;">';
       bodyHtml += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">';
       bodyHtml += '<span style="font-size:14px;">📊</span>';
-      bodyHtml += '<span style="font-size:12px;font-weight:500;color:#166534;">' + (outputDMO ? outputDMO.name : outputDMOKey) + '</span>';
+      bodyHtml += '<span style="font-size:12px;font-weight:500;color:#166534;">' + (outputDMO ? (outputDMO.displayName || outputDMO.name) : outputDMOKey) + '</span>';
       bodyHtml += '<span style="font-size:9px;padding:2px 6px;background:#dcfce7;color:#166534;border-radius:10px;margin-left:auto;">Structured</span>';
       bodyHtml += '</div>';
       bodyHtml += '<div style="display:flex;flex-wrap:wrap;gap:3px;">';
@@ -1736,10 +1736,10 @@
       // Two column layout: DMO (structured) on left, UDMO (unstructured) on right
       bodyHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">';
 
-      // LEFT COLUMN: Structured Output (DMO)
+      // LEFT COLUMN: Structured Output (Output Fields)
       bodyHtml += '<div style="border-right:1px solid #e5e7eb;padding-right:20px;">';
-      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:12px;">📊 Structured Output (DMO)</div>';
-      bodyHtml += '<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Store extracted fields in a Data Model Object</div>';
+      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:12px;">📊 Output Fields</div>';
+      bodyHtml += '<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Store extracted fields as structured data</div>';
 
       // Mode selection for DMO
       bodyHtml += '<div style="display:flex;gap:8px;margin-bottom:12px;">';
@@ -1758,7 +1758,7 @@
             var isSelected = outputConfig.dmoKey === dmo.key;
             bodyHtml += '<div class="dmo-select-card' + (isSelected ? ' selected' : '') + '" style="padding:6px 8px;margin-bottom:4px;" onclick="selectOutputDMO(\'' + dmo.key + '\')">';
             bodyHtml += '<span style="font-size:14px;">' + dmo.icon + '</span>';
-            bodyHtml += '<div class="dmo-select-info"><div style="font-size:12px;font-weight:500;">' + dmo.name + '</div></div>';
+            bodyHtml += '<div class="dmo-select-info"><div style="font-size:12px;font-weight:500;">' + (dmo.displayName || dmo.name) + '</div></div>';
             bodyHtml += '<input type="radio" name="outputDMO" ' + (isSelected ? 'checked' : '') + ' style="width:14px;height:14px;accent-color:#9333ea;">';
             bodyHtml += '</div>';
           });
@@ -1781,13 +1781,13 @@
       bodyHtml += '</div></div>';
       bodyHtml += '</div>';
 
-      // RIGHT COLUMN: Unstructured Output (UDMO)
+      // RIGHT COLUMN: Generated Content
       bodyHtml += '<div>';
-      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:12px;">📄 Unstructured Output (UDMO)</div>';
+      bodyHtml += '<div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:12px;">📄 Generated Content</div>';
       bodyHtml += '<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Generate full documents, emails, articles</div>';
 
       if (templateUDMOs.length > 0) {
-        bodyHtml += '<div style="font-size:11px;color:#059669;background:#ecfdf5;padding:6px 8px;border-radius:4px;margin-bottom:12px;">✓ ' + templateUDMOs.length + ' UDMO(s) configured for this template</div>';
+        bodyHtml += '<div style="font-size:11px;color:#059669;background:#ecfdf5;padding:6px 8px;border-radius:4px;margin-bottom:12px;">✓ ' + templateUDMOs.length + ' content type(s) configured for this template</div>';
 
         templateUDMOs.forEach(function(udmoKey) {
           var udmo = UDMOs[udmoKey];
@@ -1799,11 +1799,11 @@
           bodyHtml += '</div>';
         });
       } else {
-        bodyHtml += '<div style="font-size:12px;color:#9ca3af;text-align:center;padding:20px;">No UDMOs configured for this template</div>';
+        bodyHtml += '<div style="font-size:12px;color:#9ca3af;text-align:center;padding:20px;">No generated content configured for this template</div>';
       }
 
-      // Show available UDMOs by category
-      bodyHtml += '<div style="margin-top:12px;"><div style="font-size:11px;color:#6b7280;margin-bottom:8px;">Available UDMOs:</div>';
+      // Show available content types by category
+      bodyHtml += '<div style="margin-top:12px;"><div style="font-size:11px;color:#6b7280;margin-bottom:8px;">Available Content Types:</div>';
       bodyHtml += '<div style="max-height:150px;overflow-y:auto;">';
       for (var cat in UDMO_CATEGORIES) {
         var catUDMOs = udmosByCat[cat] || [];
@@ -1826,7 +1826,7 @@
 
       return '<div class="modal-overlay" onclick="if(event.target===this)closeOutputDMOSelector()">' +
         '<div class="modal" style="width:800px;max-height:85vh;">' +
-        '<div class="modal-header"><div class="modal-title">📤 Configure Output: DMO + UDMO</div><button class="modal-close" onclick="closeOutputDMOSelector()">×</button></div>' +
+        '<div class="modal-header"><div class="modal-title">📤 Configure Outputs</div><button class="modal-close" onclick="closeOutputDMOSelector()">×</button></div>' +
         '<div class="modal-body" style="max-height:65vh;overflow-y:auto;">' + bodyHtml + '</div>' +
         '<div class="modal-footer"><button class="btn-secondary" onclick="closeOutputDMOSelector()">Cancel</button><button class="btn-next" onclick="closeOutputDMOSelector()">Save Configuration</button></div>' +
         '</div></div>';
@@ -1835,7 +1835,7 @@
     function renderBuilderModal() {
       if (!builder.open) return '';
 
-      var stepTitles = ['Basic Info', 'Source DMO', 'Input Fields', 'Output Fields', 'Prompt'];
+      var stepTitles = ['Basic Info', 'Data Source', 'Input Fields', 'Output Fields', 'Prompt'];
       var stepsHtml = '<div class="steps-indicator">';
       for (var i = 1; i <= 5; i++) {
         var stepClass = i < builder.step ? 'done' : (i === builder.step ? 'active' : 'pending');
@@ -1857,13 +1857,13 @@
       }
 
       else if (builder.step === 2) {
-        bodyHtml = '<div class="form-group"><label class="form-label">Select Source DMO</label><div class="form-sublabel">Choose the data object to read from</div><div class="dmo-grid">';
+        bodyHtml = '<div class="form-group"><label class="form-label">Select Primary Data Source</label><div class="form-sublabel">Choose which data to read from</div><div class="dmo-grid">';
         for (var dmoKey in DMOs) {
           var dmo = DMOs[dmoKey];
           var isSelected = builder.sourceDMO === dmoKey;
           bodyHtml += '<div class="dmo-card' + (isSelected ? ' selected' : '') + '" onclick="selectSourceDMO(\'' + dmoKey + '\')">' +
             '<div class="dmo-card-icon">' + dmo.icon + '</div>' +
-            '<div class="dmo-card-name">' + dmo.name + '</div>' +
+            '<div class="dmo-card-name">' + (dmo.displayName || dmo.name) + '</div>' +
             '<div class="dmo-card-cloud">' + CLOUDS[dmo.cloud].icon + ' ' + CLOUDS[dmo.cloud].name + '</div>' +
             '</div>';
         }
@@ -2202,7 +2202,7 @@
       html += '</select><div class="sidebar-desc">' + state.template.desc + (state.template.type === 'custom' ? '<span class="template-type-badge custom">Custom</span>' : '') + '</div><div class="cloud-badge badge-' + state.template.cloud + '">' + CLOUDS[state.template.cloud].icon + ' ' + CLOUDS[state.template.cloud].name + '</div>' +
         (state.template.type === 'custom' ? '<button style="margin-top:8px;font-size:12px;color:#dc2626;background:none;border:none;cursor:pointer;text-decoration:underline;" onclick="if(confirm(\'Delete this custom template?\'))deleteCustomTemplate(\'' + state.template.id + '\')">Delete Template</button>' : '') +
         '</div>' +
-        '<div class="sidebar-section"><div class="sidebar-title" style="display:flex;justify-content:space-between;align-items:center;">📊 Input DMOs<button class="field-selector-btn" onclick="openInputDMOSelector()">Edit</button></div>';
+        '<div class="sidebar-section"><div class="sidebar-title" style="display:flex;justify-content:space-between;align-items:center;">📊 Input Data<button class="field-selector-btn" onclick="openInputDMOSelector()">Edit</button></div>';
 
       // Show selected Input DMOs
       var selectedInputDMOs = getSelectedInputDMOs();
@@ -2211,7 +2211,7 @@
         if (!d) return;
         var dFields = d.records[0] ? Object.keys(d.records[0]).length : 0;
         var isPrimary = dmoKey === state.template.primaryDMO;
-        html += '<div class="dmo-info" style="margin-bottom:4px;"><span class="dmo-primary">' + d.icon + ' ' + d.name + '</span> <span style="font-size:12px;color:#6b7280">(' + dFields + ' fields)</span>' + (isPrimary ? ' <span style="font-size:9px;background:#9333ea;color:white;padding:1px 4px;border-radius:3px;">PRIMARY</span>' : '') + '</div>';
+        html += '<div class="dmo-info" style="margin-bottom:4px;"><span class="dmo-primary">' + d.icon + ' ' + (d.displayName || d.name) + '</span> <span style="font-size:12px;color:#6b7280">(' + dFields + ' fields)</span>' + (isPrimary ? ' <span style="font-size:9px;background:#9333ea;color:white;padding:1px 4px;border-radius:3px;">PRIMARY</span>' : '') + '</div>';
       });
 
       // Show Input Fields mapping with PII indicators - grouped by DMO
@@ -2231,7 +2231,7 @@
         var fieldsForDmo = selectedFields[dmoKey] || [];
         if (fieldsForDmo.length === 0) return;
 
-        html += '<div class="input-field-group"><div class="input-field-group-header">' + dmoInfo.icon + ' ' + dmoInfo.name + ' (' + fieldsForDmo.length + ')</div>';
+        html += '<div class="input-field-group"><div class="input-field-group-header">' + dmoInfo.icon + ' ' + (dmoInfo.displayName || dmoInfo.name) + ' (' + fieldsForDmo.length + ')</div>';
         fieldsForDmo.forEach(function(f) {
           var isPII = PII_FIELDS[f];
           html += '<span class="field-tag input' + (isPII ? ' pii' : '') + '">' + f + (isPII ? ' 🔒' : '') + '</span>';
@@ -2244,8 +2244,8 @@
       outputFields.forEach(function(f) { html += '<span class="field-tag output">' + f + '</span>'; });
       html += '</div>';
 
-      // Show all available DMO fields with PII indicators
-      html += '<div class="mapping-header">📋 All DMO Fields (' + dmoFields.length + ')</div><div class="fields-section" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px;">';
+      // Show all available fields with PII indicators
+      html += '<div class="mapping-header">📋 All Available Fields (' + dmoFields.length + ')</div><div class="fields-section" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px;">';
       dmoFields.forEach(function(f) {
         var isInput = inputFields.indexOf(f) > -1;
         var isPII = PII_FIELDS[f];
@@ -2266,17 +2266,17 @@
       // Show Structured Output (DMO)
       var outputConfig = getSelectedOutputDMO();
       var outputDMO = outputConfig.mode === 'update' && DMOs[outputConfig.dmoKey] ? DMOs[outputConfig.dmoKey] : null;
-      html += '<div style="font-size:10px;color:#6b7280;text-transform:uppercase;margin:8px 0 4px 0;">📊 Structured (DMO)</div>';
+      html += '<div style="font-size:10px;color:#6b7280;text-transform:uppercase;margin:8px 0 4px 0;">📊 Output Fields</div>';
       if (outputDMO) {
-        html += '<div class="output-dmo-card" style="padding:8px;"><span class="output-dmo-icon" style="font-size:18px;">' + outputDMO.icon + '</span><div class="output-dmo-info"><div class="output-dmo-name" style="font-size:12px;">' + outputDMO.name + '</div><div class="output-dmo-fields" style="font-size:10px;">' + (state.template.outputFields || state.template.fields).length + ' fields</div></div></div>';
+        html += '<div class="output-dmo-card" style="padding:8px;"><span class="output-dmo-icon" style="font-size:18px;">' + outputDMO.icon + '</span><div class="output-dmo-info"><div class="output-dmo-name" style="font-size:12px;">' + (outputDMO.displayName || outputDMO.name) + '</div><div class="output-dmo-fields" style="font-size:10px;">' + (state.template.outputFields || state.template.fields).length + ' fields</div></div></div>';
       } else {
         html += '<div class="output-dmo-card" style="padding:8px;"><span class="output-dmo-icon" style="font-size:18px;">✨</span><div class="output-dmo-info"><div class="output-dmo-name" style="font-size:12px;">' + (outputConfig.newDMOName || 'New DMO') + '</div><div class="output-dmo-fields" style="font-size:10px;">' + (state.template.outputFields || state.template.fields).length + ' fields</div></div></div>';
       }
 
-      // Show Unstructured Output (UDMOs)
+      // Show Generated Content (UDMOs)
       var templateUDMOs = state.template.outputUDMOs || [];
       if (templateUDMOs.length > 0) {
-        html += '<div style="font-size:10px;color:#6b7280;text-transform:uppercase;margin:12px 0 4px 0;">📄 Unstructured (UDMO)</div>';
+        html += '<div style="font-size:10px;color:#6b7280;text-transform:uppercase;margin:12px 0 4px 0;">📄 Generated Content</div>';
         templateUDMOs.forEach(function(udmoKey) {
           var udmo = UDMOs[udmoKey];
           if (!udmo) return;
