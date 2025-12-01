@@ -587,6 +587,44 @@
     .icon-option { padding: 8px; text-align: center; font-size: 18px; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; }
     .icon-option:hover { background: #f3f3f3; }
     .icon-option.selected { background: #e8f4fc; border-color: #0176d3; }
+
+    /* ============ AGENTIC RIGHT PANEL ============ */
+    .agent-chat-area { padding: 16px; flex: 1; overflow-y: auto; }
+    .agent-message { display: flex; gap: 10px; margin-bottom: 16px; }
+    .agent-message.user { justify-content: flex-end; }
+    .agent-avatar { width: 32px; height: 32px; background: #e8f4fc; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .agent-bubble { background: #f3f3f3; padding: 12px 14px; border-radius: 12px; border-top-left-radius: 4px; font-size: 13px; line-height: 1.5; max-width: 85%; }
+    .user-bubble { background: #0176d3; color: white; padding: 10px 14px; border-radius: 12px; border-top-right-radius: 4px; font-size: 13px; max-width: 85%; }
+
+    .use-case-options { padding: 0 16px 16px; }
+    .use-case-option { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: white; border: 1px solid #e5e5e5; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+    .use-case-option:hover { border-color: #0176d3; background: #f8fbfe; transform: translateX(4px); }
+    .use-case-option.create-new { border-style: dashed; background: #fafafa; }
+    .use-case-option.create-new:hover { border-color: #9333ea; background: #faf5ff; }
+    .use-case-option-icon { font-size: 24px; }
+    .use-case-option-info { flex: 1; }
+    .use-case-option-name { font-size: 14px; font-weight: 500; color: #3e3e3c; }
+    .use-case-option-desc { font-size: 12px; color: #706e6b; margin-top: 2px; }
+    .use-case-option-arrow { color: #706e6b; font-size: 18px; }
+
+    .config-summary { background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fc 100%); border: 1px solid #0176d3; border-radius: 8px; padding: 14px; margin: 0 16px 12px; }
+    .config-summary-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 14px; font-weight: 600; color: #032d60; }
+    .config-change-btn { background: none; border: none; color: #0176d3; font-size: 12px; cursor: pointer; text-decoration: underline; }
+    .config-summary-stats { display: flex; gap: 16px; margin-bottom: 12px; }
+    .config-stat { text-align: center; flex: 1; }
+    .config-stat-value { display: block; font-size: 20px; font-weight: 600; color: #0176d3; }
+    .config-stat-label { font-size: 10px; color: #706e6b; text-transform: uppercase; }
+    .run-btn-large { width: 100%; padding: 12px; background: #9333ea; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
+    .run-btn-large:hover { background: #7e22ce; }
+    .run-btn-large:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .quick-suggestions { padding: 0 16px 16px; }
+    .quick-suggestions-title { font-size: 10px; text-transform: uppercase; color: #706e6b; margin-bottom: 8px; }
+    .quick-suggestion { display: inline-block; padding: 6px 12px; background: #f3f3f3; border-radius: 16px; font-size: 12px; color: #3e3e3c; margin-right: 6px; margin-bottom: 6px; cursor: pointer; }
+    .quick-suggestion:hover { background: #e8f4fc; color: #0176d3; }
+
+    .chat-input-field { flex: 1; padding: 10px 14px; border: 1px solid #d8d8d8; border-radius: 20px; font-size: 13px; outline: none; }
+    .chat-input-field:focus { border-color: #0176d3; }
   </style>
 </head>
 <body>
@@ -3090,76 +3128,256 @@
       var currentCT = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
       var allTemplates = Object.assign({}, CONTENT_TYPES, customTemplates);
 
-      // Current use case display (if selected)
-      if (currentCT) {
+      if (!currentCT) {
+        // State 1: No use case selected - Agentic welcome
+        html += '<div class="agent-chat-area">';
+        html += '<div class="agent-message">';
+        html += '<div class="agent-avatar">🤖</div>';
+        html += '<div class="agent-bubble">';
+        html += '<strong>Hi! I\'m your Content Foundry assistant.</strong><br><br>';
+        html += 'Pick a use case below, or describe what content you\'d like to generate.';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        // Use case options
+        html += '<div class="use-case-options">';
+        for (var key in allTemplates) {
+          var ct = allTemplates[key];
+          html += '<div class="use-case-option" onclick="selectUseCaseAgentic(\'' + key + '\')">';
+          html += '<span class="use-case-option-icon">' + ct.icon + '</span>';
+          html += '<div class="use-case-option-info">';
+          html += '<div class="use-case-option-name">' + ct.name + '</div>';
+          html += '<div class="use-case-option-desc">' + ct.desc + '</div>';
+          html += '</div>';
+          html += '<span class="use-case-option-arrow">›</span>';
+          html += '</div>';
+        }
+
+        // Create new option
+        html += '<div class="use-case-option create-new" onclick="openTemplateBuilder()">';
+        html += '<span class="use-case-option-icon">✨</span>';
+        html += '<div class="use-case-option-info">';
+        html += '<div class="use-case-option-name">Create New Template</div>';
+        html += '<div class="use-case-option-desc">Build a custom use case</div>';
+        html += '</div>';
+        html += '<span class="use-case-option-arrow">›</span>';
+        html += '</div>';
+        html += '</div>';
+
+      } else {
+        // State 2: Use case selected - Config mode with chat
         var records = SAMPLE_DATA[state.selectedContentType] || [];
         var outputFields = getSelectedOutputFields(state.selectedContentType);
         var udmos = getSelectedOutputUDMOs(state.selectedContentType);
 
-        html += '<div class="current-use-case">';
-        html += '<div class="current-use-case-header">';
-        html += '<span class="current-use-case-icon">' + currentCT.icon + '</span>';
-        html += '<div class="current-use-case-info">';
-        html += '<div class="current-use-case-name">' + currentCT.name + '</div>';
-        html += '<div class="current-use-case-desc">' + currentCT.desc + '</div>';
-        html += '</div>';
-        html += '</div>';
-        html += '<div class="current-use-case-stats">';
-        html += '<div class="use-case-stat"><div class="use-case-stat-value">' + records.length + '</div><div class="use-case-stat-label">Records</div></div>';
-        html += '<div class="use-case-stat"><div class="use-case-stat-value">' + outputFields.length + '</div><div class="use-case-stat-label">Fields</div></div>';
-        html += '<div class="use-case-stat"><div class="use-case-stat-value">' + udmos.length + '</div><div class="use-case-stat-label">Docs</div></div>';
+        html += '<div class="agent-chat-area">';
+
+        // Initial agent message
+        html += '<div class="agent-message">';
+        html += '<div class="agent-avatar">🤖</div>';
+        html += '<div class="agent-bubble">';
+        html += '<strong>' + currentCT.icon + ' ' + currentCT.name + '</strong><br><br>';
+        html += 'Ready! Configure on the left panel, edit the prompt in center, or ask me to make changes.';
         html += '</div>';
         html += '</div>';
 
-        // Quick actions
-        html += '<div class="use-case-actions">';
-        html += '<button class="use-case-action-btn" onclick="state.leftPanelTab=\'output\';render()">⚙️ Configure</button>';
-        html += '<button class="use-case-action-btn primary" onclick="runGeneration()">▶ Run</button>';
+        // Show chat history
+        if (state.setupMessages && state.setupMessages.length > 0) {
+          state.setupMessages.forEach(function(msg) {
+            html += '<div class="agent-message ' + msg.role + '">';
+            if (msg.role === 'user') {
+              html += '<div class="user-bubble">' + esc(msg.content) + '</div>';
+            } else {
+              html += '<div class="agent-avatar">🤖</div>';
+              html += '<div class="agent-bubble">' + msg.content + '</div>';
+            }
+            html += '</div>';
+          });
+        }
+        html += '</div>';
+
+        // Config summary card
+        html += '<div class="config-summary">';
+        html += '<div class="config-summary-header">';
+        html += '<span>' + currentCT.icon + ' ' + currentCT.name + '</span>';
+        html += '<button class="config-change-btn" onclick="resetToWelcome()">Change</button>';
+        html += '</div>';
+        html += '<div class="config-summary-stats">';
+        html += '<div class="config-stat"><span class="config-stat-value">' + records.length + '</span><span class="config-stat-label">Records</span></div>';
+        html += '<div class="config-stat"><span class="config-stat-value">' + outputFields.length + '</span><span class="config-stat-label">Fields</span></div>';
+        html += '<div class="config-stat"><span class="config-stat-value">' + udmos.length + '</span><span class="config-stat-label">Docs</span></div>';
+        html += '</div>';
+        html += '<button class="run-btn-large" onclick="runGeneration()"' + (state.currentView === 'generating' ? ' disabled' : '') + '>';
+        html += (state.currentView === 'generating' ? 'Generating...' : '▶ Run Generation');
+        html += '</button>';
+        html += '</div>';
+
+        // Quick suggestions
+        html += '<div class="quick-suggestions">';
+        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Add Confidence field\')">"Add Confidence field"</div>';
+        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Include draft email\')">"Include draft email"</div>';
+        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Show config\')">"Show current config"</div>';
         html += '</div>';
       }
 
-      // Use case list
-      html += '<div class="use-case-list">';
-      html += '<div class="use-case-list-title">' + (currentCT ? 'Switch Use Case' : 'Select Use Case') + '</div>';
-
-      for (var key in allTemplates) {
-        var ct = allTemplates[key];
-        var isActive = state.selectedContentType === key;
-        if (currentCT && isActive) continue; // Skip current one in list
-
-        html += '<div class="use-case-mini' + (isActive ? ' active' : '') + '" onclick="switchUseCase(\'' + key + '\')">';
-        html += '<span class="use-case-mini-icon">' + ct.icon + '</span>';
-        html += '<span class="use-case-mini-name">' + ct.name + '</span>';
-        html += '<span class="use-case-mini-arrow">›</span>';
-        html += '</div>';
-      }
-      html += '</div>';
-
-      // New template button
-      html += '<div class="new-template-btn" onclick="openTemplateBuilder()">';
-      html += '<span class="new-template-btn-icon">✨</span>';
-      html += '<span class="new-template-btn-text">Create New Template</span>';
-      html += '</div>';
+      // Chat input (always visible)
+      var placeholder = currentCT ? 'Ask me to add fields, change outputs...' : 'Describe what you want to generate...';
 
       return '<div class="right-panel">' +
         '<div class="agent-header">' +
-        '<div class="agent-title">Use Cases</div>' +
+        '<div class="agent-title">🤖 Assistant</div>' +
         '<div class="agent-actions">' +
-        '<button class="agent-action-btn" onclick="resetToWelcome()" title="Clear Selection">🔄</button>' +
+        '<button class="agent-action-btn" onclick="resetToWelcome()" title="Start Over">🔄</button>' +
         '</div>' +
         '</div>' +
-        '<div class="agent-body" style="padding:0;">' + html + '</div>' +
+        '<div class="agent-body">' + html + '</div>' +
+        '<div class="agent-input">' +
+        '<div class="chat-input-container">' +
+        '<input type="text" class="chat-input-field" id="setupInput" placeholder="' + placeholder + '" onkeydown="if(event.key===\'Enter\')sendSetupMessage()">' +
+        '<button class="chat-send-btn" onclick="sendSetupMessage()">➤</button>' +
+        '</div>' +
+        '</div>' +
         '</div>';
     }
 
-    function switchUseCase(typeId) {
+    function selectUseCaseAgentic(typeId) {
       state.selectedContentType = typeId;
       state.currentRecordIndex = 0;
       state.currentView = 'welcome';
       state.generatedData = null;
       state.editedPrompt = null;
       state.activeOutputTab = 0;
+      state.setupMessages = [];
       render();
+    }
+
+    function sendSetupMessage() {
+      var input = document.getElementById('setupInput');
+      if (!input || !input.value.trim()) return;
+      var message = input.value.trim();
+      input.value = '';
+      handleSetupCommand(message, true);
+    }
+
+    function applyQuickSuggestion(suggestion) {
+      handleSetupCommand(suggestion, true);
+    }
+
+    function handleSetupCommand(message, addUserMsg) {
+      var lowerMsg = message.toLowerCase();
+      var response = '';
+      if (!state.setupMessages) state.setupMessages = [];
+
+      if (addUserMsg) {
+        state.setupMessages.push({ role: 'user', content: message });
+      }
+
+      // No use case selected - try to match or guide
+      if (!state.selectedContentType) {
+        var matched = null;
+        for (var key in CONTENT_TYPES) {
+          var ct = CONTENT_TYPES[key];
+          if (lowerMsg.indexOf(ct.name.toLowerCase()) > -1 || lowerMsg.indexOf('case') > -1 && key.indexOf('case') > -1 ||
+              lowerMsg.indexOf('kb') > -1 && key.indexOf('kb') > -1 || lowerMsg.indexOf('email') > -1 && key.indexOf('email') > -1) {
+            matched = key;
+            break;
+          }
+        }
+        if (matched) {
+          selectUseCaseAgentic(matched);
+          state.setupMessages.push({ role: 'agent', content: '✅ Selected <strong>' + CONTENT_TYPES[matched].name + '</strong>. Configure it or click Run!' });
+          render();
+          return;
+        }
+        if (lowerMsg.indexOf('create') > -1 || lowerMsg.indexOf('new') > -1 || lowerMsg.indexOf('custom') > -1) {
+          openTemplateBuilder();
+          return;
+        }
+        response = 'Please select a use case above, or say "create new" to build a custom template.';
+        state.setupMessages.push({ role: 'agent', content: response });
+        render();
+        return;
+      }
+
+      // Handle configuration commands
+      // Add field
+      if (lowerMsg.indexOf('add') > -1 && lowerMsg.indexOf('field') > -1) {
+        var fieldMatch = message.match(/add\s+(?:a\s+)?["']?(\w+)["']?\s*field/i) || message.match(/add\s+["']?(\w+)["']?/i);
+        if (fieldMatch) {
+          var fieldName = fieldMatch[1].charAt(0).toUpperCase() + fieldMatch[1].slice(1);
+          var fields = getSelectedOutputFields(state.selectedContentType);
+          if (fields.indexOf(fieldName) === -1) {
+            fields.push(fieldName);
+            selectedOutputFields[state.selectedContentType] = fields;
+            response = '✅ Added <strong>' + fieldName + '</strong> field.';
+          } else {
+            response = '<strong>' + fieldName + '</strong> already exists.';
+          }
+        }
+      }
+      // Remove field
+      else if (lowerMsg.indexOf('remove') > -1) {
+        var removeMatch = message.match(/remove\s+(?:the\s+)?["']?(\w+)["']?/i);
+        if (removeMatch) {
+          var fieldToRemove = removeMatch[1].charAt(0).toUpperCase() + removeMatch[1].slice(1);
+          var currentFields = getSelectedOutputFields(state.selectedContentType);
+          var idx = currentFields.indexOf(fieldToRemove);
+          if (idx > -1) {
+            currentFields.splice(idx, 1);
+            selectedOutputFields[state.selectedContentType] = currentFields;
+            response = '✅ Removed <strong>' + fieldToRemove + '</strong>.';
+          } else {
+            response = '<strong>' + fieldToRemove + '</strong> not found.';
+          }
+        }
+      }
+      // Add document/UDMO
+      else if ((lowerMsg.indexOf('add') > -1 || lowerMsg.indexOf('include') > -1) &&
+               (lowerMsg.indexOf('draft') > -1 || lowerMsg.indexOf('email') > -1 || lowerMsg.indexOf('document') > -1 || lowerMsg.indexOf('article') > -1 || lowerMsg.indexOf('note') > -1)) {
+        var udmoToAdd = null;
+        if (lowerMsg.indexOf('email') > -1 || lowerMsg.indexOf('draft') > -1) udmoToAdd = 'DraftResponse__udmo';
+        else if (lowerMsg.indexOf('article') > -1 || lowerMsg.indexOf('kb') > -1) udmoToAdd = 'KnowledgeArticle__udmo';
+        else if (lowerMsg.indexOf('note') > -1) udmoToAdd = 'InternalNote__udmo';
+        else if (lowerMsg.indexOf('proposal') > -1) udmoToAdd = 'ProposalDocument__udmo';
+
+        if (udmoToAdd && UDMO_CATALOG[udmoToAdd]) {
+          var currentUDMOs = getSelectedOutputUDMOs(state.selectedContentType);
+          if (currentUDMOs.indexOf(udmoToAdd) === -1) {
+            currentUDMOs.push(udmoToAdd);
+            selectedOutputUDMOs[state.selectedContentType] = currentUDMOs;
+            response = '✅ Added <strong>' + UDMO_CATALOG[udmoToAdd].name + '</strong> output.';
+          } else {
+            response = '<strong>' + UDMO_CATALOG[udmoToAdd].name + '</strong> already included.';
+          }
+        }
+      }
+      // Run
+      else if (lowerMsg.indexOf('run') > -1 || lowerMsg.indexOf('generate') > -1 || lowerMsg.indexOf('execute') > -1) {
+        response = '🚀 Starting generation...';
+        state.setupMessages.push({ role: 'agent', content: response });
+        render();
+        runGeneration();
+        return;
+      }
+      // Show config
+      else if (lowerMsg.indexOf('show') > -1 || lowerMsg.indexOf('config') > -1 || lowerMsg.indexOf('list') > -1 || lowerMsg.indexOf('what') > -1) {
+        var fields = getSelectedOutputFields(state.selectedContentType);
+        var udmos = getSelectedOutputUDMOs(state.selectedContentType);
+        response = '<strong>Current Config:</strong><br>• Fields: ' + fields.join(', ') + '<br>• Docs: ' +
+          (udmos.length > 0 ? udmos.map(function(u) { return UDMO_CATALOG[u] ? UDMO_CATALOG[u].name : u; }).join(', ') : 'None');
+      }
+      // Help
+      else {
+        response = 'Try: "Add [name] field", "Include draft email", "Remove [field]", "Run", or "Show config"';
+      }
+
+      state.setupMessages.push({ role: 'agent', content: response });
+      render();
+    }
+
+    function switchUseCase(typeId) {
+      selectUseCaseAgentic(typeId);
     }
 
     function resetToWelcome() {
@@ -3167,6 +3385,7 @@
       state.selectedContentType = null;
       state.currentRecordIndex = 0;
       state.messages = [];
+      state.setupMessages = [];
       state.isTyping = false;
       state.generatedData = null;
       state.activeOutputTab = 0;
