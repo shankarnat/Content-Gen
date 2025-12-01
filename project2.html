@@ -1456,6 +1456,7 @@
       // Template builder
       templateBuilderOpen: false,
       templateMode: 'chat', // 'chat' or 'ui'
+      templateCreatingInPanel: false, // true when creating template in right panel
       templateChatMessages: [],
       newTemplate: {
         id: '',
@@ -2952,10 +2953,11 @@
 
     // ============ TEMPLATE BUILDER ============
     function openTemplateBuilder() {
-      state.templateBuilderOpen = true;
-      state.templateMode = 'chat';
+      // Start template creation in the Agentforce panel (not modal)
+      state.templateCreatingInPanel = true;
+      state.selectedContentType = null; // Clear any selected use case
       state.templateChatMessages = [
-        { role: 'agent', content: "Hi! I'll help you create a new content template. What would you like to call it?" }
+        { role: 'agent', content: "Let's create a new template! What would you like to call it?" }
       ];
       state.newTemplate = {
         id: '',
@@ -2969,13 +2971,36 @@
       render();
     }
 
+    function openTemplateBuilderModal() {
+      // For UI-based template creation (modal)
+      state.templateBuilderOpen = true;
+      state.templateMode = 'ui';
+      state.newTemplate = {
+        id: '',
+        name: '',
+        icon: '📄',
+        desc: '',
+        sources: [],
+        outputs: ['Summary'],
+        udmos: []
+      };
+      render();
+    }
+
+    function cancelTemplateCreation() {
+      state.templateCreatingInPanel = false;
+      state.templateChatMessages = [];
+      state.newTemplate = { id: '', name: '', icon: '📄', desc: '', sources: [], outputs: ['Summary'], udmos: [] };
+      render();
+    }
+
     function setTemplateMode(mode) {
       state.templateMode = mode;
       render();
     }
 
     function sendTemplateMessage() {
-      var input = document.getElementById('templateChatInput');
+      var input = document.getElementById('setupInput');
       if (!input || !input.value.trim()) return;
       var message = input.value.trim();
       input.value = '';
@@ -3262,6 +3287,8 @@
       // Select the new template
       state.selectedContentType = t.id;
       state.templateBuilderOpen = false;
+      state.templateCreatingInPanel = false;
+      state.templateChatMessages = [];
       render();
 
       alert('Template "' + t.name + '" created successfully!');
@@ -3447,18 +3474,81 @@
       render();
     }
 
+    function renderTemplateCreationChat() {
+      var t = state.newTemplate;
+      var html = '';
+
+      html += '<div class="agent-chat-area">';
+
+      // Preview card if we have data
+      if (t.name) {
+        html += '<div class="template-preview-card">';
+        html += '<div class="template-preview-header">';
+        html += '<span class="template-preview-icon">' + t.icon + '</span>';
+        html += '<div><div class="template-preview-name">' + esc(t.name) + '</div>';
+        if (t.desc) html += '<div class="template-preview-desc">' + esc(t.desc) + '</div>';
+        html += '</div></div>';
+        html += '<div class="template-preview-stats">';
+        html += '<span class="template-preview-stat"><strong>' + t.sources.length + '</strong> sources</span>';
+        html += '<span class="template-preview-stat"><strong>' + t.outputs.length + '</strong> fields</span>';
+        html += '<span class="template-preview-stat"><strong>' + t.udmos.length + '</strong> docs</span>';
+        html += '</div>';
+        html += '</div>';
+      }
+
+      // Chat messages
+      state.templateChatMessages.forEach(function(msg) {
+        html += '<div class="agent-message ' + msg.role + '">';
+        if (msg.role === 'agent') {
+          html += '<div class="agent-avatar">⚡</div>';
+          html += '<div class="agent-bubble">' + msg.content + '</div>';
+        } else {
+          html += '<div class="user-bubble">' + esc(msg.content) + '</div>';
+        }
+        html += '</div>';
+      });
+
+      html += '</div>';
+
+      // Suggestions based on state
+      var suggestions = [];
+      if (!t.name) {
+        suggestions = ['Lead Scorer', 'Feedback Analyzer', 'Deal Summary'];
+      } else if (!t.desc) {
+        suggestions = ['Scores leads based on activity', 'Analyzes customer feedback', 'Generates deal summaries'];
+      } else if (t.sources.length === 0) {
+        suggestions = ['Add Case', 'Add Lead', 'Add Contact', 'Add Opportunity'];
+      } else if (t.outputs.length <= 1) {
+        suggestions = ['Add Priority field', 'Add Score field', 'Add Sentiment field'];
+      } else {
+        suggestions = ['Add draft email', 'Add article', 'Done', 'Show config'];
+      }
+
+      html += '<div class="quick-suggestions">';
+      suggestions.forEach(function(s) {
+        html += '<div class="quick-suggestion" onclick="applyTemplateSuggestion(\'' + esc(s) + '\')">"' + s + '"</div>';
+      });
+      html += '</div>';
+
+      return html;
+    }
+
     function renderRightPanel() {
       var html = '';
       var currentCT = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
       var allTemplates = Object.assign({}, CONTENT_TYPES, customTemplates);
 
-      if (!currentCT) {
-        // State 1: No use case selected - Agentic welcome
+      // State 0: Template creation mode
+      if (state.templateCreatingInPanel) {
+        html += renderTemplateCreationChat();
+      }
+      // State 1: No use case selected - Agentic welcome
+      else if (!currentCT) {
         html += '<div class="agent-chat-area">';
         html += '<div class="agent-message">';
-        html += '<div class="agent-avatar">🤖</div>';
+        html += '<div class="agent-avatar">⚡</div>';
         html += '<div class="agent-bubble">';
-        html += '<strong>Hi! I\'m your Content Foundry assistant.</strong><br><br>';
+        html += '<strong>Hi! I\'m Agentforce for Content Foundry.</strong><br><br>';
         html += 'Pick a use case below, or describe what content you\'d like to generate.';
         html += '</div>';
         html += '</div>';
@@ -3499,7 +3589,7 @@
 
         // Initial agent message
         html += '<div class="agent-message">';
-        html += '<div class="agent-avatar">🤖</div>';
+        html += '<div class="agent-avatar">⚡</div>';
         html += '<div class="agent-bubble">';
         html += '<strong>' + currentCT.icon + ' ' + currentCT.name + '</strong><br><br>';
         html += 'Ready! Configure on the left panel, edit the prompt in center, or ask me to make changes.';
@@ -3513,7 +3603,7 @@
             if (msg.role === 'user') {
               html += '<div class="user-bubble">' + esc(msg.content) + '</div>';
             } else {
-              html += '<div class="agent-avatar">🤖</div>';
+              html += '<div class="agent-avatar">⚡</div>';
               html += '<div class="agent-bubble">' + msg.content + '</div>';
             }
             html += '</div>';
@@ -3546,20 +3636,26 @@
       }
 
       // Chat input (always visible)
-      var placeholder = currentCT ? 'Ask me to add fields, change outputs...' : 'Describe what you want to generate...';
+      var placeholder = state.templateCreatingInPanel
+        ? 'Type template name or command...'
+        : (currentCT ? 'Ask me to add fields, change outputs...' : 'Describe what you want to generate...');
+
+      var inputHandler = state.templateCreatingInPanel ? 'sendTemplateMessage()' : 'sendSetupMessage()';
+      var resetAction = state.templateCreatingInPanel ? 'cancelTemplateCreation()' : 'resetToWelcome()';
 
       return '<div class="right-panel">' +
         '<div class="agent-header">' +
-        '<div class="agent-title">🤖 Assistant</div>' +
+        '<div class="agent-title">⚡ Agentforce</div>' +
         '<div class="agent-actions">' +
-        '<button class="agent-action-btn" onclick="resetToWelcome()" title="Start Over">🔄</button>' +
+        (state.templateCreatingInPanel ? '<button class="agent-action-btn" onclick="openTemplateBuilderModal()" title="Open Form">📋</button>' : '') +
+        '<button class="agent-action-btn" onclick="' + resetAction + '" title="' + (state.templateCreatingInPanel ? 'Cancel' : 'Start Over') + '">🔄</button>' +
         '</div>' +
         '</div>' +
         '<div class="agent-body">' + html + '</div>' +
         '<div class="agent-input">' +
         '<div class="chat-input-container">' +
-        '<input type="text" class="chat-input-field" id="setupInput" placeholder="' + placeholder + '" onkeydown="if(event.key===\'Enter\')sendSetupMessage()">' +
-        '<button class="chat-send-btn" onclick="sendSetupMessage()">➤</button>' +
+        '<input type="text" class="chat-input-field" id="setupInput" placeholder="' + placeholder + '" onkeydown="if(event.key===\'Enter\')' + inputHandler + '">' +
+        '<button class="chat-send-btn" onclick="' + inputHandler + '">➤</button>' +
         '</div>' +
         '</div>' +
         '</div>';
