@@ -483,6 +483,27 @@
     /* Three-tab left panel */
     .panel-tabs-three { display: flex; border-bottom: 1px solid #e5e5e5; }
     .panel-tabs-three .panel-tab { flex: 1; padding: 10px 8px; font-size: 12px; text-align: center; }
+
+    /* Run Bar */
+    .run-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: #f9f9f9; border-bottom: 1px solid #e5e5e5; }
+    .run-bar-left { display: flex; align-items: center; gap: 16px; }
+    .run-bar-stat { font-size: 12px; color: #706e6b; }
+    .run-bar-stat.cost { color: #2e844a; font-weight: 500; }
+
+    /* Compact layout adjustments */
+    .main-container { height: calc(100vh - 90px); }
+    .left-panel { height: 100%; }
+    .center-panel { height: 100%; display: flex; flex-direction: column; }
+    .output-content { flex: 1; overflow: hidden; padding: 12px; }
+    .output-card { height: 100%; }
+    .output-card-body { height: calc(100% - 50px); overflow-y: auto; }
+    .right-panel { height: 100%; }
+    .agent-body { height: calc(100% - 140px); overflow-y: auto; }
+    .panel-content { height: calc(100% - 42px); overflow-y: auto; }
+
+    /* Compact output config */
+    .output-config-section { margin-bottom: 12px; }
+    .output-config-title { font-size: 12px; margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -1274,7 +1295,9 @@
       outputConfigOpen: false,
       currentEditingDMO: null, // which DMO is being edited in field selector
       // Left panel tab
-      leftPanelTab: 'sources' // sources, configuration
+      leftPanelTab: 'sources', // sources, records, output
+      // Prompt preview toggle
+      promptPreviewOpen: false
     };
 
     // Runtime selections (per content type)
@@ -1311,7 +1334,7 @@
     // ============ RENDER FUNCTIONS ============
     function render() {
       var app = document.getElementById('app');
-      app.innerHTML = renderHeader() + renderCloudTabs() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + renderRightPanel() + '</div>' + renderPublishModal() + renderInputDMOSelectorModal() + renderFieldSelectorModal();
+      app.innerHTML = renderHeader() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + renderRightPanel() + '</div>' + renderPublishModal() + renderInputDMOSelectorModal() + renderFieldSelectorModal();
     }
 
     function renderHeader() {
@@ -1355,15 +1378,17 @@
         tabContentHtml = renderSourcesTab(sources, contentType);
       } else if (state.leftPanelTab === 'records') {
         tabContentHtml = renderRecordsTab(contentType);
+      } else if (state.leftPanelTab === 'output') {
+        tabContentHtml = renderOutputTab(contentType);
       } else {
-        tabContentHtml = renderConfigurationTab(contentType);
+        tabContentHtml = renderSourcesTab(sources, contentType);
       }
 
       return '<div class="left-panel">' +
         '<div class="panel-tabs panel-tabs-three">' +
         '<button class="panel-tab' + (state.leftPanelTab === 'sources' ? ' active' : '') + '" onclick="setLeftPanelTab(\'sources\')">Sources</button>' +
         '<button class="panel-tab' + (state.leftPanelTab === 'records' ? ' active' : '') + '" onclick="setLeftPanelTab(\'records\')">Records</button>' +
-        '<button class="panel-tab' + (state.leftPanelTab === 'configuration' ? ' active' : '') + '" onclick="setLeftPanelTab(\'configuration\')">Config</button>' +
+        '<button class="panel-tab' + (state.leftPanelTab === 'output' ? ' active' : '') + '" onclick="setLeftPanelTab(\'output\')">Output</button>' +
         '</div>' +
         '<div class="panel-content">' + tabContentHtml + '</div>' +
         '</div>';
@@ -1508,61 +1533,76 @@
       return fieldsTokens + udmoTokens;
     }
 
-    function renderConfigurationTab(contentType) {
+    function renderOutputTab(contentType) {
       if (!contentType) {
         return '<div class="sources-hint">Select a content type to configure outputs.</div>';
       }
 
       var html = '';
 
+      // Prompt Preview Section (collapsible)
+      var prompt = generateResolvedPrompt();
+      var inputTokens = estimateInputTokens();
+
+      html += '<div class="output-config-section">';
+      html += '<div class="output-config-title" style="cursor:pointer;" onclick="togglePromptPreview()">📝 Prompt Preview <span style="font-size:10px;color:#706e6b;">(' + inputTokens + ' tokens)</span> <span id="promptToggle" style="float:right;">' + (state.promptPreviewOpen ? '▼' : '▶') + '</span></div>';
+      if (state.promptPreviewOpen) {
+        html += '<div style="background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:6px;font-size:11px;font-family:monospace;max-height:150px;overflow-y:auto;white-space:pre-wrap;margin-bottom:12px;">' + esc(prompt) + '</div>';
+      }
+      html += '</div>';
+
       // Output Fields Section
       html += '<div class="output-config-section">';
-      html += '<div class="output-config-title">📤 Structured Output Fields</div>';
-      html += '<div class="output-field-list">';
+      html += '<div class="output-config-title">📤 Structured Fields (' + getSelectedOutputFields(state.selectedContentType).length + ')</div>';
+      html += '<div class="output-field-list" style="max-height:120px;overflow-y:auto;">';
 
       var outputFields = getSelectedOutputFields(state.selectedContentType);
       outputFields.forEach(function(field, idx) {
-        html += '<div class="output-field-item">';
-        html += '<span class="output-field-icon">📊</span>';
-        html += '<span class="output-field-name">' + esc(field) + '</span>';
-        html += '<span class="output-field-type">Text</span>';
-        html += '<button class="output-field-delete" onclick="removeOutputField(\'' + esc(field) + '\')" title="Remove field">×</button>';
+        html += '<div class="output-field-item" style="padding:6px 10px;margin-bottom:4px;">';
+        html += '<span class="output-field-icon" style="font-size:12px;">📊</span>';
+        html += '<span class="output-field-name" style="font-size:12px;">' + esc(field) + '</span>';
+        html += '<button class="output-field-delete" onclick="removeOutputField(\'' + esc(field) + '\')" title="Remove">×</button>';
         html += '</div>';
       });
       html += '</div>';
 
       // Add new field
-      html += '<div class="add-field-row">';
-      html += '<input type="text" class="add-field-input" id="newFieldInput" placeholder="New field name...">';
-      html += '<button class="add-field-btn" onclick="addOutputField()">+ Add</button>';
+      html += '<div class="add-field-row" style="margin-top:8px;">';
+      html += '<input type="text" class="add-field-input" id="newFieldInput" placeholder="Add field..." style="padding:6px 10px;font-size:12px;">';
+      html += '<button class="add-field-btn" onclick="addOutputField()" style="padding:6px 12px;font-size:12px;">+</button>';
       html += '</div>';
       html += '</div>';
 
-      // UDMO Outputs Section
+      // UDMO Outputs Section (compact)
       html += '<div class="output-config-section">';
-      html += '<div class="output-config-title">📄 Document Outputs (UDMOs)</div>';
+      html += '<div class="output-config-title">📄 Documents (' + getSelectedOutputUDMOs(state.selectedContentType).length + ')</div>';
 
       var allUDMOs = Object.keys(UDMO_CATALOG);
       var selectedUDMOs = getSelectedOutputUDMOs(state.selectedContentType);
 
+      html += '<div style="max-height:150px;overflow-y:auto;">';
       allUDMOs.forEach(function(udmoId) {
         var udmo = UDMO_CATALOG[udmoId];
         var isSelected = selectedUDMOs.indexOf(udmoId) > -1;
 
-        html += '<div class="udmo-toggle-card' + (isSelected ? ' selected' : '') + '" onclick="toggleOutputUDMO(\'' + udmoId + '\')">';
-        html += '<span class="udmo-toggle-icon">' + udmo.icon + '</span>';
+        html += '<div class="udmo-toggle-card' + (isSelected ? ' selected' : '') + '" onclick="toggleOutputUDMO(\'' + udmoId + '\')" style="padding:8px 10px;margin-bottom:4px;">';
+        html += '<span class="udmo-toggle-icon" style="font-size:16px;">' + udmo.icon + '</span>';
         html += '<div class="udmo-toggle-info">';
-        html += '<div class="udmo-toggle-name">' + udmo.name + '</div>';
-        html += '<div class="udmo-toggle-desc">' + udmo.desc + '</div>';
+        html += '<div class="udmo-toggle-name" style="font-size:12px;">' + udmo.name + '</div>';
         html += '</div>';
-        html += '<span class="udmo-toggle-badge">' + udmo.contentType + '</span>';
-        html += '<input type="checkbox" class="dmo-select-checkbox" ' + (isSelected ? 'checked' : '') + ' onclick="event.stopPropagation()">';
+        html += '<input type="checkbox" class="dmo-select-checkbox" ' + (isSelected ? 'checked' : '') + ' onclick="event.stopPropagation()" style="width:14px;height:14px;">';
         html += '</div>';
       });
+      html += '</div>';
 
       html += '</div>';
 
       return html;
+    }
+
+    function togglePromptPreview() {
+      state.promptPreviewOpen = !state.promptPreviewOpen;
+      render();
     }
 
     // Helper functions for field/DMO selection
@@ -1744,7 +1784,7 @@
         outputBodyHtml = '<div class="output-placeholder">' +
           '<div class="output-placeholder-icon">✨</div>' +
           '<div class="output-placeholder-text">No content generated yet</div>' +
-          '<div class="output-placeholder-hint">Click "Run" to generate content for the selected record</div>' +
+          '<div class="output-placeholder-hint">Select a record and click Run to generate</div>' +
           '</div>';
       } else if (state.currentView === 'generating') {
         outputBodyHtml = '<div class="output-placeholder">' +
@@ -1757,66 +1797,33 @@
       }
 
       var records = state.selectedContentType ? (SAMPLE_DATA[state.selectedContentType] || []) : [];
-      var paginationHtml = state.currentView === 'results' ?
-        '<div class="output-pagination">' +
-        '<input type="text" class="page-input" value="' + (state.currentRecordIndex + 1) + '" onchange="goToRecord(this.value)">' +
-        '<span class="page-total">/ ' + records.length + '</span>' +
-        '<button class="page-btn" onclick="prevRecord()"' + (state.currentRecordIndex === 0 ? ' disabled' : '') + '>▲</button>' +
-        '<button class="page-btn" onclick="nextRecord()"' + (state.currentRecordIndex >= records.length - 1 ? ' disabled' : '') + '>▼</button>' +
-        '</div>' : '';
 
-      // Bulk mode toggle for results view
-      var bulkHtml = (state.currentView === 'results') ? renderBulkModeToggle() + renderBulkProgress() : '';
-
-      // Generate the resolved prompt
-      var prompt = generateResolvedPrompt();
+      // Run bar with button and stats
       var inputTokens = estimateInputTokens();
       var outputTokens = estimateOutputTokens();
-
-      // Split center view: Prompt Panel (left) + Output Panel (right)
-      return '<div class="center-panel">' +
-        '<div class="output-content">' +
-        bulkHtml +
-        '<div class="split-center">' +
-
-        // LEFT: Prompt Panel
-        '<div class="prompt-panel">' +
-        '<div class="prompt-card">' +
-        '<div class="prompt-card-header">' +
-        '<div class="prompt-card-title">📝 Resolved Prompt</div>' +
-        '<span class="prompt-card-tokens">' + inputTokens + ' tokens</span>' +
-        '</div>' +
-        '<div class="prompt-card-body">' +
-        '<pre class="prompt-box">' + esc(prompt) + '</pre>' +
-        '</div>' +
-        '<div class="prompt-card-footer">' +
-        '<div class="usage-stats">' +
-        '<div class="usage-stat"><span class="usage-stat-label">Input</span><span class="usage-stat-value">' + inputTokens + '</span></div>' +
-        '<div class="usage-stat"><span class="usage-stat-label">Output</span><span class="usage-stat-value">~' + outputTokens + '</span></div>' +
-        '<div class="usage-stat"><span class="usage-stat-label">Cost</span><span class="usage-stat-value cost">$' + ((inputTokens * 0.00001) + (outputTokens * 0.00003)).toFixed(4) + '</span></div>' +
+      var runBarHtml = '<div class="run-bar">' +
+        '<div class="run-bar-left">' +
+        '<span class="run-bar-stat">Record ' + (state.currentRecordIndex + 1) + '/' + records.length + '</span>' +
+        '<span class="run-bar-stat">' + inputTokens + ' in / ~' + outputTokens + ' out</span>' +
+        '<span class="run-bar-stat cost">$' + ((inputTokens * 0.00001) + (outputTokens * 0.00003)).toFixed(4) + '</span>' +
         '</div>' +
         '<button class="run-btn" onclick="runGeneration()"' + (state.currentView === 'generating' || !contentType ? ' disabled' : '') + '>' +
         (state.currentView === 'generating' ? '<svg class="spinner" width="16" height="16" viewBox="0 0 24 24"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Running...' : '▶ Run') +
         '</button>' +
-        '</div>' +
-        '</div>' +
-        '</div>' +
+        '</div>';
 
-        // RIGHT: Output Panel
-        '<div class="output-panel">' +
+      return '<div class="center-panel">' +
+        runBarHtml +
+        '<div class="output-tabs">' + (tabsHtml || '<div style="padding:12px;color:#706e6b;font-size:13px;">Output Preview</div>') + '</div>' +
+        '<div class="output-content">' +
         '<div class="output-card">' +
         '<div class="output-card-header">' +
-        '<div class="output-card-title">✨ ' + (contentType ? contentType.name : 'Generated Output') + '</div>' +
-        paginationHtml +
+        '<div class="output-card-title">' + (contentType ? contentType.name : 'Generated Content') + '</div>' +
         '</div>' +
-        '<div class="output-tabs" style="padding:0 16px;border-bottom:1px solid #e5e5e5;">' + (tabsHtml || '<div style="padding:12px 0;color:#706e6b;font-size:13px;">Output Preview</div>') + '</div>' +
         '<div class="output-card-body">' + outputBodyHtml + '</div>' +
         '</div>' +
         '</div>' +
-
-        '</div>' + // close split-center
-        '</div>' + // close output-content
-        '</div>'; // close center-panel
+        '</div>';
     }
 
     function generateResolvedPrompt() {
@@ -2771,9 +2778,9 @@
         '<div class="agent-header">' +
         '<div class="agent-title">Agentforce <span class="agent-info-btn">i</span></div>' +
         '<div class="agent-actions">' +
-        '<button class="agent-action-btn">🔄</button>' +
-        '<button class="agent-action-btn">📌</button>' +
-        '<button class="agent-action-btn">✕</button>' +
+        '<button class="agent-action-btn" onclick="resetToWelcome()" title="Start Over">🔄</button>' +
+        '<button class="agent-action-btn" title="Pin">📌</button>' +
+        '<button class="agent-action-btn" title="Close">✕</button>' +
         '</div>' +
         '</div>' +
         '<div class="agent-body">' + messagesHtml + '</div>' +
@@ -2784,6 +2791,18 @@
         '</div>' +
         '</div>' +
         '</div>';
+    }
+
+    function resetToWelcome() {
+      state.currentView = 'welcome';
+      state.selectedContentType = null;
+      state.currentRecordIndex = 0;
+      state.messages = [];
+      state.isTyping = false;
+      state.generatedData = null;
+      state.activeOutputTab = 0;
+      state.leftPanelTab = 'sources';
+      render();
     }
 
     // ============ EVENT HANDLERS ============
