@@ -367,6 +367,74 @@
     .btn-publish:hover { background: #014486; }
     .btn-cancel { padding: 10px 24px; background: white; color: #3e3e3c; border: 1px solid #d8d8d8; border-radius: 6px; font-size: 14px; cursor: pointer; }
     .btn-cancel:hover { background: #f3f3f3; }
+
+    /* ============ DMO SELECTOR & FIELD EDITOR MODALS ============ */
+    .dmo-select-card { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: white; border: 1px solid #e5e5e5; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+    .dmo-select-card:hover { border-color: #0176d3; background: #f8fbfe; }
+    .dmo-select-card.selected { border-color: #0176d3; background: #e8f4fc; }
+    .dmo-select-card.disabled { opacity: 0.7; cursor: not-allowed; background: #f3f3f3; }
+    .dmo-select-icon { font-size: 24px; }
+    .dmo-select-info { flex: 1; }
+    .dmo-select-name { font-size: 14px; font-weight: 500; color: #3e3e3c; }
+    .dmo-select-meta { font-size: 12px; color: #706e6b; margin-top: 2px; }
+    .dmo-select-checkbox { width: 18px; height: 18px; accent-color: #0176d3; }
+
+    .subject-area-group { margin-bottom: 20px; }
+    .subject-area-header { font-size: 12px; font-weight: 600; color: #706e6b; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e5e5e5; }
+
+    .dmo-field-group { background: #f9f9f9; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    .dmo-field-group-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .dmo-field-group-icon { font-size: 18px; }
+    .dmo-field-group-name { font-size: 14px; font-weight: 500; color: #3e3e3c; }
+    .dmo-field-group-count { margin-left: auto; font-size: 12px; color: #706e6b; background: white; padding: 2px 8px; border-radius: 10px; }
+
+    .field-checkbox-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; max-height: 200px; overflow-y: auto; }
+    .field-checkbox { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+    .field-checkbox:hover { background: #e8f4fc; }
+    .field-checkbox input { width: 16px; height: 16px; accent-color: #0176d3; }
+    .field-checkbox-label { color: #3e3e3c; }
+    .pii-badge { background: #fef0f0; color: #ea001e; padding: 1px 4px; border-radius: 3px; font-size: 9px; font-weight: 600; }
+
+    /* Output Configuration */
+    .output-config-section { margin-bottom: 24px; }
+    .output-config-title { font-size: 13px; font-weight: 600; color: #3e3e3c; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .output-field-list { }
+    .output-field-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #e8f4e8; border: 1px solid #2e844a; border-radius: 6px; margin-bottom: 8px; }
+    .output-field-item.udmo { background: #f3e8ff; border-color: #9333ea; }
+    .output-field-icon { font-size: 16px; }
+    .output-field-name { flex: 1; font-size: 13px; color: #3e3e3c; }
+    .output-field-type { font-size: 10px; color: #706e6b; background: white; padding: 2px 6px; border-radius: 10px; }
+    .output-field-delete { background: none; border: none; color: #706e6b; cursor: pointer; font-size: 14px; padding: 4px; }
+    .output-field-delete:hover { color: #ea001e; }
+
+    .add-field-row { display: flex; gap: 8px; margin-top: 12px; }
+    .add-field-input { flex: 1; padding: 8px 12px; border: 1px solid #d8d8d8; border-radius: 6px; font-size: 13px; }
+    .add-field-input:focus { outline: none; border-color: #0176d3; }
+    .add-field-btn { padding: 8px 16px; background: #2e844a; color: white; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .add-field-btn:hover { background: #236a3b; }
+
+    /* UDMO Toggle Cards */
+    .udmo-toggle-card { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: white; border: 1px solid #e5e5e5; border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
+    .udmo-toggle-card:hover { border-color: #9333ea; background: #faf5ff; }
+    .udmo-toggle-card.selected { border-color: #9333ea; background: #f3e8ff; }
+    .udmo-toggle-icon { font-size: 24px; }
+    .udmo-toggle-info { flex: 1; }
+    .udmo-toggle-name { font-size: 14px; font-weight: 500; color: #3e3e3c; }
+    .udmo-toggle-desc { font-size: 12px; color: #706e6b; margin-top: 2px; }
+    .udmo-toggle-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #f3e8ff; color: #9333ea; font-weight: 500; }
+
+    /* Editable Source Card */
+    .source-item.editable { cursor: pointer; transition: all 0.15s; }
+    .source-item.editable:hover { background: #e8f4fc; border: 1px solid #0176d3; margin: -1px; margin-bottom: 7px; }
+    .source-field-count { font-size: 10px; color: #0176d3; background: #e8f4fc; padding: 2px 6px; border-radius: 8px; margin-left: auto; }
+    .edit-fields-btn { background: none; border: none; color: #0176d3; cursor: pointer; font-size: 12px; padding: 4px 8px; border-radius: 4px; }
+    .edit-fields-btn:hover { background: #e8f4fc; }
+
+    /* Primary badge */
+    .primary-badge { font-size: 9px; background: #9333ea; color: white; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+
+    .btn-done { padding: 10px 24px; background: #0176d3; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
+    .btn-done:hover { background: #014486; }
   </style>
 </head>
 <body>
@@ -1070,6 +1138,63 @@
       ]
     };
 
+    // ============ DMO CATALOG WITH FIELDS ============
+    var DMO_CATALOG = {
+      'Case__dlm': {
+        id: 'Case__dlm', name: 'Case', displayName: 'Support Case', icon: '📁', cloud: 'service',
+        fields: ['Id', 'Subject', 'Description', 'Status', 'Priority', 'Origin', 'Type', 'Reason', 'ContactId', 'AccountId', 'OwnerId', 'CreatedDate', 'ClosedDate', 'IsClosed', 'IsEscalated']
+      },
+      'EmailMessage__dlm': {
+        id: 'EmailMessage__dlm', name: 'Email Message', displayName: 'Email Message', icon: '📧', cloud: 'service',
+        fields: ['Id', 'Subject', 'TextBody', 'HtmlBody', 'FromAddress', 'ToAddress', 'CcAddress', 'MessageDate', 'Status', 'HasAttachment', 'ParentId', 'RelatedToId', 'IsIncoming']
+      },
+      'ResolvedCase__dlm': {
+        id: 'ResolvedCase__dlm', name: 'Resolved Case', displayName: 'Resolved Case', icon: '✅', cloud: 'service',
+        fields: ['Id', 'Subject', 'Resolution', 'Comments', 'Category', 'ProductArea', 'RootCause', 'Priority', 'ResolutionTime', 'CustomerSatisfactionScore', 'ClosedDate', 'AgentId']
+      },
+      'VoiceCall__dlm': {
+        id: 'VoiceCall__dlm', name: 'Voice Call', displayName: 'Voice Call', icon: '📞', cloud: 'service',
+        fields: ['Id', 'CallType', 'CallDuration', 'StartTime', 'EndTime', 'FromNumber', 'ToNumber', 'RecordingUrl', 'Transcript', 'Sentiment', 'ContactId', 'CaseId', 'OwnerId']
+      },
+      'Contact__dlm': {
+        id: 'Contact__dlm', name: 'Contact', displayName: 'Contact', icon: '👤', cloud: 'sales',
+        fields: ['Id', 'FirstName', 'LastName', 'Email', 'Phone', 'Title', 'Department', 'AccountId', 'MailingAddress', 'LeadSource', 'Birthdate', 'OwnerId', 'CreatedDate']
+      },
+      'Opportunity__dlm': {
+        id: 'Opportunity__dlm', name: 'Opportunity', displayName: 'Opportunity', icon: '💰', cloud: 'sales',
+        fields: ['Id', 'Name', 'Amount', 'CloseDate', 'StageName', 'Probability', 'Type', 'LeadSource', 'NextStep', 'Description', 'AccountId', 'ContactId', 'OwnerId', 'IsClosed', 'IsWon']
+      },
+      'Account__dlm': {
+        id: 'Account__dlm', name: 'Account', displayName: 'Account', icon: '🏢', cloud: 'sales',
+        fields: ['Id', 'Name', 'Industry', 'Type', 'Website', 'Phone', 'BillingAddress', 'ShippingAddress', 'AnnualRevenue', 'NumberOfEmployees', 'OwnerId', 'SupportTier', 'HealthScore']
+      },
+      'Lead__dlm': {
+        id: 'Lead__dlm', name: 'Lead', displayName: 'Lead', icon: '🎯', cloud: 'sales',
+        fields: ['Id', 'FirstName', 'LastName', 'Email', 'Company', 'Title', 'Phone', 'Status', 'LeadSource', 'Industry', 'Rating', 'OwnerId', 'IsConverted']
+      },
+      'WebActivity__dlm': {
+        id: 'WebActivity__dlm', name: 'Web Activity', displayName: 'Web Activity', icon: '🌐', cloud: 'marketing',
+        fields: ['Id', 'PageUrl', 'PageTitle', 'VisitDuration', 'VisitDate', 'ReferrerUrl', 'DeviceType', 'Browser', 'LeadId', 'ContactId', 'CampaignId']
+      },
+      'EmailActivity__dlm': {
+        id: 'EmailActivity__dlm', name: 'Email Activity', displayName: 'Email Activity', icon: '📩', cloud: 'marketing',
+        fields: ['Id', 'EmailName', 'SendDate', 'OpenDate', 'ClickDate', 'Status', 'LinkClicked', 'LeadId', 'ContactId', 'CampaignId', 'IsOpened', 'IsClicked', 'IsBounced']
+      }
+    };
+
+    // Map source names to DMO keys
+    var SOURCE_TO_DMO = {
+      'Cases': 'Case__dlm',
+      'Email Messages': 'EmailMessage__dlm',
+      'Resolved Cases': 'ResolvedCase__dlm',
+      'Voice Calls': 'VoiceCall__dlm',
+      'Contacts': 'Contact__dlm',
+      'Opportunities': 'Opportunity__dlm',
+      'Leads': 'Lead__dlm',
+      'Web Activity': 'WebActivity__dlm',
+      'Email Activity': 'EmailActivity__dlm'
+    };
+
     // ============ STATE ============
     var state = {
       currentView: 'welcome', // welcome, generating, results
@@ -1094,8 +1219,21 @@
         model: 'gpt-4o',
         dailyLimit: 1000,
         autoPublish: false
-      }
+      },
+      // DMO/Field Selection Modals
+      inputDMOSelectorOpen: false,
+      fieldSelectorOpen: false,
+      outputConfigOpen: false,
+      currentEditingDMO: null, // which DMO is being edited in field selector
+      // Left panel tab
+      leftPanelTab: 'sources' // sources, configuration
     };
+
+    // Runtime selections (per content type)
+    var selectedInputDMOs = {}; // { contentTypeId: [dmoKey, ...] }
+    var selectedInputFields = {}; // { contentTypeId: { dmoKey: [field, ...], ... } }
+    var selectedOutputFields = {}; // { contentTypeId: [field, ...] }
+    var selectedOutputUDMOs = {}; // { contentTypeId: [udmoId, ...] }
 
     // Cloud definitions
     var CLOUDS = {
@@ -1125,7 +1263,7 @@
     // ============ RENDER FUNCTIONS ============
     function render() {
       var app = document.getElementById('app');
-      app.innerHTML = renderHeader() + renderCloudTabs() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + renderRightPanel() + '</div>' + renderPublishModal();
+      app.innerHTML = renderHeader() + renderCloudTabs() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + renderRightPanel() + '</div>' + renderPublishModal() + renderInputDMOSelectorModal() + renderFieldSelectorModal();
     }
 
     function renderHeader() {
@@ -1160,38 +1298,277 @@
     }
 
     function renderLeftPanel() {
-      var sources = state.selectedContentType ? getSourcesForType(state.selectedContentType) : [];
+      var contentType = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
+      var sources = contentType ? getSourcesForTypeWithDMO(state.selectedContentType) : [];
 
-      var sourcesHtml = '';
-      if (sources.length > 0) {
-        sources.forEach(function(s) {
-          sourcesHtml += '<div class="source-item">' +
-            '<span class="source-icon">' + s.icon + '</span>' +
-            '<div class="source-info">' +
-            '<div class="source-name">' + s.name + '</div>' +
-            '<div class="source-meta">' + s.count.toLocaleString() + ' records</div>' +
-            '</div>' +
-            '<button class="source-delete">🗑️</button>' +
-            '</div>';
-        });
+      // Render based on active tab
+      var tabContentHtml = '';
+      if (state.leftPanelTab === 'sources') {
+        tabContentHtml = renderSourcesTab(sources, contentType);
       } else {
-        sourcesHtml = '<div class="sources-hint">Select a content type to see available data sources.</div>';
+        tabContentHtml = renderConfigurationTab(contentType);
       }
 
       return '<div class="left-panel">' +
         '<div class="panel-tabs">' +
-        '<button class="panel-tab active">Sources</button>' +
-        '<button class="panel-tab">Configuration</button>' +
+        '<button class="panel-tab' + (state.leftPanelTab === 'sources' ? ' active' : '') + '" onclick="setLeftPanelTab(\'sources\')">Sources</button>' +
+        '<button class="panel-tab' + (state.leftPanelTab === 'configuration' ? ' active' : '') + '" onclick="setLeftPanelTab(\'configuration\')">Configuration</button>' +
         '</div>' +
-        '<div class="panel-content">' +
-        '<div class="sources-header">' +
-        '<div><span class="sources-title">Data Sources</span> <span class="sources-count">(' + sources.length + ')</span></div>' +
-        '<button class="add-source-btn">+</button>' +
-        '</div>' +
-        sourcesHtml +
-        (sources.length > 0 ? '<div class="sources-hint" style="margin-top:20px;">These data sources will be used to generate your content. The assistant automatically selects the right data.</div>' : '') +
-        '</div>' +
+        '<div class="panel-content">' + tabContentHtml + '</div>' +
         '</div>';
+    }
+
+    function setLeftPanelTab(tab) {
+      state.leftPanelTab = tab;
+      render();
+    }
+
+    function getSourcesForTypeWithDMO(typeId) {
+      var type = CONTENT_TYPES[typeId];
+      if (!type) return [];
+      return type.sources.map(function(s, i) {
+        var counts = { 'Cases': 156, 'Email Messages': 89, 'Resolved Cases': 234, 'Voice Calls': 45, 'Contacts': 1250, 'Opportunities': 78, 'Leads': 312, 'Web Activity': 5420, 'Email Activity': 890 };
+        var icons = { 'Cases': '📁', 'Email Messages': '📧', 'Resolved Cases': '✅', 'Voice Calls': '📞', 'Contacts': '👤', 'Opportunities': '💰', 'Leads': '🎯', 'Web Activity': '🌐', 'Email Activity': '📩' };
+        var dmoKey = SOURCE_TO_DMO[s];
+        var dmo = dmoKey ? DMO_CATALOG[dmoKey] : null;
+        return { name: s, count: counts[s] || 100, icon: icons[s] || '📊', dmoKey: dmoKey, dmo: dmo, isPrimary: i === 0 };
+      });
+    }
+
+    function renderSourcesTab(sources, contentType) {
+      var html = '';
+
+      // Sources header with add button
+      html += '<div class="sources-header">';
+      html += '<div><span class="sources-title">Input Sources</span> <span class="sources-count">(' + sources.length + ')</span></div>';
+      html += '<button class="add-source-btn" onclick="openInputDMOSelector()" title="Add Input Source">+</button>';
+      html += '</div>';
+
+      if (sources.length > 0) {
+        sources.forEach(function(s) {
+          var selectedFields = getSelectedFieldsForDMO(state.selectedContentType, s.dmoKey);
+          var totalFields = s.dmo ? s.dmo.fields.length : 0;
+          var fieldCountText = selectedFields.length + '/' + totalFields + ' fields';
+
+          html += '<div class="source-item editable" onclick="openFieldSelectorForDMO(\'' + s.dmoKey + '\')">';
+          html += '<span class="source-icon">' + s.icon + '</span>';
+          html += '<div class="source-info">';
+          html += '<div class="source-name">' + s.name + (s.isPrimary ? '<span class="primary-badge">PRIMARY</span>' : '') + '</div>';
+          html += '<div class="source-meta">' + s.count.toLocaleString() + ' records</div>';
+          html += '</div>';
+          html += '<span class="source-field-count">' + fieldCountText + '</span>';
+          html += '<button class="edit-fields-btn" onclick="event.stopPropagation();openFieldSelectorForDMO(\'' + s.dmoKey + '\')">Edit</button>';
+          html += '</div>';
+        });
+
+        html += '<div class="sources-hint" style="margin-top:20px;">Click on a source to select which fields to include. The agent uses these fields as context for generation.</div>';
+      } else {
+        html += '<div class="sources-hint">Select a content type to configure data sources.</div>';
+      }
+
+      return html;
+    }
+
+    function renderConfigurationTab(contentType) {
+      if (!contentType) {
+        return '<div class="sources-hint">Select a content type to configure outputs.</div>';
+      }
+
+      var html = '';
+
+      // Output Fields Section
+      html += '<div class="output-config-section">';
+      html += '<div class="output-config-title">📤 Structured Output Fields</div>';
+      html += '<div class="output-field-list">';
+
+      var outputFields = getSelectedOutputFields(state.selectedContentType);
+      outputFields.forEach(function(field, idx) {
+        html += '<div class="output-field-item">';
+        html += '<span class="output-field-icon">📊</span>';
+        html += '<span class="output-field-name">' + esc(field) + '</span>';
+        html += '<span class="output-field-type">Text</span>';
+        html += '<button class="output-field-delete" onclick="removeOutputField(\'' + esc(field) + '\')" title="Remove field">×</button>';
+        html += '</div>';
+      });
+      html += '</div>';
+
+      // Add new field
+      html += '<div class="add-field-row">';
+      html += '<input type="text" class="add-field-input" id="newFieldInput" placeholder="New field name...">';
+      html += '<button class="add-field-btn" onclick="addOutputField()">+ Add</button>';
+      html += '</div>';
+      html += '</div>';
+
+      // UDMO Outputs Section
+      html += '<div class="output-config-section">';
+      html += '<div class="output-config-title">📄 Document Outputs (UDMOs)</div>';
+
+      var allUDMOs = Object.keys(UDMO_CATALOG);
+      var selectedUDMOs = getSelectedOutputUDMOs(state.selectedContentType);
+
+      allUDMOs.forEach(function(udmoId) {
+        var udmo = UDMO_CATALOG[udmoId];
+        var isSelected = selectedUDMOs.indexOf(udmoId) > -1;
+
+        html += '<div class="udmo-toggle-card' + (isSelected ? ' selected' : '') + '" onclick="toggleOutputUDMO(\'' + udmoId + '\')">';
+        html += '<span class="udmo-toggle-icon">' + udmo.icon + '</span>';
+        html += '<div class="udmo-toggle-info">';
+        html += '<div class="udmo-toggle-name">' + udmo.name + '</div>';
+        html += '<div class="udmo-toggle-desc">' + udmo.desc + '</div>';
+        html += '</div>';
+        html += '<span class="udmo-toggle-badge">' + udmo.contentType + '</span>';
+        html += '<input type="checkbox" class="dmo-select-checkbox" ' + (isSelected ? 'checked' : '') + ' onclick="event.stopPropagation()">';
+        html += '</div>';
+      });
+
+      html += '</div>';
+
+      return html;
+    }
+
+    // Helper functions for field/DMO selection
+    function getSelectedFieldsForDMO(contentTypeId, dmoKey) {
+      if (!contentTypeId || !dmoKey) return [];
+
+      // Initialize if not exists
+      if (!selectedInputFields[contentTypeId]) {
+        selectedInputFields[contentTypeId] = {};
+        initializeDefaultSelections(contentTypeId);
+      }
+
+      if (!selectedInputFields[contentTypeId][dmoKey]) {
+        // Default to first 5 fields
+        var dmo = DMO_CATALOG[dmoKey];
+        if (dmo) {
+          selectedInputFields[contentTypeId][dmoKey] = dmo.fields.slice(0, 5);
+        }
+      }
+
+      return selectedInputFields[contentTypeId][dmoKey] || [];
+    }
+
+    function initializeDefaultSelections(contentTypeId) {
+      var contentType = CONTENT_TYPES[contentTypeId];
+      if (!contentType) return;
+
+      // Initialize input fields
+      if (!selectedInputFields[contentTypeId]) selectedInputFields[contentTypeId] = {};
+      contentType.sources.forEach(function(src) {
+        var dmoKey = SOURCE_TO_DMO[src];
+        if (dmoKey && DMO_CATALOG[dmoKey]) {
+          selectedInputFields[contentTypeId][dmoKey] = DMO_CATALOG[dmoKey].fields.slice(0, 5);
+        }
+      });
+
+      // Initialize output fields
+      if (!selectedOutputFields[contentTypeId]) {
+        selectedOutputFields[contentTypeId] = contentType.outputs.slice();
+      }
+
+      // Initialize output UDMOs
+      if (!selectedOutputUDMOs[contentTypeId]) {
+        selectedOutputUDMOs[contentTypeId] = contentType.udmos ? contentType.udmos.map(function(u) { return u.id; }) : [];
+      }
+    }
+
+    function getSelectedOutputFields(contentTypeId) {
+      if (!contentTypeId) return [];
+
+      if (!selectedOutputFields[contentTypeId]) {
+        var contentType = CONTENT_TYPES[contentTypeId];
+        selectedOutputFields[contentTypeId] = contentType ? contentType.outputs.slice() : [];
+      }
+
+      return selectedOutputFields[contentTypeId];
+    }
+
+    function getSelectedOutputUDMOs(contentTypeId) {
+      if (!contentTypeId) return [];
+
+      if (!selectedOutputUDMOs[contentTypeId]) {
+        var contentType = CONTENT_TYPES[contentTypeId];
+        selectedOutputUDMOs[contentTypeId] = contentType && contentType.udmos ? contentType.udmos.map(function(u) { return u.id; }) : [];
+      }
+
+      return selectedOutputUDMOs[contentTypeId];
+    }
+
+    // Field/DMO manipulation functions
+    function addOutputField() {
+      var input = document.getElementById('newFieldInput');
+      if (!input || !input.value.trim()) return;
+
+      var fieldName = input.value.trim();
+      var fields = getSelectedOutputFields(state.selectedContentType);
+
+      if (fields.indexOf(fieldName) === -1) {
+        fields.push(fieldName);
+        selectedOutputFields[state.selectedContentType] = fields;
+        render();
+      }
+
+      input.value = '';
+    }
+
+    function removeOutputField(fieldName) {
+      var fields = getSelectedOutputFields(state.selectedContentType);
+      var idx = fields.indexOf(fieldName);
+      if (idx > -1) {
+        fields.splice(idx, 1);
+        selectedOutputFields[state.selectedContentType] = fields;
+        render();
+      }
+    }
+
+    function toggleOutputUDMO(udmoId) {
+      var udmos = getSelectedOutputUDMOs(state.selectedContentType);
+      var idx = udmos.indexOf(udmoId);
+      if (idx > -1) {
+        udmos.splice(idx, 1);
+      } else {
+        udmos.push(udmoId);
+      }
+      selectedOutputUDMOs[state.selectedContentType] = udmos;
+      render();
+    }
+
+    function toggleInputField(dmoKey, field) {
+      if (!state.selectedContentType || !dmoKey) return;
+
+      if (!selectedInputFields[state.selectedContentType]) selectedInputFields[state.selectedContentType] = {};
+      if (!selectedInputFields[state.selectedContentType][dmoKey]) selectedInputFields[state.selectedContentType][dmoKey] = [];
+
+      var fields = selectedInputFields[state.selectedContentType][dmoKey];
+      var idx = fields.indexOf(field);
+      if (idx > -1) {
+        fields.splice(idx, 1);
+      } else {
+        fields.push(field);
+      }
+      render();
+    }
+
+    // Modal open/close functions
+    function openInputDMOSelector() {
+      state.inputDMOSelectorOpen = true;
+      render();
+    }
+
+    function closeInputDMOSelector() {
+      state.inputDMOSelectorOpen = false;
+      render();
+    }
+
+    function openFieldSelectorForDMO(dmoKey) {
+      state.currentEditingDMO = dmoKey;
+      state.fieldSelectorOpen = true;
+      render();
+    }
+
+    function closeFieldSelector() {
+      state.fieldSelectorOpen = false;
+      state.currentEditingDMO = null;
+      render();
     }
 
     function renderCenterPanel() {
@@ -1907,6 +2284,156 @@
     function selectAlternative(index) {
       // Would swap in the selected alternative
       console.log('Selected alternative', index);
+    }
+
+    // ============ INPUT DMO SELECTOR MODAL ============
+    function renderInputDMOSelectorModal() {
+      if (!state.inputDMOSelectorOpen) return '';
+
+      var contentType = CONTENT_TYPES[state.selectedContentType];
+      if (!contentType) return '';
+
+      // Get currently selected input DMOs
+      var currentSources = contentType.sources.map(function(s) { return SOURCE_TO_DMO[s]; }).filter(Boolean);
+
+      var bodyHtml = '<div style="font-size:13px;color:#706e6b;margin-bottom:16px;">Select data sources to include as inputs for this content type.</div>';
+
+      // Group DMOs by cloud
+      var dmosByCloud = {};
+      for (var dmoKey in DMO_CATALOG) {
+        var dmo = DMO_CATALOG[dmoKey];
+        if (!dmosByCloud[dmo.cloud]) dmosByCloud[dmo.cloud] = [];
+        dmosByCloud[dmo.cloud].push(dmo);
+      }
+
+      // Render by cloud
+      for (var cloudKey in dmosByCloud) {
+        var cloudDMOs = dmosByCloud[cloudKey];
+        var cloud = CLOUDS[cloudKey] || { name: cloudKey, icon: '📊' };
+
+        bodyHtml += '<div class="subject-area-group">';
+        bodyHtml += '<div class="subject-area-header">' + cloud.icon + ' ' + cloud.name + '</div>';
+
+        cloudDMOs.forEach(function(dmo) {
+          var isSelected = currentSources.indexOf(dmo.id) > -1;
+          var isPrimary = currentSources.indexOf(dmo.id) === 0;
+
+          bodyHtml += '<div class="dmo-select-card' + (isSelected ? ' selected' : '') + (isPrimary ? ' disabled' : '') + '" onclick="' + (isPrimary ? '' : 'toggleInputDMOSelection(\'' + dmo.id + '\')') + '">';
+          bodyHtml += '<span class="dmo-select-icon">' + dmo.icon + '</span>';
+          bodyHtml += '<div class="dmo-select-info">';
+          bodyHtml += '<div class="dmo-select-name">' + dmo.displayName + (isPrimary ? ' <span class="primary-badge">PRIMARY</span>' : '') + '</div>';
+          bodyHtml += '<div class="dmo-select-meta">' + dmo.fields.length + ' fields available</div>';
+          bodyHtml += '</div>';
+          bodyHtml += '<input type="checkbox" class="dmo-select-checkbox" ' + (isSelected ? 'checked' : '') + (isPrimary ? ' disabled' : '') + ' onclick="event.stopPropagation()">';
+          bodyHtml += '</div>';
+        });
+
+        bodyHtml += '</div>';
+      }
+
+      return '<div class="modal-overlay" onclick="if(event.target===this)closeInputDMOSelector()">' +
+        '<div class="modal" style="width:600px;max-height:80vh;">' +
+        '<div class="modal-header"><div class="modal-title">📥 Select Input Sources</div><button class="modal-close" onclick="closeInputDMOSelector()">×</button></div>' +
+        '<div class="modal-body" style="max-height:60vh;overflow-y:auto;">' + bodyHtml + '</div>' +
+        '<div class="modal-footer"><span style="font-size:12px;color:#706e6b;">' + currentSources.length + ' sources selected</span><button class="btn-done" onclick="closeInputDMOSelector()">Done</button></div>' +
+        '</div></div>';
+    }
+
+    function toggleInputDMOSelection(dmoKey) {
+      // For now, just log - full implementation would modify CONTENT_TYPES
+      console.log('Toggle DMO:', dmoKey);
+      // In a real implementation, you would update the sources array
+      // This is a demo, so we just close the modal
+      render();
+    }
+
+    // ============ FIELD SELECTOR MODAL ============
+    function renderFieldSelectorModal() {
+      if (!state.fieldSelectorOpen || !state.currentEditingDMO) return '';
+
+      var dmo = DMO_CATALOG[state.currentEditingDMO];
+      if (!dmo) return '';
+
+      var selectedFields = getSelectedFieldsForDMO(state.selectedContentType, state.currentEditingDMO);
+      var allFields = dmo.fields;
+
+      // PII fields for marking
+      var PII_FIELDS = {
+        'Email': true, 'Phone': true, 'FirstName': true, 'LastName': true,
+        'MailingAddress': true, 'BillingAddress': true, 'ShippingAddress': true,
+        'FromAddress': true, 'ToAddress': true, 'CcAddress': true,
+        'FromNumber': true, 'ToNumber': true, 'Birthdate': true
+      };
+
+      var bodyHtml = '';
+      bodyHtml += '<div class="dmo-field-group">';
+      bodyHtml += '<div class="dmo-field-group-header">';
+      bodyHtml += '<span class="dmo-field-group-icon">' + dmo.icon + '</span>';
+      bodyHtml += '<span class="dmo-field-group-name">' + dmo.displayName + '</span>';
+      bodyHtml += '<span class="dmo-field-group-count">' + selectedFields.length + '/' + allFields.length + ' selected</span>';
+      bodyHtml += '</div>';
+
+      bodyHtml += '<div class="field-checkbox-list">';
+      allFields.forEach(function(field) {
+        var isSelected = selectedFields.indexOf(field) > -1;
+        var isPII = PII_FIELDS[field];
+
+        bodyHtml += '<label class="field-checkbox">';
+        bodyHtml += '<input type="checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="toggleInputField(\'' + state.currentEditingDMO + '\', \'' + field + '\')">';
+        bodyHtml += '<span class="field-checkbox-label">' + field + (isPII ? ' <span class="pii-badge">PII</span>' : '') + '</span>';
+        bodyHtml += '</label>';
+      });
+      bodyHtml += '</div>';
+      bodyHtml += '</div>';
+
+      // Quick actions
+      bodyHtml += '<div style="display:flex;gap:8px;margin-top:16px;">';
+      bodyHtml += '<button class="btn-cancel" style="padding:6px 12px;font-size:12px;" onclick="selectAllFields(\'' + state.currentEditingDMO + '\')">Select All</button>';
+      bodyHtml += '<button class="btn-cancel" style="padding:6px 12px;font-size:12px;" onclick="deselectAllFields(\'' + state.currentEditingDMO + '\')">Deselect All</button>';
+      bodyHtml += '<button class="btn-cancel" style="padding:6px 12px;font-size:12px;" onclick="selectNonPIIFields(\'' + state.currentEditingDMO + '\')">Select Non-PII Only</button>';
+      bodyHtml += '</div>';
+
+      return '<div class="modal-overlay" onclick="if(event.target===this)closeFieldSelector()">' +
+        '<div class="modal" style="width:600px;">' +
+        '<div class="modal-header"><div class="modal-title">📋 Select Fields for ' + dmo.displayName + '</div><button class="modal-close" onclick="closeFieldSelector()">×</button></div>' +
+        '<div class="modal-body">' + bodyHtml + '</div>' +
+        '<div class="modal-footer"><span style="font-size:12px;color:#706e6b;">' + selectedFields.length + ' fields selected</span><button class="btn-done" onclick="closeFieldSelector()">Done</button></div>' +
+        '</div></div>';
+    }
+
+    function selectAllFields(dmoKey) {
+      var dmo = DMO_CATALOG[dmoKey];
+      if (!dmo || !state.selectedContentType) return;
+
+      if (!selectedInputFields[state.selectedContentType]) selectedInputFields[state.selectedContentType] = {};
+      selectedInputFields[state.selectedContentType][dmoKey] = dmo.fields.slice();
+      render();
+    }
+
+    function deselectAllFields(dmoKey) {
+      if (!state.selectedContentType) return;
+
+      if (!selectedInputFields[state.selectedContentType]) selectedInputFields[state.selectedContentType] = {};
+      selectedInputFields[state.selectedContentType][dmoKey] = [];
+      render();
+    }
+
+    function selectNonPIIFields(dmoKey) {
+      var dmo = DMO_CATALOG[dmoKey];
+      if (!dmo || !state.selectedContentType) return;
+
+      var PII_FIELDS = {
+        'Email': true, 'Phone': true, 'FirstName': true, 'LastName': true,
+        'MailingAddress': true, 'BillingAddress': true, 'ShippingAddress': true,
+        'FromAddress': true, 'ToAddress': true, 'CcAddress': true,
+        'FromNumber': true, 'ToNumber': true, 'Birthdate': true
+      };
+
+      if (!selectedInputFields[state.selectedContentType]) selectedInputFields[state.selectedContentType] = {};
+      selectedInputFields[state.selectedContentType][dmoKey] = dmo.fields.filter(function(f) {
+        return !PII_FIELDS[f];
+      });
+      render();
     }
 
     // ============ CLOUD TABS RENDERER ============
