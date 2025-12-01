@@ -622,6 +622,17 @@
     .quick-suggestions-title { font-size: 10px; text-transform: uppercase; color: #706e6b; margin-bottom: 8px; }
     .quick-suggestion { display: inline-block; padding: 6px 12px; background: #f3f3f3; border-radius: 16px; font-size: 12px; color: #3e3e3c; margin-right: 6px; margin-bottom: 6px; cursor: pointer; }
     .quick-suggestion:hover { background: #e8f4fc; color: #0176d3; }
+    .quick-suggestion.run-chip { background: #9333ea; color: white; font-weight: 500; }
+    .quick-suggestion.run-chip:hover { background: #7e22ce; color: white; }
+    .config-inline { color: #706e6b; font-size: 12px; }
+
+    /* Mode choice buttons for template creation */
+    .mode-choice-container { display: flex; gap: 10px; margin-top: 12px; }
+    .mode-choice-btn { flex: 1; padding: 14px 16px; border: 1px solid #e5e5e5; border-radius: 8px; background: white; cursor: pointer; text-align: center; transition: all 0.15s; }
+    .mode-choice-btn:hover { border-color: #0176d3; background: #f8fbfe; }
+    .mode-choice-icon { font-size: 24px; margin-bottom: 6px; }
+    .mode-choice-label { font-size: 13px; font-weight: 500; color: #3e3e3c; }
+    .mode-choice-desc { font-size: 11px; color: #706e6b; margin-top: 2px; }
 
     .chat-input-field { flex: 1; padding: 10px 14px; border: 1px solid #d8d8d8; border-radius: 20px; font-size: 13px; outline: none; }
     .chat-input-field:focus { border-color: #0176d3; }
@@ -1457,6 +1468,7 @@
       templateBuilderOpen: false,
       templateMode: 'chat', // 'chat' or 'ui'
       templateCreatingInPanel: false, // true when creating template in right panel
+      templateModeChosen: false, // true once user picks chat or form
       templateChatMessages: [],
       newTemplate: {
         id: '',
@@ -2953,11 +2965,12 @@
 
     // ============ TEMPLATE BUILDER ============
     function openTemplateBuilder() {
-      // Start template creation in the Agentforce panel (not modal)
+      // Start template creation - ask user to choose mode
       state.templateCreatingInPanel = true;
-      state.selectedContentType = null; // Clear any selected use case
+      state.templateModeChosen = false; // Show mode choice first
+      state.selectedContentType = null;
       state.templateChatMessages = [
-        { role: 'agent', content: "Let's create a new template! What would you like to call it?" }
+        { role: 'agent', content: "Let's create a new template! How would you like to build it?" }
       ];
       state.newTemplate = {
         id: '',
@@ -2971,8 +2984,25 @@
       render();
     }
 
+    function chooseTemplateMode(mode) {
+      state.templateModeChosen = true;
+      if (mode === 'chat') {
+        // Continue in Agentforce panel with chat
+        state.templateChatMessages.push({ role: 'agent', content: "Great! Let's build it together. What would you like to call your template?" });
+        render();
+      } else {
+        // Open the form modal
+        state.templateCreatingInPanel = false;
+        state.templateBuilderOpen = true;
+        state.templateMode = 'ui';
+        render();
+      }
+    }
+
     function openTemplateBuilderModal() {
-      // For UI-based template creation (modal)
+      // For UI-based template creation (modal) - direct access
+      state.templateCreatingInPanel = false;
+      state.templateModeChosen = true;
       state.templateBuilderOpen = true;
       state.templateMode = 'ui';
       state.newTemplate = {
@@ -2989,6 +3019,7 @@
 
     function cancelTemplateCreation() {
       state.templateCreatingInPanel = false;
+      state.templateModeChosen = false;
       state.templateChatMessages = [];
       state.newTemplate = { id: '', name: '', icon: '📄', desc: '', sources: [], outputs: ['Summary'], udmos: [] };
       render();
@@ -3480,8 +3511,8 @@
 
       html += '<div class="agent-chat-area">';
 
-      // Preview card if we have data
-      if (t.name) {
+      // Preview card if we have data (only after mode is chosen and name is set)
+      if (state.templateModeChosen && t.name) {
         html += '<div class="template-preview-card">';
         html += '<div class="template-preview-header">';
         html += '<span class="template-preview-icon">' + t.icon + '</span>';
@@ -3508,27 +3539,45 @@
         html += '</div>';
       });
 
-      html += '</div>';
-
-      // Suggestions based on state
-      var suggestions = [];
-      if (!t.name) {
-        suggestions = ['Lead Scorer', 'Feedback Analyzer', 'Deal Summary'];
-      } else if (!t.desc) {
-        suggestions = ['Scores leads based on activity', 'Analyzes customer feedback', 'Generates deal summaries'];
-      } else if (t.sources.length === 0) {
-        suggestions = ['Add Case', 'Add Lead', 'Add Contact', 'Add Opportunity'];
-      } else if (t.outputs.length <= 1) {
-        suggestions = ['Add Priority field', 'Add Score field', 'Add Sentiment field'];
-      } else {
-        suggestions = ['Add draft email', 'Add article', 'Done', 'Show config'];
+      // Mode choice buttons (shown before mode is chosen)
+      if (!state.templateModeChosen) {
+        html += '<div class="mode-choice-container">';
+        html += '<div class="mode-choice-btn" onclick="chooseTemplateMode(\'chat\')">';
+        html += '<div class="mode-choice-icon">💬</div>';
+        html += '<div class="mode-choice-label">Chat with me</div>';
+        html += '<div class="mode-choice-desc">I\'ll guide you step by step</div>';
+        html += '</div>';
+        html += '<div class="mode-choice-btn" onclick="chooseTemplateMode(\'form\')">';
+        html += '<div class="mode-choice-icon">📋</div>';
+        html += '<div class="mode-choice-label">Use a form</div>';
+        html += '<div class="mode-choice-desc">Fill out fields directly</div>';
+        html += '</div>';
+        html += '</div>';
       }
 
-      html += '<div class="quick-suggestions">';
-      suggestions.forEach(function(s) {
-        html += '<div class="quick-suggestion" onclick="applyTemplateSuggestion(\'' + esc(s) + '\')">"' + s + '"</div>';
-      });
       html += '</div>';
+
+      // Suggestions based on state (only show after mode is chosen)
+      if (state.templateModeChosen) {
+        var suggestions = [];
+        if (!t.name) {
+          suggestions = ['Lead Scorer', 'Feedback Analyzer', 'Deal Summary'];
+        } else if (!t.desc) {
+          suggestions = ['Scores leads based on activity', 'Analyzes customer feedback', 'Generates deal summaries'];
+        } else if (t.sources.length === 0) {
+          suggestions = ['Add Case', 'Add Lead', 'Add Contact', 'Add Opportunity'];
+        } else if (t.outputs.length <= 1) {
+          suggestions = ['Add Priority field', 'Add Score field', 'Add Sentiment field'];
+        } else {
+          suggestions = ['Add draft email', 'Add article', 'Done', 'Show config'];
+        }
+
+        html += '<div class="quick-suggestions">';
+        suggestions.forEach(function(s) {
+          html += '<div class="quick-suggestion" onclick="applyTemplateSuggestion(\'' + esc(s) + '\')">"' + s + '"</div>';
+        });
+        html += '</div>';
+      }
 
       return html;
     }
@@ -3580,19 +3629,20 @@
         html += '</div>';
 
       } else {
-        // State 2: Use case selected - Config mode with chat
+        // State 2: Use case selected - Conversational config (no card/modal)
         var records = SAMPLE_DATA[state.selectedContentType] || [];
         var outputFields = getSelectedOutputFields(state.selectedContentType);
         var udmos = getSelectedOutputUDMOs(state.selectedContentType);
 
         html += '<div class="agent-chat-area">';
 
-        // Initial agent message
+        // Initial agent message - conversational with config info
         html += '<div class="agent-message">';
         html += '<div class="agent-avatar">⚡</div>';
         html += '<div class="agent-bubble">';
-        html += '<strong>' + currentCT.icon + ' ' + currentCT.name + '</strong><br><br>';
-        html += 'Ready! Configure on the left panel, edit the prompt in center, or ask me to make changes.';
+        html += '<strong>' + currentCT.icon + ' ' + currentCT.name + ' is ready!</strong><br>';
+        html += '<span class="config-inline">' + records.length + ' records • ' + outputFields.length + ' fields • ' + udmos.length + ' docs</span><br><br>';
+        html += 'What would you like to do?';
         html += '</div>';
         html += '</div>';
 
@@ -3611,31 +3661,18 @@
         }
         html += '</div>';
 
-        // Config summary card
-        html += '<div class="config-summary">';
-        html += '<div class="config-summary-header">';
-        html += '<span>' + currentCT.icon + ' ' + currentCT.name + '</span>';
-        html += '<button class="config-change-btn" onclick="resetToWelcome()">Change</button>';
-        html += '</div>';
-        html += '<div class="config-summary-stats">';
-        html += '<div class="config-stat"><span class="config-stat-value">' + records.length + '</span><span class="config-stat-label">Records</span></div>';
-        html += '<div class="config-stat"><span class="config-stat-value">' + outputFields.length + '</span><span class="config-stat-label">Fields</span></div>';
-        html += '<div class="config-stat"><span class="config-stat-value">' + udmos.length + '</span><span class="config-stat-label">Docs</span></div>';
-        html += '</div>';
-        html += '<button class="run-btn-large" onclick="runGeneration()"' + (state.currentView === 'generating' ? ' disabled' : '') + '>';
-        html += (state.currentView === 'generating' ? 'Generating...' : '▶ Run Generation');
-        html += '</button>';
-        html += '</div>';
-
-        // Quick suggestions
+        // Action chips - all peer level, Run is just another action
         html += '<div class="quick-suggestions">';
-        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Add Confidence field\')">"Add Confidence field"</div>';
-        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Include draft email\')">"Include draft email"</div>';
-        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Show config\')">"Show current config"</div>';
+        html += '<div class="quick-suggestion run-chip" onclick="runGeneration()">' + (state.currentView === 'generating' ? '⏳ Running...' : '▶ Run') + '</div>';
+        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Add field\')">Add field</div>';
+        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Add document\')">Add document</div>';
+        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Show config\')">Show config</div>';
+        html += '<div class="quick-suggestion" onclick="resetToWelcome()">Change use case</div>';
         html += '</div>';
       }
 
-      // Chat input (always visible)
+      // Chat input - hide until mode is chosen for template creation
+      var showInput = !state.templateCreatingInPanel || state.templateModeChosen;
       var placeholder = state.templateCreatingInPanel
         ? 'Type template name or command...'
         : (currentCT ? 'Ask me to add fields, change outputs...' : 'Describe what you want to generate...');
@@ -3643,21 +3680,23 @@
       var inputHandler = state.templateCreatingInPanel ? 'sendTemplateMessage()' : 'sendSetupMessage()';
       var resetAction = state.templateCreatingInPanel ? 'cancelTemplateCreation()' : 'resetToWelcome()';
 
+      var inputHtml = showInput
+        ? '<div class="agent-input"><div class="chat-input-container">' +
+          '<input type="text" class="chat-input-field" id="setupInput" placeholder="' + placeholder + '" onkeydown="if(event.key===\'Enter\')' + inputHandler + '">' +
+          '<button class="chat-send-btn" onclick="' + inputHandler + '">➤</button>' +
+          '</div></div>'
+        : '';
+
       return '<div class="right-panel">' +
         '<div class="agent-header">' +
         '<div class="agent-title">⚡ Agentforce</div>' +
         '<div class="agent-actions">' +
-        (state.templateCreatingInPanel ? '<button class="agent-action-btn" onclick="openTemplateBuilderModal()" title="Open Form">📋</button>' : '') +
+        (state.templateCreatingInPanel && state.templateModeChosen ? '<button class="agent-action-btn" onclick="openTemplateBuilderModal()" title="Switch to Form">📋</button>' : '') +
         '<button class="agent-action-btn" onclick="' + resetAction + '" title="' + (state.templateCreatingInPanel ? 'Cancel' : 'Start Over') + '">🔄</button>' +
         '</div>' +
         '</div>' +
         '<div class="agent-body">' + html + '</div>' +
-        '<div class="agent-input">' +
-        '<div class="chat-input-container">' +
-        '<input type="text" class="chat-input-field" id="setupInput" placeholder="' + placeholder + '" onkeydown="if(event.key===\'Enter\')' + inputHandler + '">' +
-        '<button class="chat-send-btn" onclick="' + inputHandler + '">➤</button>' +
-        '</div>' +
-        '</div>' +
+        inputHtml +
         '</div>';
     }
 
