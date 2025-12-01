@@ -625,6 +625,38 @@
 
     .chat-input-field { flex: 1; padding: 10px 14px; border: 1px solid #d8d8d8; border-radius: 20px; font-size: 13px; outline: none; }
     .chat-input-field:focus { border-color: #0176d3; }
+
+    /* ============ TEMPLATE BUILDER TABS (CHAT VS UI) ============ */
+    .template-mode-tabs { display: flex; border-bottom: 1px solid #e5e5e5; margin: -24px -24px 16px; padding: 0 24px; }
+    .template-mode-tab { flex: 1; padding: 12px 16px; font-size: 13px; font-weight: 500; color: #706e6b; background: none; border: none; cursor: pointer; border-bottom: 3px solid transparent; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .template-mode-tab:hover { background: #f3f3f3; }
+    .template-mode-tab.active { color: #0176d3; border-bottom-color: #0176d3; }
+
+    .template-chat-container { display: flex; flex-direction: column; height: 400px; }
+    .template-chat-messages { flex: 1; overflow-y: auto; padding: 16px 0; }
+    .template-chat-message { display: flex; gap: 10px; margin-bottom: 14px; }
+    .template-chat-message.user { justify-content: flex-end; }
+    .template-chat-avatar { width: 28px; height: 28px; background: #e8f4fc; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .template-chat-bubble { background: #f3f3f3; padding: 10px 14px; border-radius: 12px; border-top-left-radius: 4px; font-size: 13px; line-height: 1.5; max-width: 85%; }
+    .template-chat-message.user .template-chat-bubble { background: #0176d3; color: white; border-top-left-radius: 12px; border-top-right-radius: 4px; }
+    .template-chat-input-row { display: flex; gap: 8px; padding-top: 12px; border-top: 1px solid #e5e5e5; }
+    .template-chat-input { flex: 1; padding: 10px 14px; border: 1px solid #d8d8d8; border-radius: 20px; font-size: 13px; outline: none; }
+    .template-chat-input:focus { border-color: #0176d3; }
+    .template-chat-send { width: 36px; height: 36px; background: #0176d3; border: none; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .template-chat-send:hover { background: #014486; }
+
+    .template-preview-card { background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fc 100%); border: 1px solid #0176d3; border-radius: 8px; padding: 14px; margin-bottom: 16px; }
+    .template-preview-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .template-preview-icon { font-size: 24px; }
+    .template-preview-name { font-size: 15px; font-weight: 600; color: #032d60; }
+    .template-preview-desc { font-size: 12px; color: #706e6b; }
+    .template-preview-stats { display: flex; gap: 12px; margin-top: 10px; }
+    .template-preview-stat { background: white; padding: 6px 10px; border-radius: 12px; font-size: 11px; color: #3e3e3c; }
+    .template-preview-stat strong { color: #0176d3; }
+
+    .template-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .template-suggestion { padding: 6px 12px; background: #f3f3f3; border-radius: 16px; font-size: 11px; color: #3e3e3c; cursor: pointer; }
+    .template-suggestion:hover { background: #e8f4fc; color: #0176d3; }
   </style>
 </head>
 <body>
@@ -1423,6 +1455,8 @@
       editedPrompt: null, // null means use generated prompt
       // Template builder
       templateBuilderOpen: false,
+      templateMode: 'chat', // 'chat' or 'ui'
+      templateChatMessages: [],
       newTemplate: {
         id: '',
         name: '',
@@ -1890,26 +1924,30 @@
     function renderCenterPanel() {
       var contentType = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
 
-      // Build tabs - DMO outputs first, then UDMO outputs
+      // Build tabs - Use SELECTED outputs (which reflect chat changes), not just contentType defaults
       var tabsHtml = '';
       if (contentType) {
-        // DMO output tabs (structured fields)
-        var dmoTabs = contentType.outputs.slice(0, 3);
+        // DMO output tabs - use selected output fields (includes fields added via chat)
+        var selectedFields = getSelectedOutputFields(state.selectedContentType);
+        var dmoTabs = selectedFields.slice(0, 5); // Show up to 5 tabs
+
+        var icons = { 'Summary': '📝', 'Priority': '🎯', 'Sentiment': '💭', 'Title': '📰', 'Problem': '❗', 'Solution': '✅', 'Subject': '📧', 'Tone': '🎭', 'Confidence': '📊', 'Safety': '🛡️', 'Key Points': '📌', 'Action Items': '✓', 'Score': '💯', 'Category': '🏷️', 'Recommendation': '💡', 'NextSteps': '➡️' };
+
         dmoTabs.forEach(function(tab, i) {
-          var icons = { 'Summary': '📝', 'Priority': '🎯', 'Sentiment': '💭', 'Title': '📰', 'Problem': '❗', 'Solution': '✅', 'Subject': '📧', 'Tone': '🎭', 'Confidence': '📊', 'Safety': '🛡️', 'Key Points': '📌', 'Action Items': '✓' };
           tabsHtml += '<button class="output-tab' + (state.activeOutputTab === i ? ' active' : '') + '" onclick="setActiveTab(' + i + ')">' +
             '<span class="output-tab-icon">' + (icons[tab] || '📄') + '</span>' + tab +
             '</button>';
         });
 
-        // UDMO output tabs (unstructured content) - with divider
-        if (contentType.udmos && contentType.udmos.length > 0) {
-          contentType.udmos.forEach(function(udmo, i) {
-            var udmoInfo = UDMO_CATALOG[udmo.id] || {};
+        // UDMO output tabs - use selected UDMOs (includes docs added via chat)
+        var selectedUDMOs = getSelectedOutputUDMOs(state.selectedContentType);
+        if (selectedUDMOs.length > 0) {
+          selectedUDMOs.forEach(function(udmoId, i) {
+            var udmoInfo = UDMO_CATALOG[udmoId] || {};
             var tabIndex = dmoTabs.length + i;
             var isFirst = i === 0;
             tabsHtml += '<button class="output-tab' + (isFirst ? ' udmo-tab' : '') + (state.activeOutputTab === tabIndex ? ' active' : '') + '" onclick="setActiveTab(' + tabIndex + ')">' +
-              '<span class="output-tab-icon">' + (udmoInfo.icon || '📄') + '</span>' + udmo.name +
+              '<span class="output-tab-icon">' + (udmoInfo.icon || '📄') + '</span>' + (udmoInfo.name || udmoId) +
               '<span class="udmo-type-badge">' + (udmoInfo.contentType || 'Text') + '</span>' +
               '</button>';
           });
@@ -2119,71 +2157,79 @@
 
       var data = outputs[state.currentRecordIndex];
       var html = '';
-      var dmoTabCount = contentType.outputs.slice(0, 3).length;
+
+      // Use selected fields (includes chat additions)
+      var selectedFields = getSelectedOutputFields(state.selectedContentType);
+      var dmoTabs = selectedFields.slice(0, 5);
+      var dmoTabCount = dmoTabs.length;
+
+      // Get selected UDMOs (includes chat additions)
+      var selectedUDMOs = getSelectedOutputUDMOs(state.selectedContentType);
 
       // Check if we're on a UDMO tab
-      if (contentType.udmos && state.activeOutputTab >= dmoTabCount) {
+      if (selectedUDMOs.length > 0 && state.activeOutputTab >= dmoTabCount) {
         var udmoIndex = state.activeOutputTab - dmoTabCount;
-        var udmoConfig = contentType.udmos[udmoIndex];
-        if (udmoConfig && data.__udmo && data.__udmo[udmoConfig.id]) {
-          html = renderUDMO(udmoConfig.id, data.__udmo[udmoConfig.id]);
+        var udmoId = selectedUDMOs[udmoIndex];
+        if (udmoId && data.__udmo && data.__udmo[udmoId]) {
+          html = renderUDMO(udmoId, data.__udmo[udmoId]);
         } else {
           html = '<div class="output-placeholder"><div class="output-placeholder-icon">📄</div><div class="output-placeholder-text">UDMO content not available</div></div>';
         }
       }
       // DMO tab views
       else if (state.activeOutputTab === 0) {
-        // Summary/Main view
+        // Summary/Main view - show first field as main content
+        var firstField = dmoTabs[0] || 'Summary';
         html += '<div class="generated-section">';
-        html += '<div class="generated-label">Summary</div>';
-        html += '<div class="generated-value large">' + esc(data.Summary || data.Title || data.Subject || '') + '</div>';
+        html += '<div class="generated-label">' + firstField + '</div>';
+        html += '<div class="generated-value large">' + esc(data[firstField] || data.Summary || data.Title || data.Subject || '') + '</div>';
         html += '</div>';
 
-        // Field grid for metadata
+        // Field grid for all other selected fields
         html += '<div class="field-grid">';
-        if (data.Priority) {
-          html += '<div class="field-item"><div class="generated-label">Priority</div>';
-          var prioClass = data.Priority.toLowerCase() === 'critical' ? 'high' : data.Priority.toLowerCase();
-          html += '<span class="field-badge ' + prioClass + '">' + data.Priority + '</span></div>';
-        }
-        if (data.Sentiment) {
-          var sentimentClass = data.Sentiment.toLowerCase().indexOf('positive') > -1 ? 'positive' : (data.Sentiment.toLowerCase().indexOf('negative') > -1 || data.Sentiment.toLowerCase().indexOf('angry') > -1 || data.Sentiment.toLowerCase().indexOf('frustrated') > -1 ? 'negative' : 'neutral');
-          html += '<div class="field-item"><div class="generated-label">Sentiment</div>';
-          html += '<span class="field-badge ' + sentimentClass + '">' + data.Sentiment + '</span></div>';
-        }
-        if (data.Category) {
-          html += '<div class="field-item"><div class="generated-label">Category</div>';
-          html += '<div class="generated-value">' + esc(data.Category) + '</div></div>';
-        }
-        if (data.Tone) {
-          html += '<div class="field-item"><div class="generated-label">Tone</div>';
-          html += '<div class="generated-value">' + esc(data.Tone) + '</div></div>';
-        }
-        if (data.Confidence) {
-          html += '<div class="field-item"><div class="generated-label">Confidence</div>';
-          html += '<span class="field-badge positive">' + data.Confidence + '</span></div>';
-        }
-        if (data.Safety) {
-          var safetyClass = data.Safety.toLowerCase().indexOf('approved') > -1 ? 'positive' : (data.Safety.toLowerCase().indexOf('review') > -1 ? 'medium' : 'neutral');
-          html += '<div class="field-item"><div class="generated-label">Safety</div>';
-          html += '<span class="field-badge ' + safetyClass + '">' + data.Safety + '</span></div>';
-        }
+        selectedFields.forEach(function(field, idx) {
+          if (idx === 0) return; // Skip first field (shown above)
+          if (!data[field]) return; // Skip if no data
+
+          html += '<div class="field-item"><div class="generated-label">' + field + '</div>';
+
+          // Apply styling based on field type
+          if (field === 'Priority') {
+            var prioClass = data[field].toLowerCase() === 'critical' ? 'high' : data[field].toLowerCase();
+            html += '<span class="field-badge ' + prioClass + '">' + data[field] + '</span>';
+          } else if (field === 'Sentiment') {
+            var sentimentClass = data[field].toLowerCase().indexOf('positive') > -1 ? 'positive' : (data[field].toLowerCase().indexOf('negative') > -1 || data[field].toLowerCase().indexOf('angry') > -1 || data[field].toLowerCase().indexOf('frustrated') > -1 ? 'negative' : 'neutral');
+            html += '<span class="field-badge ' + sentimentClass + '">' + data[field] + '</span>';
+          } else if (field === 'Confidence' || field === 'Score') {
+            html += '<span class="field-badge positive">' + data[field] + '</span>';
+          } else if (field === 'Safety') {
+            var safetyClass = data[field].toLowerCase().indexOf('approved') > -1 ? 'positive' : (data[field].toLowerCase().indexOf('review') > -1 ? 'medium' : 'neutral');
+            html += '<span class="field-badge ' + safetyClass + '">' + data[field] + '</span>';
+          } else {
+            html += '<div class="generated-value">' + esc(data[field]) + '</div>';
+          }
+          html += '</div>';
+        });
         html += '</div>';
       } else {
         // Individual DMO field view
-        var tabs = contentType.outputs.slice(0, 3);
-        var fieldName = tabs[state.activeOutputTab];
-        if (fieldName && data[fieldName]) {
+        var fieldName = dmoTabs[state.activeOutputTab];
+        if (fieldName) {
           html += '<div class="generated-section">';
           html += '<div class="generated-label">' + fieldName + '</div>';
-          if (fieldName === 'Priority') {
-            var prioClass = data[fieldName].toLowerCase() === 'critical' ? 'high' : data[fieldName].toLowerCase();
-            html += '<span class="field-badge ' + prioClass + '" style="font-size:16px;padding:8px 16px;">' + data[fieldName] + '</span>';
-          } else if (fieldName === 'Sentiment') {
-            var sentClass = data[fieldName].toLowerCase().indexOf('positive') > -1 ? 'positive' : (data[fieldName].toLowerCase().indexOf('negative') > -1 || data[fieldName].toLowerCase().indexOf('angry') > -1 || data[fieldName].toLowerCase().indexOf('frustrated') > -1 ? 'negative' : 'neutral');
-            html += '<span class="field-badge ' + sentClass + '" style="font-size:16px;padding:8px 16px;">' + data[fieldName] + '</span>';
+
+          if (data[fieldName]) {
+            if (fieldName === 'Priority') {
+              var prioClass = data[fieldName].toLowerCase() === 'critical' ? 'high' : data[fieldName].toLowerCase();
+              html += '<span class="field-badge ' + prioClass + '" style="font-size:16px;padding:8px 16px;">' + data[fieldName] + '</span>';
+            } else if (fieldName === 'Sentiment') {
+              var sentClass = data[fieldName].toLowerCase().indexOf('positive') > -1 ? 'positive' : (data[fieldName].toLowerCase().indexOf('negative') > -1 || data[fieldName].toLowerCase().indexOf('angry') > -1 || data[fieldName].toLowerCase().indexOf('frustrated') > -1 ? 'negative' : 'neutral');
+              html += '<span class="field-badge ' + sentClass + '" style="font-size:16px;padding:8px 16px;">' + data[fieldName] + '</span>';
+            } else {
+              html += '<div class="generated-value large">' + esc(data[fieldName]) + '</div>';
+            }
           } else {
-            html += '<div class="generated-value large">' + esc(data[fieldName]) + '</div>';
+            html += '<div class="generated-value large" style="color:#706e6b;font-style:italic;">Value will be generated when you run</div>';
           }
           html += '</div>';
         }
@@ -2907,6 +2953,10 @@
     // ============ TEMPLATE BUILDER ============
     function openTemplateBuilder() {
       state.templateBuilderOpen = true;
+      state.templateMode = 'chat';
+      state.templateChatMessages = [
+        { role: 'agent', content: "Hi! I'll help you create a new content template. What would you like to call it?" }
+      ];
       state.newTemplate = {
         id: '',
         name: '',
@@ -2916,6 +2966,199 @@
         outputs: ['Summary'],
         udmos: []
       };
+      render();
+    }
+
+    function setTemplateMode(mode) {
+      state.templateMode = mode;
+      render();
+    }
+
+    function sendTemplateMessage() {
+      var input = document.getElementById('templateChatInput');
+      if (!input || !input.value.trim()) return;
+      var message = input.value.trim();
+      input.value = '';
+      handleTemplateCommand(message);
+    }
+
+    function applyTemplateSuggestion(suggestion) {
+      handleTemplateCommand(suggestion);
+    }
+
+    function handleTemplateCommand(message) {
+      var lowerMsg = message.toLowerCase();
+      var t = state.newTemplate;
+
+      // Add user message
+      state.templateChatMessages.push({ role: 'user', content: message });
+
+      var response = '';
+
+      // Handle name setting
+      if (!t.name) {
+        t.name = message;
+        t.id = message.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        response = '✅ Great name! <strong>"' + esc(message) + '"</strong><br><br>Now describe what this template does (e.g., "Scores and qualifies leads based on activity data")';
+      }
+      // Handle description setting
+      else if (!t.desc) {
+        t.desc = message;
+        response = '✅ Got it! Now let\'s add input sources.<br><br>Say something like:<br>• "Add Case as a source"<br>• "Use Contact and Opportunity"<br><br>Or pick from suggestions below.';
+      }
+      // Add source
+      else if (lowerMsg.indexOf('add') > -1 && (lowerMsg.indexOf('source') > -1 || lowerMsg.indexOf('use ') > -1 || lowerMsg.indexOf('input') > -1)) {
+        var sourceAdded = false;
+        for (var dmoKey in DMO_CATALOG) {
+          var dmo = DMO_CATALOG[dmoKey];
+          if (lowerMsg.indexOf(dmo.name.toLowerCase()) > -1) {
+            if (t.sources.indexOf(dmoKey) === -1) {
+              t.sources.push(dmoKey);
+              response = '✅ Added <strong>' + dmo.icon + ' ' + dmo.name + '</strong> as input source.';
+              sourceAdded = true;
+              break;
+            } else {
+              response = '<strong>' + dmo.name + '</strong> is already added.';
+              sourceAdded = true;
+              break;
+            }
+          }
+        }
+        if (!sourceAdded) {
+          response = 'I couldn\'t find that source. Try: Case, Contact, Lead, Opportunity, Account, etc.';
+        }
+      }
+      // Check for DMO name without "add"
+      else if (Object.keys(DMO_CATALOG).some(function(k) { return lowerMsg.indexOf(DMO_CATALOG[k].name.toLowerCase()) > -1; })) {
+        for (var dmoKey in DMO_CATALOG) {
+          var dmo = DMO_CATALOG[dmoKey];
+          if (lowerMsg.indexOf(dmo.name.toLowerCase()) > -1) {
+            if (t.sources.indexOf(dmoKey) === -1) {
+              t.sources.push(dmoKey);
+              response = '✅ Added <strong>' + dmo.icon + ' ' + dmo.name + '</strong> as input source.';
+            } else {
+              response = '<strong>' + dmo.name + '</strong> is already added.';
+            }
+            break;
+          }
+        }
+      }
+      // Add output field
+      else if (lowerMsg.indexOf('add') > -1 && (lowerMsg.indexOf('field') > -1 || lowerMsg.indexOf('output') > -1)) {
+        var fieldMatch = message.match(/add\s+(?:a\s+)?["']?(\w+)["']?\s*(?:field|output)?/i);
+        if (fieldMatch) {
+          var fieldName = fieldMatch[1].charAt(0).toUpperCase() + fieldMatch[1].slice(1);
+          if (t.outputs.indexOf(fieldName) === -1) {
+            t.outputs.push(fieldName);
+            response = '✅ Added <strong>' + fieldName + '</strong> as output field.';
+          } else {
+            response = '<strong>' + fieldName + '</strong> already exists.';
+          }
+        }
+      }
+      // Add document/UDMO
+      else if ((lowerMsg.indexOf('add') > -1 || lowerMsg.indexOf('include') > -1) &&
+               (lowerMsg.indexOf('document') > -1 || lowerMsg.indexOf('email') > -1 || lowerMsg.indexOf('draft') > -1 || lowerMsg.indexOf('article') > -1 || lowerMsg.indexOf('note') > -1 || lowerMsg.indexOf('proposal') > -1)) {
+        var udmoAdded = false;
+        for (var udmoKey in UDMO_CATALOG) {
+          var udmo = UDMO_CATALOG[udmoKey];
+          if (lowerMsg.indexOf(udmo.name.toLowerCase()) > -1 ||
+              (lowerMsg.indexOf('email') > -1 && udmoKey.indexOf('Email') > -1) ||
+              (lowerMsg.indexOf('draft') > -1 && udmoKey.indexOf('Draft') > -1) ||
+              (lowerMsg.indexOf('article') > -1 && udmoKey.indexOf('Article') > -1) ||
+              (lowerMsg.indexOf('note') > -1 && udmoKey.indexOf('Note') > -1) ||
+              (lowerMsg.indexOf('proposal') > -1 && udmoKey.indexOf('Proposal') > -1)) {
+            if (t.udmos.indexOf(udmoKey) === -1) {
+              t.udmos.push(udmoKey);
+              response = '✅ Added <strong>' + udmo.icon + ' ' + udmo.name + '</strong> document output.';
+              udmoAdded = true;
+              break;
+            }
+          }
+        }
+        if (!udmoAdded) {
+          response = 'Try: "Add draft email", "Add knowledge article", "Add internal note", "Add proposal"';
+        }
+      }
+      // Set icon
+      else if (lowerMsg.indexOf('icon') > -1 || lowerMsg.indexOf('emoji') > -1) {
+        var emojiMatch = message.match(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u);
+        if (emojiMatch) {
+          t.icon = emojiMatch[0];
+          response = '✅ Icon set to ' + t.icon;
+        } else {
+          response = 'Include an emoji in your message, like: "Use 🎯 as icon"';
+        }
+      }
+      // Done / Create / Finish
+      else if (lowerMsg.indexOf('done') > -1 || lowerMsg.indexOf('create') > -1 || lowerMsg.indexOf('finish') > -1 || lowerMsg.indexOf('save') > -1) {
+        if (t.name && t.sources.length > 0) {
+          state.templateChatMessages.push({ role: 'agent', content: '🚀 Creating your template...' });
+          render();
+          setTimeout(function() { saveTemplate(); }, 500);
+          return;
+        } else {
+          response = 'Before creating, please add:<br>' +
+            (t.sources.length === 0 ? '• At least one input source<br>' : '') +
+            'Say "Add [source name]" to continue.';
+        }
+      }
+      // Remove source
+      else if (lowerMsg.indexOf('remove') > -1) {
+        var removed = false;
+        for (var dmoKey in DMO_CATALOG) {
+          var dmo = DMO_CATALOG[dmoKey];
+          if (lowerMsg.indexOf(dmo.name.toLowerCase()) > -1) {
+            var idx = t.sources.indexOf(dmoKey);
+            if (idx > -1) {
+              t.sources.splice(idx, 1);
+              response = '✅ Removed <strong>' + dmo.name + '</strong>.';
+              removed = true;
+              break;
+            }
+          }
+        }
+        // Try removing output field
+        if (!removed) {
+          t.outputs.forEach(function(field, idx) {
+            if (lowerMsg.indexOf(field.toLowerCase()) > -1) {
+              t.outputs.splice(idx, 1);
+              response = '✅ Removed <strong>' + field + '</strong> field.';
+              removed = true;
+            }
+          });
+        }
+        if (!removed) {
+          response = 'Couldn\'t find that to remove.';
+        }
+      }
+      // Help / What can I do
+      else if (lowerMsg.indexOf('help') > -1 || lowerMsg.indexOf('what') > -1) {
+        response = 'You can say:<br>' +
+          '• "Add Case as source" - add input source<br>' +
+          '• "Add Priority field" - add output field<br>' +
+          '• "Add draft email" - add document output<br>' +
+          '• "Use 🎯 as icon" - set icon<br>' +
+          '• "Remove [name]" - remove something<br>' +
+          '• "Done" - create the template';
+      }
+      // Show current config
+      else if (lowerMsg.indexOf('show') > -1 || lowerMsg.indexOf('config') > -1 || lowerMsg.indexOf('current') > -1) {
+        response = '<strong>Current Template:</strong><br>' +
+          '• Name: ' + (t.name || '(not set)') + '<br>' +
+          '• Sources: ' + (t.sources.length > 0 ? t.sources.map(function(k) { return DMO_CATALOG[k] ? DMO_CATALOG[k].name : k; }).join(', ') : '(none)') + '<br>' +
+          '• Fields: ' + t.outputs.join(', ') + '<br>' +
+          '• Docs: ' + (t.udmos.length > 0 ? t.udmos.map(function(k) { return UDMO_CATALOG[k] ? UDMO_CATALOG[k].name : k; }).join(', ') : '(none)');
+      }
+      else {
+        response = 'I didn\'t understand that. Try:<br>' +
+          '• "Add Case" (source)<br>' +
+          '• "Add Priority field"<br>' +
+          '• "Add draft email"<br>' +
+          '• "Done" to finish';
+      }
+
+      state.templateChatMessages.push({ role: 'agent', content: response });
       render();
     }
 
@@ -3030,77 +3273,158 @@
       var t = state.newTemplate;
       var icons = ['📄', '📝', '📊', '📈', '📋', '📑', '📰', '📧', '💼', '🎯', '✨', '🔮', '💡', '🚀', '⚡', '🎨'];
 
-      var html = '<div class="template-builder">';
+      // Tabs: Chat vs UI
+      var tabsHtml = '<div class="template-mode-tabs">';
+      tabsHtml += '<button class="template-mode-tab' + (state.templateMode === 'chat' ? ' active' : '') + '" onclick="setTemplateMode(\'chat\')">🤖 Chat</button>';
+      tabsHtml += '<button class="template-mode-tab' + (state.templateMode === 'ui' ? ' active' : '') + '" onclick="setTemplateMode(\'ui\')">📋 Form</button>';
+      tabsHtml += '</div>';
 
-      // Step 1: Basic Info
-      html += '<div class="template-step">';
-      html += '<div class="template-step-header"><span class="template-step-number">1</span><span class="template-step-title">Basic Information</span></div>';
-      html += '<input type="text" class="template-input" id="templateName" placeholder="Template name (e.g., Lead Scorer)" value="' + esc(t.name) + '">';
-      html += '<textarea class="template-textarea" id="templateDesc" placeholder="Description...">' + esc(t.desc) + '</textarea>';
-      html += '<div class="use-case-label" style="margin-top:12px;">Icon</div>';
-      html += '<div class="icon-picker">';
-      icons.forEach(function(icon) {
-        html += '<div class="icon-option' + (t.icon === icon ? ' selected' : '') + '" onclick="setTemplateIcon(\'' + icon + '\')">' + icon + '</div>';
-      });
-      html += '</div>';
-      html += '</div>';
+      var bodyHtml = '';
 
-      // Step 2: Input Sources
-      html += '<div class="template-step">';
-      html += '<div class="template-step-header"><span class="template-step-number">2</span><span class="template-step-title">Input Sources</span></div>';
-      html += '<div class="template-chips">';
-      t.sources.forEach(function(dmoKey) {
-        var dmo = DMO_CATALOG[dmoKey];
-        html += '<span class="template-chip">' + (dmo ? dmo.icon + ' ' + dmo.name : dmoKey) + ' <span class="template-chip-remove" onclick="removeTemplateSource(\'' + dmoKey + '\')">×</span></span>';
-      });
-      html += '<select class="template-add-chip" onchange="if(this.value){addTemplateSource(this.value);this.value=\'\';}" style="border-style:solid;padding:4px 8px;">';
-      html += '<option value="">+ Add Source</option>';
-      for (var dmoKey in DMO_CATALOG) {
-        if (t.sources.indexOf(dmoKey) === -1) {
-          var dmo = DMO_CATALOG[dmoKey];
-          html += '<option value="' + dmoKey + '">' + dmo.icon + ' ' + dmo.name + '</option>';
+      if (state.templateMode === 'chat') {
+        // Chat-based template creation
+        bodyHtml += '<div class="template-chat-container">';
+
+        // Preview card if we have data
+        if (t.name) {
+          bodyHtml += '<div class="template-preview-card">';
+          bodyHtml += '<div class="template-preview-header">';
+          bodyHtml += '<span class="template-preview-icon">' + t.icon + '</span>';
+          bodyHtml += '<div><div class="template-preview-name">' + esc(t.name) + '</div>';
+          if (t.desc) bodyHtml += '<div class="template-preview-desc">' + esc(t.desc) + '</div>';
+          bodyHtml += '</div></div>';
+          bodyHtml += '<div class="template-preview-stats">';
+          bodyHtml += '<span class="template-preview-stat"><strong>' + t.sources.length + '</strong> sources</span>';
+          bodyHtml += '<span class="template-preview-stat"><strong>' + t.outputs.length + '</strong> fields</span>';
+          bodyHtml += '<span class="template-preview-stat"><strong>' + t.udmos.length + '</strong> docs</span>';
+          bodyHtml += '</div>';
+          bodyHtml += '</div>';
         }
+
+        // Chat messages
+        bodyHtml += '<div class="template-chat-messages">';
+        state.templateChatMessages.forEach(function(msg) {
+          if (msg.role === 'agent') {
+            bodyHtml += '<div class="template-chat-message">';
+            bodyHtml += '<div class="template-chat-avatar">🤖</div>';
+            bodyHtml += '<div class="template-chat-bubble">' + msg.content + '</div>';
+            bodyHtml += '</div>';
+          } else {
+            bodyHtml += '<div class="template-chat-message user">';
+            bodyHtml += '<div class="template-chat-bubble">' + esc(msg.content) + '</div>';
+            bodyHtml += '</div>';
+          }
+        });
+        bodyHtml += '</div>';
+
+        // Suggestions based on state
+        var suggestions = [];
+        if (!t.name) {
+          suggestions = ['Lead Scorer', 'Customer Feedback Analyzer', 'Deal Summary Generator'];
+        } else if (!t.desc) {
+          suggestions = ['Scores leads based on engagement', 'Analyzes customer feedback', 'Generates deal summaries'];
+        } else if (t.sources.length === 0) {
+          suggestions = ['Add Case', 'Add Lead', 'Add Contact', 'Add Opportunity'];
+        } else if (t.outputs.length <= 1) {
+          suggestions = ['Add Priority field', 'Add Score field', 'Add Sentiment field', 'Add Confidence field'];
+        } else {
+          suggestions = ['Add draft email', 'Add knowledge article', 'Done', 'Show config'];
+        }
+
+        if (suggestions.length > 0) {
+          bodyHtml += '<div class="template-suggestions">';
+          suggestions.forEach(function(s) {
+            bodyHtml += '<span class="template-suggestion" onclick="applyTemplateSuggestion(\'' + esc(s) + '\')">' + s + '</span>';
+          });
+          bodyHtml += '</div>';
+        }
+
+        // Chat input
+        bodyHtml += '<div class="template-chat-input-row">';
+        bodyHtml += '<input type="text" class="template-chat-input" id="templateChatInput" placeholder="Type a command..." onkeydown="if(event.key===\'Enter\')sendTemplateMessage()">';
+        bodyHtml += '<button class="template-chat-send" onclick="sendTemplateMessage()">➤</button>';
+        bodyHtml += '</div>';
+
+        bodyHtml += '</div>';
+      } else {
+        // UI-based template creation (original form)
+        bodyHtml += '<div class="template-builder">';
+
+        // Step 1: Basic Info
+        bodyHtml += '<div class="template-step">';
+        bodyHtml += '<div class="template-step-header"><span class="template-step-number">1</span><span class="template-step-title">Basic Information</span></div>';
+        bodyHtml += '<input type="text" class="template-input" id="templateName" placeholder="Template name (e.g., Lead Scorer)" value="' + esc(t.name) + '">';
+        bodyHtml += '<textarea class="template-textarea" id="templateDesc" placeholder="Description...">' + esc(t.desc) + '</textarea>';
+        bodyHtml += '<div class="use-case-label" style="margin-top:12px;">Icon</div>';
+        bodyHtml += '<div class="icon-picker">';
+        icons.forEach(function(icon) {
+          bodyHtml += '<div class="icon-option' + (t.icon === icon ? ' selected' : '') + '" onclick="setTemplateIcon(\'' + icon + '\')">' + icon + '</div>';
+        });
+        bodyHtml += '</div>';
+        bodyHtml += '</div>';
+
+        // Step 2: Input Sources
+        bodyHtml += '<div class="template-step">';
+        bodyHtml += '<div class="template-step-header"><span class="template-step-number">2</span><span class="template-step-title">Input Sources</span></div>';
+        bodyHtml += '<div class="template-chips">';
+        t.sources.forEach(function(dmoKey) {
+          var dmo = DMO_CATALOG[dmoKey];
+          bodyHtml += '<span class="template-chip">' + (dmo ? dmo.icon + ' ' + dmo.name : dmoKey) + ' <span class="template-chip-remove" onclick="removeTemplateSource(\'' + dmoKey + '\')">×</span></span>';
+        });
+        bodyHtml += '<select class="template-add-chip" onchange="if(this.value){addTemplateSource(this.value);this.value=\'\';}" style="border-style:solid;padding:4px 8px;">';
+        bodyHtml += '<option value="">+ Add Source</option>';
+        for (var dmoKey in DMO_CATALOG) {
+          if (t.sources.indexOf(dmoKey) === -1) {
+            var dmo = DMO_CATALOG[dmoKey];
+            bodyHtml += '<option value="' + dmoKey + '">' + dmo.icon + ' ' + dmo.name + '</option>';
+          }
+        }
+        bodyHtml += '</select>';
+        bodyHtml += '</div>';
+        bodyHtml += '</div>';
+
+        // Step 3: Output Fields
+        bodyHtml += '<div class="template-step">';
+        bodyHtml += '<div class="template-step-header"><span class="template-step-number">3</span><span class="template-step-title">Output Fields</span></div>';
+        bodyHtml += '<div class="template-chips">';
+        t.outputs.forEach(function(field) {
+          bodyHtml += '<span class="template-chip output">' + field + ' <span class="template-chip-remove" onclick="removeTemplateOutput(\'' + field + '\')">×</span></span>';
+        });
+        bodyHtml += '</div>';
+        bodyHtml += '<div style="display:flex;gap:8px;margin-top:8px;">';
+        bodyHtml += '<input type="text" class="template-input" id="newOutputField" placeholder="Field name..." style="margin:0;flex:1;">';
+        bodyHtml += '<button class="add-field-btn" onclick="var i=document.getElementById(\'newOutputField\');addTemplateOutput(i.value);i.value=\'\';">+ Add</button>';
+        bodyHtml += '</div>';
+        bodyHtml += '</div>';
+
+        // Step 4: Document Outputs (UDMOs)
+        bodyHtml += '<div class="template-step">';
+        bodyHtml += '<div class="template-step-header"><span class="template-step-number">4</span><span class="template-step-title">Document Outputs</span></div>';
+        bodyHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">';
+        for (var udmoKey in UDMO_CATALOG) {
+          var udmo = UDMO_CATALOG[udmoKey];
+          var isSelected = t.udmos.indexOf(udmoKey) > -1;
+          bodyHtml += '<div class="template-chip udmo" style="cursor:pointer;opacity:' + (isSelected ? '1' : '0.5') + ';justify-content:flex-start;" onclick="toggleTemplateUDMO(\'' + udmoKey + '\')">';
+          bodyHtml += '<input type="checkbox" ' + (isSelected ? 'checked' : '') + ' style="margin-right:4px;">';
+          bodyHtml += udmo.icon + ' ' + udmo.name;
+          bodyHtml += '</div>';
+        }
+        bodyHtml += '</div>';
+        bodyHtml += '</div>';
+
+        bodyHtml += '</div>';
       }
-      html += '</select>';
-      html += '</div>';
-      html += '</div>';
 
-      // Step 3: Output Fields
-      html += '<div class="template-step">';
-      html += '<div class="template-step-header"><span class="template-step-number">3</span><span class="template-step-title">Output Fields</span></div>';
-      html += '<div class="template-chips">';
-      t.outputs.forEach(function(field) {
-        html += '<span class="template-chip output">' + field + ' <span class="template-chip-remove" onclick="removeTemplateOutput(\'' + field + '\')">×</span></span>';
-      });
-      html += '</div>';
-      html += '<div style="display:flex;gap:8px;margin-top:8px;">';
-      html += '<input type="text" class="template-input" id="newOutputField" placeholder="Field name..." style="margin:0;flex:1;">';
-      html += '<button class="add-field-btn" onclick="var i=document.getElementById(\'newOutputField\');addTemplateOutput(i.value);i.value=\'\';">+ Add</button>';
-      html += '</div>';
-      html += '</div>';
-
-      // Step 4: Document Outputs (UDMOs)
-      html += '<div class="template-step">';
-      html += '<div class="template-step-header"><span class="template-step-number">4</span><span class="template-step-title">Document Outputs</span></div>';
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">';
-      for (var udmoKey in UDMO_CATALOG) {
-        var udmo = UDMO_CATALOG[udmoKey];
-        var isSelected = t.udmos.indexOf(udmoKey) > -1;
-        html += '<div class="template-chip udmo" style="cursor:pointer;opacity:' + (isSelected ? '1' : '0.5') + ';justify-content:flex-start;" onclick="toggleTemplateUDMO(\'' + udmoKey + '\')">';
-        html += '<input type="checkbox" ' + (isSelected ? 'checked' : '') + ' style="margin-right:4px;">';
-        html += udmo.icon + ' ' + udmo.name;
-        html += '</div>';
+      var footerHtml = '<button class="btn-cancel" onclick="closeTemplateBuilder()">Cancel</button>';
+      if (state.templateMode === 'ui' || (t.name && t.sources.length > 0)) {
+        footerHtml += '<button class="btn-publish" onclick="saveTemplate()">Create Template</button>';
       }
-      html += '</div>';
-      html += '</div>';
-
-      html += '</div>';
 
       return '<div class="modal-overlay" onclick="if(event.target===this)closeTemplateBuilder()">' +
         '<div class="modal" style="width:600px;max-height:90vh;">' +
         '<div class="modal-header"><div class="modal-title">✨ Create New Template</div><button class="modal-close" onclick="closeTemplateBuilder()">×</button></div>' +
-        '<div class="modal-body" style="max-height:65vh;overflow-y:auto;">' + html + '</div>' +
-        '<div class="modal-footer"><button class="btn-cancel" onclick="closeTemplateBuilder()">Cancel</button><button class="btn-publish" onclick="saveTemplate()">Create Template</button></div>' +
+        '<div class="modal-body" style="max-height:65vh;overflow-y:auto;">' + tabsHtml + bodyHtml + '</div>' +
+        '<div class="modal-footer">' + footerHtml + '</div>' +
         '</div></div>';
     }
 
