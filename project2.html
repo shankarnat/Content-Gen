@@ -157,6 +157,67 @@
     .fade-in { animation: fadeIn 0.3s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* UDMO Tab Styles */
+    .output-tab.udmo-tab { border-left: 2px solid #0176d3; margin-left: 8px; padding-left: 14px; }
+    .udmo-type-badge { font-size: 9px; background: #e8f4fc; color: #0176d3; padding: 2px 6px; border-radius: 8px; margin-left: 6px; text-transform: uppercase; font-weight: 600; }
+
+    /* UDMO Content Renderers */
+    .udmo-container { border-radius: 8px; overflow: hidden; }
+
+    /* Email UDMO Styles */
+    .udmo-email { background: #fafafa; border: 1px solid #e5e5e5; }
+    .udmo-email-header { background: #f3f3f3; padding: 16px 20px; border-bottom: 1px solid #e5e5e5; }
+    .udmo-email-field { display: flex; margin-bottom: 8px; font-size: 13px; }
+    .udmo-email-field:last-child { margin-bottom: 0; }
+    .udmo-email-label { color: #706e6b; width: 60px; flex-shrink: 0; }
+    .udmo-email-value { color: #3e3e3c; flex: 1; }
+    .udmo-email-body { padding: 20px; font-size: 14px; line-height: 1.7; color: #3e3e3c; white-space: pre-wrap; }
+    .udmo-email-signature { padding: 16px 20px; border-top: 1px solid #e5e5e5; background: #f9f9f9; font-size: 13px; color: #706e6b; }
+
+    /* Internal Note UDMO Styles */
+    .udmo-note { background: #fffef5; border: 1px solid #f0e68c; border-left: 4px solid #f4c542; }
+    .udmo-note-header { background: #fefceb; padding: 12px 16px; border-bottom: 1px solid #f0e68c; display: flex; align-items: center; justify-content: space-between; }
+    .udmo-note-title { font-weight: 600; color: #8b7355; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+    .udmo-note-priority { font-size: 11px; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
+    .udmo-note-priority.high { background: #fef0f0; color: #ea001e; }
+    .udmo-note-priority.medium { background: #fef7e0; color: #a96404; }
+    .udmo-note-priority.low { background: #e8f4e8; color: #2e844a; }
+    .udmo-note-body { padding: 16px; font-size: 14px; line-height: 1.6; color: #5d4e37; white-space: pre-wrap; }
+    .udmo-note-tags { padding: 12px 16px; border-top: 1px solid #f0e68c; display: flex; gap: 8px; flex-wrap: wrap; }
+    .udmo-note-tag { background: #f4c542; color: #5d4e37; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+
+    /* Knowledge Article UDMO Styles */
+    .udmo-article { background: #f8fbfe; border: 1px solid #d8edfc; border-left: 4px solid #0176d3; }
+    .udmo-article-header { background: #e8f4fc; padding: 16px 20px; border-bottom: 1px solid #d8edfc; }
+    .udmo-article-title { font-size: 18px; font-weight: 600; color: #032d60; margin-bottom: 8px; }
+    .udmo-article-meta { display: flex; gap: 16px; font-size: 12px; color: #706e6b; }
+    .udmo-article-toc { background: white; padding: 12px 16px; border-bottom: 1px solid #d8edfc; }
+    .udmo-article-toc-title { font-size: 11px; font-weight: 600; color: #706e6b; text-transform: uppercase; margin-bottom: 8px; }
+    .udmo-article-toc-list { list-style: none; padding: 0; margin: 0; }
+    .udmo-article-toc-list li { padding: 4px 0; font-size: 13px; color: #0176d3; cursor: pointer; }
+    .udmo-article-toc-list li:hover { text-decoration: underline; }
+    .udmo-article-body { padding: 20px; }
+    .udmo-article-section { margin-bottom: 24px; }
+    .udmo-article-section:last-child { margin-bottom: 0; }
+    .udmo-article-section h3 { font-size: 15px; font-weight: 600; color: #032d60; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e5e5e5; }
+    .udmo-article-section p { font-size: 14px; line-height: 1.7; color: #3e3e3c; margin-bottom: 12px; }
+    .udmo-article-section ol, .udmo-article-section ul { margin: 12px 0; padding-left: 24px; }
+    .udmo-article-section li { font-size: 14px; line-height: 1.6; color: #3e3e3c; margin-bottom: 8px; }
+    .udmo-article-footer { background: #e8f4fc; padding: 12px 16px; border-top: 1px solid #d8edfc; font-size: 12px; color: #706e6b; }
+
+    /* Proposal UDMO Styles */
+    .udmo-proposal { background: white; border: 1px solid #e5e5e5; }
+    .udmo-proposal-header { background: linear-gradient(135deg, #032d60 0%, #0176d3 100%); color: white; padding: 24px; text-align: center; }
+    .udmo-proposal-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .udmo-proposal-subtitle { font-size: 13px; opacity: 0.9; }
+    .udmo-proposal-body { padding: 24px; }
+    .udmo-proposal-section { margin-bottom: 24px; }
+    .udmo-proposal-section h4 { font-size: 14px; font-weight: 600; color: #032d60; margin-bottom: 12px; }
+    .udmo-proposal-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .udmo-proposal-table th, .udmo-proposal-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e5e5e5; font-size: 13px; }
+    .udmo-proposal-table th { background: #f3f3f3; font-weight: 600; color: #3e3e3c; }
+    .udmo-proposal-total { font-weight: 600; background: #e8f4fc !important; }
+
     /* Loading State */
     .loading-spinner { width: 24px; height: 24px; border: 3px solid #e5e5e5; border-top-color: #0176d3; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -172,33 +233,123 @@
 
   <script>
     // ============ DATA (Reused from index.html concepts) ============
+
+    // UDMO Catalog - Unstructured Data Model Objects for rich content output
+    var UDMO_CATALOG = {
+      'DraftResponse__udmo': {
+        id: 'DraftResponse__udmo',
+        name: 'Draft Response',
+        icon: '✉️',
+        cloud: 'service',
+        category: 'Response',
+        contentType: 'HTML',
+        desc: 'Full draft email ready to send to customer'
+      },
+      'InternalNote__udmo': {
+        id: 'InternalNote__udmo',
+        name: 'Internal Note',
+        icon: '📋',
+        cloud: 'service',
+        category: 'Note',
+        contentType: 'PlainText',
+        desc: 'Detailed internal notes for agents and escalation'
+      },
+      'KnowledgeArticle__udmo': {
+        id: 'KnowledgeArticle__udmo',
+        name: 'Knowledge Article',
+        icon: '📚',
+        cloud: 'service',
+        category: 'Document',
+        contentType: 'Markdown',
+        desc: 'Full KB article with TOC and structured sections'
+      },
+      'FAQDocument__udmo': {
+        id: 'FAQDocument__udmo',
+        name: 'FAQ Document',
+        icon: '❓',
+        cloud: 'service',
+        category: 'Document',
+        contentType: 'Markdown',
+        desc: 'FAQ-formatted document with Q&A pairs'
+      },
+      'EmailDraft__udmo': {
+        id: 'EmailDraft__udmo',
+        name: 'Sales Email',
+        icon: '💼',
+        cloud: 'sales',
+        category: 'Email',
+        contentType: 'HTML',
+        desc: 'Personalized sales follow-up email'
+      },
+      'ProposalDocument__udmo': {
+        id: 'ProposalDocument__udmo',
+        name: 'Proposal',
+        icon: '📄',
+        cloud: 'sales',
+        category: 'Document',
+        contentType: 'HTML',
+        desc: 'Auto-generated proposal with pricing'
+      },
+      'MeetingAgenda__udmo': {
+        id: 'MeetingAgenda__udmo',
+        name: 'Meeting Agenda',
+        icon: '📅',
+        cloud: 'sales',
+        category: 'Document',
+        contentType: 'Markdown',
+        desc: 'Structured agenda for follow-up meetings'
+      },
+      'CallSummary__udmo': {
+        id: 'CallSummary__udmo',
+        name: 'Call Summary',
+        icon: '📞',
+        cloud: 'sales',
+        category: 'Note',
+        contentType: 'Markdown',
+        desc: 'AI-generated call summary with action items'
+      }
+    };
+
     var CONTENT_TYPES = {
       'case-summary': {
         id: 'case-summary',
-        name: 'Case Summaries',
-        icon: '📋',
-        desc: 'Summarize support cases with priority and sentiment',
+        name: 'Case Triage',
+        icon: '🤖',
+        desc: 'Classify cases with sentiment, priority + generate draft responses',
         sources: ['Cases', 'Email Messages'],
-        outputs: ['Summary', 'Priority', 'Sentiment', 'Category', 'Action Items'],
-        udmo: 'Internal Note'
+        outputs: ['Summary', 'Priority', 'Sentiment', 'Category'],
+        // Multiple UDMOs for Case Triage
+        udmos: [
+          { id: 'InternalNote__udmo', name: 'Agent Notes', primary: true },
+          { id: 'DraftResponse__udmo', name: 'Draft Email' }
+        ]
       },
       'kb-article': {
         id: 'kb-article',
-        name: 'Knowledge Articles',
+        name: 'KB Generator',
         icon: '📚',
-        desc: 'Generate KB articles from resolved cases',
+        desc: 'Create knowledge base articles from resolved cases',
         sources: ['Resolved Cases'],
         outputs: ['Title', 'Problem', 'Solution', 'Category'],
-        udmo: 'Knowledge Article'
+        // Multiple UDMOs for KB Generation
+        udmos: [
+          { id: 'KnowledgeArticle__udmo', name: 'Full Article', primary: true },
+          { id: 'FAQDocument__udmo', name: 'FAQ Format' }
+        ]
       },
       'email-response': {
         id: 'email-response',
-        name: 'Email Responses',
+        name: 'Email Follow-Up',
         icon: '✉️',
-        desc: 'Draft personalized email responses',
-        sources: ['Cases', 'Email Messages', 'Contacts'],
-        outputs: ['Subject', 'Greeting', 'Body', 'Closing', 'Tone'],
-        udmo: 'Draft Response'
+        desc: 'Generate personalized follow-up emails + proposals',
+        sources: ['Cases', 'Email Messages', 'Contacts', 'Opportunities'],
+        outputs: ['Subject', 'Tone', 'Confidence', 'Safety'],
+        // Multiple UDMOs for Email Follow-Up
+        udmos: [
+          { id: 'EmailDraft__udmo', name: 'Sales Email', primary: true },
+          { id: 'ProposalDocument__udmo', name: 'Proposal' },
+          { id: 'MeetingAgenda__udmo', name: 'Meeting Agenda' }
+        ]
       },
       'call-summary': {
         id: 'call-summary',
@@ -206,8 +357,10 @@
         icon: '📞',
         desc: 'Summarize sales and support calls',
         sources: ['Voice Calls', 'Contacts', 'Opportunities'],
-        outputs: ['Summary', 'Key Points', 'Action Items', 'Next Steps', 'Sentiment'],
-        udmo: 'Call Summary'
+        outputs: ['Summary', 'Key Points', 'Action Items', 'Sentiment'],
+        udmos: [
+          { id: 'CallSummary__udmo', name: 'Call Notes', primary: true }
+        ]
       },
       'lead-enrichment': {
         id: 'lead-enrichment',
@@ -216,7 +369,7 @@
         desc: 'Score and enrich leads with insights',
         sources: ['Leads', 'Web Activity', 'Email Activity'],
         outputs: ['Score', 'Fit Rating', 'Engagement Level', 'Recommended Actions'],
-        udmo: null
+        udmos: []
       }
     };
 
@@ -248,65 +401,442 @@
       ]
     };
 
-    // Generated output samples
+    // Generated output samples with rich UDMO content
     var GENERATED_OUTPUTS = {
       'case-summary': [
         {
+          // DMO Fields (Structured)
           Summary: 'Customer John Smith from Acme Corp is experiencing a critical login issue after a password reset. Error code E-5502 is preventing dashboard access, which is blocking their quarterly report preparation.',
           Priority: 'High',
           Sentiment: 'Frustrated',
           Category: 'Technical - Authentication',
-          ActionItems: '1. Check password reset logs\n2. Verify account status\n3. Test E-5502 error reproduction\n4. Escalate if auth service issue',
-          DraftNote: 'Login issue post password reset. Error E-5502 blocking quarterly report. Customer frustrated - needs urgent resolution. Check auth service logs and account status.'
+          // UDMO Content (Unstructured)
+          __udmo: {
+            'InternalNote__udmo': {
+              title: 'Case Analysis: Login Authentication Failure',
+              priority: 'High',
+              content: 'ISSUE SUMMARY\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCustomer John Smith (VP Operations) at Acme Corp cannot access the dashboard following a password reset. Error code E-5502 is displayed on login attempts.\n\nBUSINESS IMPACT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n• Quarterly report preparation blocked\n• Customer is a Premium tier account ($50K ARR)\n• Previous escalation history: 2 tickets in past 90 days\n\nTECHNICAL ANALYSIS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nError E-5502 indicates OAuth token mismatch post-password reset. Auth service logs show token generation but session cache not invalidated.\n\nRECOMMENDED ACTIONS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n1. Clear session cache for user ID: acme_jsmith_001\n2. Force token regeneration via admin console\n3. If persists, escalate to Auth Service team\n4. Schedule follow-up call within 2 hours',
+              tags: ['authentication', 'high-priority', 'premium-account', 'escalation-risk']
+            },
+            'DraftResponse__udmo': {
+              to: 'john.smith@acmecorp.com',
+              subject: 'Re: Cannot login to dashboard - Immediate Assistance',
+              greeting: 'Dear John,',
+              body: 'Thank you for contacting us about the login issue you\'re experiencing. I understand this is blocking your quarterly report preparation, and I want to assure you this is my top priority.\n\nI\'ve identified the root cause: when you reset your password, our authentication system didn\'t properly refresh your session token. This is what\'s causing the E-5502 error.\n\nHere\'s what I\'m doing right now:\n\n1. I\'ve cleared your cached session on our end\n2. I\'ve initiated a fresh token generation for your account\n3. I\'ve flagged your account for priority support\n\nPlease try the following steps:\n• Clear your browser cache and cookies\n• Close all browser windows completely\n• Wait 2 minutes, then try logging in again\n• If you still see the error, please try an incognito/private browser window\n\nI\'ll be monitoring your account for the next hour. If you\'re still unable to access the dashboard after trying these steps, please reply to this email and I\'ll escalate immediately to our engineering team for a live session.\n\nGiven the urgency of your quarterly report, would you like me to schedule a quick screen-share session to ensure we get you back in as quickly as possible?',
+              closing: 'Best regards,',
+              signature: 'Sarah Chen\nSenior Support Engineer\nPriority Support Team\nDirect: (555) 123-4567'
+            }
+          }
         },
         {
           Summary: 'Feature request from Sarah Jones at TechStart Inc for dark mode functionality. Non-urgent enhancement request to reduce eye strain.',
           Priority: 'Low',
           Sentiment: 'Positive',
           Category: 'Feature Request - UI',
-          ActionItems: '1. Log feature request\n2. Add to product backlog\n3. Send acknowledgment to customer',
-          DraftNote: 'Dark mode feature request. Customer cites eye strain during long sessions. Add to Q2 backlog for consideration.'
+          __udmo: {
+            'InternalNote__udmo': {
+              title: 'Feature Request: Dark Mode UI',
+              priority: 'Low',
+              content: 'REQUEST DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCustomer requests dark mode for the application UI. Primary motivation is reducing eye strain during extended work sessions.\n\nCUSTOMER CONTEXT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n• Account: TechStart Inc (Growth tier)\n• Contact: Sarah Jones, Product Manager\n• Usage: 8+ hours daily average\n• Sentiment: Positive, enthusiastic about product\n\nPRODUCT IMPACT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDark mode is #3 on our feature request list with 47 similar requests this quarter. Currently planned for Q3 roadmap.\n\nACTION ITEMS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n1. Log request in product feedback system\n2. Add customer to dark mode beta notification list\n3. Send acknowledgment with roadmap update',
+              tags: ['feature-request', 'ui-enhancement', 'backlog', 'q3-roadmap']
+            },
+            'DraftResponse__udmo': {
+              to: 'sarah.jones@techstart.io',
+              subject: 'Re: Feature request: Dark mode - Thank You!',
+              greeting: 'Hi Sarah,',
+              body: 'Thank you so much for taking the time to share this feedback! We really appreciate customers like you who help us make our product better.\n\nI\'m excited to tell you that dark mode is already on our roadmap! You\'re not alone in this request – it\'s actually one of our most requested features. Our design team is currently working on it, and we\'re targeting a Q3 release.\n\nI\'ve added you to our beta tester list for the dark mode feature. This means you\'ll be among the first to try it out before the general release. We\'d love to get your feedback during the beta period.\n\nIn the meantime, here are a couple of workarounds that some of our power users find helpful:\n• Most browsers support a "force dark mode" extension\n• Your operating system\'s dark mode may partially apply to web apps\n\nIs there anything else I can help you with today?',
+              closing: 'Thanks again for your feedback!',
+              signature: 'Mike Rodriguez\nCustomer Success Team'
+            }
+          }
         },
         {
           Summary: 'URGENT: Michael Chen from Global Finance was overcharged $200 (charged $499 vs $299). This is a repeat billing issue. Customer threatening bank dispute.',
           Priority: 'Critical',
           Sentiment: 'Angry',
           Category: 'Billing - Overcharge',
-          ActionItems: '1. Immediately verify invoice\n2. Process refund for $200\n3. Investigate recurring billing bug\n4. Call customer personally',
-          DraftNote: 'CRITICAL: Repeat overcharge issue. Customer threatening chargeback. Immediate refund required. Escalate billing bug to engineering.'
+          __udmo: {
+            'InternalNote__udmo': {
+              title: 'CRITICAL: Repeat Billing Overcharge - Escalation Required',
+              priority: 'Critical',
+              content: '⚠️  CRITICAL ESCALATION - IMMEDIATE ACTION REQUIRED  ⚠️\n\nISSUE SUMMARY\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCustomer charged $499 instead of $299 on invoice INV-2024-0892.\nThis is the SECOND occurrence of this billing error.\nCustomer is threatening to dispute charge with bank.\n\nACCOUNT RISK ASSESSMENT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n• Account: Global Finance (Enterprise tier)\n• ARR: $125,000\n• Contract renewal: 45 days\n• Churn risk: HIGH if not resolved immediately\n• Previous issue: Same error on INV-2024-0756 (resolved Feb 15)\n\nROOT CAUSE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nLikely related to pricing tier migration bug identified in JIRA-4521.\nEngineering fix deployed but may not have caught all edge cases.\n\nIMMEDIATE ACTIONS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n1. Process $200 refund IMMEDIATELY (auth code: REF-URGENT)\n2. Call customer within 30 minutes\n3. Escalate to Billing Engineering - reference JIRA-4521\n4. Add account to manual billing review until fix confirmed\n5. Prepare account credit as goodwill gesture ($50 suggested)',
+              tags: ['critical', 'billing-error', 'churn-risk', 'escalation', 'refund-required']
+            },
+            'DraftResponse__udmo': {
+              to: 'michael.chen@globalfinance.com',
+              subject: 'URGENT: Your Billing Concern - Immediate Resolution',
+              greeting: 'Dear Michael,',
+              body: 'I want to personally apologize for this billing error. You\'re absolutely right to be frustrated, and I take full responsibility for ensuring this gets resolved immediately.\n\nHere\'s what I\'ve already done:\n\n✓ Processed a full refund of $200 to your original payment method\n✓ You should see this reflected within 1-2 business days\n✓ Applied a $50 account credit for the inconvenience\n✓ Escalated to our billing engineering team to prevent any future occurrences\n\nI understand this is the second time this has happened, and that\'s completely unacceptable. I\'ve personally flagged your account for manual billing review for the next 3 months to ensure accuracy on every invoice.\n\nI\'d like to schedule a brief call with you at your convenience to:\n1. Confirm you\'ve received the refund\n2. Walk through your upcoming invoices together\n3. Discuss any other concerns you may have\n\nWould tomorrow at 10am or 2pm work for a 15-minute call? I\'ll have our billing manager on the line as well.\n\nAgain, I sincerely apologize for this error and the frustration it\'s caused.',
+              closing: 'With sincere apologies,',
+              signature: 'Jennifer Walsh\nDirector of Customer Success\nGlobal Finance Account Team\nDirect: (555) 987-6543\nMobile: (555) 321-9876'
+            }
+          }
         },
         {
           Summary: 'Technical inquiry from StartupCo dev team about API integration. Need clarification on Pro plan rate limits, burst capacity, and webhook callbacks.',
           Priority: 'Medium',
           Sentiment: 'Neutral',
           Category: 'Pre-Sales - Technical',
-          ActionItems: '1. Send API documentation link\n2. Clarify Pro plan limits (1000 req/min)\n3. Confirm webhook support\n4. Schedule technical call if needed',
-          DraftNote: 'API integration questions for mobile app. Send rate limit docs and webhook specs. Potential upsell opportunity if needs exceed Pro limits.'
+          __udmo: {
+            'InternalNote__udmo': {
+              title: 'API Integration Inquiry - Potential Upsell',
+              priority: 'Medium',
+              content: 'INQUIRY DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDev team at StartupCo planning mobile app integration.\nNeed clarification on Pro plan limits.\n\nTECHNICAL QUESTIONS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n1. Rate limits: Pro = 1,000 req/min, Enterprise = 10,000 req/min\n2. Burst capacity: Pro allows 150% burst for 30 seconds\n3. Webhooks: Supported on Pro and above\n\nSALES OPPORTUNITY\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n• Current plan: Pro ($299/mo)\n• Potential need: Enterprise ($999/mo) if mobile app scales\n• Decision timeline: 30 days\n• Technical call recommended to assess requirements\n\nACTION ITEMS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n1. Send API documentation links\n2. Include rate limit comparison chart\n3. Offer technical consultation call\n4. Loop in Account Executive for upsell conversation',
+              tags: ['api-inquiry', 'pre-sales', 'upsell-opportunity', 'technical']
+            },
+            'DraftResponse__udmo': {
+              to: 'dev-team@startupco.io',
+              subject: 'Re: API rate limits question - Full Details Inside',
+              greeting: 'Hi Dev Team,',
+              body: 'Great to hear you\'re planning a mobile app integration! I\'d be happy to clarify our API specifications for you.\n\nHere\'s a breakdown of the Pro plan API limits:\n\n📊 RATE LIMITS\n• Standard: 1,000 requests per minute\n• Burst: Up to 1,500 req/min for 30-second windows\n• Daily cap: None (unlimited daily requests)\n\n🔗 WEBHOOK SUPPORT\n• Webhooks are fully supported on Pro\n• Up to 10 webhook endpoints per account\n• Retry policy: 3 attempts with exponential backoff\n• Event types: 25+ event types available\n\n📱 MOBILE-SPECIFIC\n• We have iOS and Android SDKs available\n• Offline sync support included\n• Push notification integration available\n\nFor a mobile app with significant scale, you might want to consider our Enterprise plan which offers 10x the rate limits and dedicated infrastructure. Happy to discuss if you\'d like to explore that option.\n\nWould you be interested in a technical consultation call? Our solutions architect can walk through your specific use case and recommend the optimal setup.\n\nI\'ve attached our API rate limit comparison chart and mobile SDK documentation for your reference.',
+              closing: 'Let me know if you have any other questions!',
+              signature: 'Alex Kim\nDeveloper Relations\nTechnical Support Team'
+            }
+          }
         }
       ],
       'kb-article': [
         {
+          // DMO Fields
           Title: 'How to Fix OAuth Token Expired Error (API Connection Failed)',
           Problem: 'When connecting to the API, you receive an error message indicating that the OAuth token has expired and the connection has failed.',
-          Solution: '1. Navigate to Setup > Connected Apps\n2. Find your application in the list\n3. Click "Manage" and then "Edit Policies"\n4. Under OAuth Policies, click "Regenerate Token"\n5. Copy the new token and update your application credentials\n6. Test the connection to verify it works',
+          Solution: '1. Navigate to Setup > Connected Apps\n2. Find your application\n3. Click "Regenerate Token"\n4. Update your application credentials',
           Category: 'API & Integration',
-          RelatedArticles: 'API Authentication Guide, OAuth 2.0 Setup, Troubleshooting Connection Issues'
+          // UDMO Content
+          __udmo: {
+            'KnowledgeArticle__udmo': {
+              title: 'How to Fix OAuth Token Expired Error (API Connection Failed)',
+              articleNumber: 'KB-2024-0892',
+              lastUpdated: '2024-01-20',
+              author: 'Technical Documentation Team',
+              views: 1247,
+              helpful: 94,
+              tableOfContents: ['Overview', 'Symptoms', 'Cause', 'Resolution', 'Prevention'],
+              sections: [
+                {
+                  title: 'Overview',
+                  content: 'This article explains how to resolve the "OAuth Token Expired" error that occurs when your API connection fails due to an expired authentication token. This is one of the most common API connectivity issues and can be resolved in a few simple steps.'
+                },
+                {
+                  title: 'Symptoms',
+                  content: 'You may experience this issue if:\n• API calls return a 401 Unauthorized error\n• Error message contains "OAuth token expired" or "invalid_token"\n• Previously working integrations suddenly stop functioning\n• Connection tests fail after a period of inactivity'
+                },
+                {
+                  title: 'Cause',
+                  content: 'OAuth tokens have a limited lifespan for security purposes. By default, access tokens expire after 2 hours, and refresh tokens expire after 90 days. If your application doesn\'t properly refresh tokens, or if the refresh token itself has expired, you\'ll encounter this error.'
+                },
+                {
+                  title: 'Resolution',
+                  content: 'Follow these steps to regenerate your OAuth token:\n\n1. Log in to your admin console\n2. Navigate to Setup → Connected Apps\n3. Locate your application in the list\n4. Click the application name to open details\n5. Click "Manage" then "Edit Policies"\n6. Under OAuth Policies, click "Regenerate Token"\n7. Copy the new access token immediately (it won\'t be shown again)\n8. Update your application\'s configuration with the new token\n9. Test the connection to verify it works\n\n⚠️ Important: Regenerating the token will invalidate the old token immediately. Make sure to update all applications using this token.'
+                },
+                {
+                  title: 'Prevention',
+                  content: 'To prevent this issue in the future:\n• Implement automatic token refresh in your application\n• Set up monitoring alerts for token expiration\n• Use refresh tokens properly according to OAuth 2.0 best practices\n• Consider using service accounts for server-to-server integrations'
+                }
+              ],
+              relatedArticles: ['API Authentication Guide', 'OAuth 2.0 Setup', 'Troubleshooting Connection Issues'],
+              tags: ['oauth', 'api', 'authentication', 'token', 'integration']
+            },
+            'FAQDocument__udmo': {
+              title: 'OAuth Token Errors - Frequently Asked Questions',
+              questions: [
+                {
+                  q: 'Why did my OAuth token expire?',
+                  a: 'OAuth tokens expire automatically for security. Access tokens typically last 2 hours, refresh tokens last 90 days.'
+                },
+                {
+                  q: 'Will regenerating my token affect other users?',
+                  a: 'No, tokens are specific to your connected app. Other users\' tokens are not affected.'
+                },
+                {
+                  q: 'How can I prevent this from happening again?',
+                  a: 'Implement automatic token refresh in your application using refresh tokens.'
+                },
+                {
+                  q: 'I regenerated the token but still get errors. What now?',
+                  a: 'Ensure you\'ve updated the token in ALL locations where it\'s used. Check for cached tokens.'
+                }
+              ]
+            }
+          }
         },
         {
           Title: 'Reports Showing Wrong Timezone - How to Fix',
           Problem: 'Reports and dashboards are displaying times in the wrong timezone, causing confusion with scheduled events and data analysis.',
-          Solution: '1. Click your profile icon in the top right\n2. Select "Settings"\n3. Navigate to "Time & Language"\n4. Select your correct timezone from the dropdown\n5. Click "Save"\n6. Refresh your reports to see the updated times',
+          Solution: '1. Go to Settings\n2. Navigate to Time & Language\n3. Select correct timezone\n4. Save and refresh reports',
           Category: 'Reports & Analytics',
-          RelatedArticles: 'Report Configuration Guide, Dashboard Setup, Time Zone Best Practices'
+          __udmo: {
+            'KnowledgeArticle__udmo': {
+              title: 'Reports Showing Wrong Timezone - Complete Fix Guide',
+              articleNumber: 'KB-2024-0756',
+              lastUpdated: '2024-01-18',
+              author: 'Technical Documentation Team',
+              views: 892,
+              helpful: 87,
+              tableOfContents: ['Overview', 'Common Causes', 'User-Level Fix', 'Org-Wide Settings', 'Troubleshooting'],
+              sections: [
+                {
+                  title: 'Overview',
+                  content: 'Timezone discrepancies in reports can cause significant confusion, especially for teams distributed across multiple time zones. This guide walks through all the settings that affect how times are displayed in reports and dashboards.'
+                },
+                {
+                  title: 'Common Causes',
+                  content: 'Timezone issues typically stem from:\n• User profile timezone not matching actual location\n• Organization default timezone misconfigured\n• Browser timezone override settings\n• Daylight saving time transition periods\n• Report-level timezone filters'
+                },
+                {
+                  title: 'User-Level Fix',
+                  content: 'To fix timezone at the user level:\n\n1. Click your profile icon in the top right corner\n2. Select "Settings" from the dropdown menu\n3. Navigate to "Time & Language" section\n4. Under "Time Zone", select your correct timezone from the dropdown\n5. Click "Save Changes"\n6. Refresh your browser and check reports again\n\nNote: Changes take effect immediately for new reports. Cached dashboard data may take up to 15 minutes to update.'
+                },
+                {
+                  title: 'Org-Wide Settings',
+                  content: 'If multiple users are affected, check organization settings:\n\n1. Go to Setup → Company Settings → Company Information\n2. Verify the "Default Time Zone" is correct\n3. Check "Default Locale" settings\n4. Review any timezone-related automation rules\n\nAdministrators can also force timezone sync across all users if needed.'
+                },
+                {
+                  title: 'Troubleshooting',
+                  content: 'If the issue persists:\n• Clear browser cache and cookies\n• Check if specific reports have timezone overrides\n• Verify data source timezone settings\n• Test in incognito mode to rule out extensions\n• Contact support if issue affects only certain report types'
+                }
+              ],
+              relatedArticles: ['Report Configuration Guide', 'Dashboard Setup', 'Time Zone Best Practices'],
+              tags: ['timezone', 'reports', 'dashboard', 'configuration']
+            },
+            'FAQDocument__udmo': {
+              title: 'Timezone Settings - FAQ',
+              questions: [
+                {
+                  q: 'Does changing my timezone affect historical data?',
+                  a: 'No, historical data remains unchanged. Only the display format is affected.'
+                },
+                {
+                  q: 'Why do scheduled reports show different times than the dashboard?',
+                  a: 'Scheduled reports use the timezone set at report creation. Edit the schedule to update.'
+                },
+                {
+                  q: 'Can I set different timezones for different reports?',
+                  a: 'Yes, individual reports can override your default timezone in the report settings.'
+                }
+              ]
+            }
+          }
+        },
+        {
+          Title: 'CSV Import Failing Silently - Resolution Guide',
+          Problem: 'CSV file imports appear to complete but no data is imported, with no error message displayed.',
+          Solution: 'Convert file to UTF-8 without BOM encoding using a text editor or spreadsheet application.',
+          Category: 'Data Management',
+          __udmo: {
+            'KnowledgeArticle__udmo': {
+              title: 'CSV Import Failing Silently - Complete Troubleshooting Guide',
+              articleNumber: 'KB-2024-0634',
+              lastUpdated: '2024-01-15',
+              author: 'Data Operations Team',
+              views: 2156,
+              helpful: 91,
+              tableOfContents: ['Overview', 'Diagnosis', 'File Encoding Fix', 'Format Validation', 'Best Practices'],
+              sections: [
+                {
+                  title: 'Overview',
+                  content: 'Silent import failures are typically caused by file encoding issues, specifically when CSV files include a Byte Order Mark (BOM) or use incompatible character encoding. This guide will help you diagnose and fix these issues.'
+                },
+                {
+                  title: 'Diagnosis',
+                  content: 'Signs your import is failing silently:\n• Import wizard shows "Complete" but record count is 0\n• No error messages in the import log\n• File uploads successfully but data doesn\'t appear\n• Partial imports with garbled characters\n\nTo diagnose, check the import log at Setup → Data Import → Import History.'
+                },
+                {
+                  title: 'File Encoding Fix',
+                  content: 'To convert your file to the correct encoding:\n\nUsing Notepad++ (Windows):\n1. Open your CSV file in Notepad++\n2. Go to Encoding menu\n3. Select "Convert to UTF-8"\n4. Save the file and retry import\n\nUsing Excel:\n1. Open the CSV in Excel\n2. Go to File → Save As\n3. Choose "CSV UTF-8 (Comma delimited)"\n4. Save and retry import\n\nUsing Mac TextEdit:\n1. Open file in TextEdit\n2. Format → Make Plain Text\n3. File → Save, choose UTF-8 encoding'
+                },
+                {
+                  title: 'Format Validation',
+                  content: 'Before importing, verify your CSV meets these requirements:\n• First row contains column headers\n• No merged cells or special formatting\n• Date format matches system settings (YYYY-MM-DD recommended)\n• Numbers don\'t include currency symbols\n• Text fields with commas are wrapped in quotes\n• No trailing commas at end of rows'
+                },
+                {
+                  title: 'Best Practices',
+                  content: 'To prevent future import issues:\n• Always export from source systems in UTF-8 format\n• Use our CSV template for new imports\n• Test with a small subset (10-20 rows) before bulk import\n• Enable import validation in settings\n• Schedule large imports during off-peak hours'
+                }
+              ],
+              relatedArticles: ['Data Import Best Practices', 'CSV Template Library', 'Bulk Data Operations'],
+              tags: ['csv', 'import', 'encoding', 'utf-8', 'data-import']
+            },
+            'FAQDocument__udmo': {
+              title: 'CSV Import Issues - FAQ',
+              questions: [
+                {
+                  q: 'What is UTF-8 encoding and why does it matter?',
+                  a: 'UTF-8 is a universal character encoding that supports all languages. Files with other encodings may not import correctly.'
+                },
+                {
+                  q: 'Can I import files with special characters like ñ or ü?',
+                  a: 'Yes, but only if the file is properly encoded as UTF-8. Other encodings may corrupt these characters.'
+                },
+                {
+                  q: 'My import worked last month but fails now with the same file format. Why?',
+                  a: 'Check if Excel auto-formatting changed date formats or added BOM on re-save. Re-export from source.'
+                }
+              ]
+            }
+          }
         }
       ],
       'email-response': [
         {
-          Subject: 'Re: Error uploading files - Solution Found',
-          Greeting: 'Hi John,',
-          Body: 'Thank you for reaching out about the file upload issue you\'re experiencing.\n\nI\'ve looked into error code E-5502, and this typically occurs when files exceed our current upload limit. Here\'s how to resolve this:\n\n1. For files over 25MB, please use our bulk upload tool at app.company.com/bulk-upload\n2. Alternatively, you can compress files before uploading\n3. If you need to upload larger files regularly, I can enable the Enterprise file limit for your account\n\nI understand this is blocking your quarterly report, so I\'ve prioritized your ticket. Would you like me to enable the higher limit for your account?',
-          Closing: 'Best regards,\nSupport Team',
-          Tone: 'Professional, Helpful'
+          // DMO Fields
+          Subject: 'Follow-up: Enterprise Solution Discussion',
+          Tone: 'Professional, Consultative',
+          Confidence: '92%',
+          Safety: 'Approved',
+          // UDMO Content
+          __udmo: {
+            'EmailDraft__udmo': {
+              to: 'john.smith@acmecorp.com',
+              cc: 'procurement@acmecorp.com',
+              subject: 'Follow-up: Enterprise Solution Discussion - Next Steps',
+              greeting: 'Hi John,',
+              body: 'It was great speaking with you yesterday about Acme Corp\'s digital transformation initiatives. I wanted to follow up while our conversation is still fresh.\n\nBased on what you shared about your team\'s challenges with data silos and manual reporting, I believe our Enterprise platform could help you:\n\n📊 Consolidate all 12 data sources into a single view\n⏱️ Reduce report generation time from 3 days to 3 hours\n🔄 Automate 80% of your current manual workflows\n📈 Achieve the 40% efficiency gain you mentioned targeting\n\nI\'ve put together a preliminary proposal (attached) that outlines:\n• Implementation approach tailored to your existing Salesforce instance\n• Phased rollout plan to minimize disruption\n• ROI projections based on similar financial services deployments\n• Pricing options including the multi-year discount we discussed\n\nNext Steps I\'d Recommend:\n1. I can schedule a technical deep-dive with your IT team (Sarah mentioned some API concerns)\n2. We could arrange a reference call with Global Bank, who had a similar use case\n3. I\'m happy to extend the pilot offer we discussed through end of quarter\n\nWould Thursday at 2pm work for a 30-minute call to walk through the proposal? I can also include our solutions architect if you\'d like to get into technical details.\n\nLooking forward to partnering with Acme Corp on this initiative.',
+              closing: 'Best regards,',
+              signature: 'Michael Torres\nEnterprise Account Executive\nmichael.torres@company.com\n(555) 234-5678'
+            },
+            'ProposalDocument__udmo': {
+              title: 'Enterprise Platform Proposal',
+              client: 'Acme Corp',
+              preparedFor: 'John Smith, VP of Operations',
+              preparedBy: 'Michael Torres, Enterprise Account Executive',
+              date: '2024-01-20',
+              validUntil: '2024-02-20',
+              executiveSummary: 'This proposal outlines a comprehensive Enterprise Platform implementation designed to consolidate Acme Corp\'s data infrastructure, automate manual workflows, and deliver projected annual savings of $450,000.',
+              sections: [
+                {
+                  title: 'Understanding Your Needs',
+                  content: 'Based on our discovery sessions, Acme Corp is seeking to:\n• Unify 12 disparate data sources\n• Reduce manual reporting overhead by 80%\n• Enable real-time dashboards for executive team\n• Integrate with existing Salesforce CRM investment'
+                },
+                {
+                  title: 'Proposed Solution',
+                  content: 'Our Enterprise Platform provides:\n• Unified data layer with pre-built connectors\n• AI-powered automation engine\n• Executive dashboard suite\n• Native Salesforce integration\n• 99.9% uptime SLA'
+                },
+                {
+                  title: 'Implementation Timeline',
+                  content: 'Phase 1 (Weeks 1-4): Discovery & Setup\nPhase 2 (Weeks 5-8): Data Integration\nPhase 3 (Weeks 9-12): Automation Build\nPhase 4 (Weeks 13-14): Training & Go-Live'
+                }
+              ],
+              pricing: [
+                { item: 'Enterprise Platform License (Annual)', qty: 1, price: 85000 },
+                { item: 'Implementation Services', qty: 1, price: 35000 },
+                { item: 'Training Package (5 sessions)', qty: 1, price: 7500 },
+                { item: 'Premium Support (Annual)', qty: 1, price: 15000 }
+              ],
+              totalPrice: 142500,
+              discount: '15% Multi-Year Discount Available'
+            },
+            'MeetingAgenda__udmo': {
+              title: 'Proposal Review Meeting',
+              date: 'Thursday, January 25, 2024',
+              time: '2:00 PM - 2:30 PM EST',
+              attendees: ['John Smith (Acme Corp)', 'Sarah Chen (Acme Corp IT)', 'Michael Torres (Account Executive)', 'Lisa Park (Solutions Architect)'],
+              objectives: ['Review proposal details and address questions', 'Discuss technical integration requirements', 'Align on implementation timeline', 'Outline next steps and decision process'],
+              agenda: [
+                { time: '2:00 - 2:05', topic: 'Welcome and introductions', owner: 'Michael Torres' },
+                { time: '2:05 - 2:15', topic: 'Proposal overview and key benefits', owner: 'Michael Torres' },
+                { time: '2:15 - 2:22', topic: 'Technical architecture and Salesforce integration', owner: 'Lisa Park' },
+                { time: '2:22 - 2:28', topic: 'Q&A and discussion', owner: 'All' },
+                { time: '2:28 - 2:30', topic: 'Next steps and action items', owner: 'Michael Torres' }
+              ],
+              preMeetingMaterials: ['Attached proposal document', 'Technical architecture diagram', 'ROI calculator spreadsheet']
+            }
+          }
+        },
+        {
+          Subject: 'Re: Product demo request',
+          Tone: 'Friendly, Enthusiastic',
+          Confidence: '88%',
+          Safety: 'Approved',
+          __udmo: {
+            'EmailDraft__udmo': {
+              to: 'sarah.jones@techstart.io',
+              subject: 'Re: Product demo request - Let\'s schedule!',
+              greeting: 'Hi Sarah!',
+              body: 'Thank you so much for your interest in our platform! I checked out TechStart\'s website and I\'m really impressed with what you\'re building in the HR tech space.\n\nI\'d love to show you how our solution can help TechStart scale faster. Based on your website, I think you\'d particularly benefit from:\n\n🚀 Our startup-friendly pricing (you mentioned budget constraints)\n🔌 Easy API integration with your existing HR systems\n📊 Analytics dashboard your leadership team will love\n\nFor the demo, I typically cover:\n• 15-min platform overview\n• Live walkthrough customized to HR tech use cases\n• Q&A with our product specialist\n• Startup program details (including our Y Combinator discount if applicable!)\n\nHere are some times that work for me this week:\n• Tuesday 1/23 at 10am or 3pm PT\n• Wednesday 1/24 at 11am or 2pm PT\n• Thursday 1/25 at 10am PT\n\nJust reply with what works best, or feel free to grab time directly on my calendar: calendly.com/emily-sales\n\nExcited to chat!',
+              closing: 'Cheers,',
+              signature: 'Emily Chen\nStartup Account Executive\nP.S. - We just launched a new feature that\'s perfect for growing teams. Can\'t wait to show you! 🎉'
+            },
+            'ProposalDocument__udmo': null,
+            'MeetingAgenda__udmo': {
+              title: 'TechStart Product Demo',
+              date: 'TBD',
+              time: '45 minutes',
+              attendees: ['Sarah Jones (TechStart)', 'Emily Chen (Account Executive)', 'Product Specialist TBD'],
+              objectives: ['Showcase platform capabilities', 'Understand TechStart specific needs', 'Discuss startup program pricing'],
+              agenda: [
+                { time: '0:00 - 0:05', topic: 'Introductions and TechStart overview', owner: 'Emily Chen' },
+                { time: '0:05 - 0:10', topic: 'Discovery: Current challenges and goals', owner: 'Emily Chen' },
+                { time: '0:10 - 0:30', topic: 'Live product demo', owner: 'Product Specialist' },
+                { time: '0:30 - 0:40', topic: 'Q&A', owner: 'All' },
+                { time: '0:40 - 0:45', topic: 'Pricing and next steps', owner: 'Emily Chen' }
+              ],
+              preMeetingMaterials: ['Platform overview video', 'HR tech case study']
+            }
+          }
+        },
+        {
+          Subject: 'Re: Contract renewal discussion',
+          Tone: 'Professional, Retention-focused',
+          Confidence: '85%',
+          Safety: 'Review - Discount mentioned',
+          __udmo: {
+            'EmailDraft__udmo': {
+              to: 'mark.johnson@globaltech.io',
+              cc: 'legal@globaltech.io',
+              subject: 'Re: Contract renewal - Special offer for GlobalTech',
+              greeting: 'Hi Mark,',
+              body: 'Thank you for the candid conversation about your renewal concerns. I really appreciate you sharing the competitive quotes you\'ve received – it helps me understand what we\'re working with.\n\nFirst, I want to acknowledge: GlobalTech has been a valued partner for 3 years, and I\'m committed to finding a way to continue that relationship.\n\nAfter discussing with my leadership team, I\'m pleased to offer:\n\n💰 Special Renewal Package for GlobalTech:\n• 18% discount on your current plan (vs. the 10% standard renewal discount)\n• Price lock for 2 years (protecting you from our planned Q3 increase)\n• 2 additional Enterprise seats at no extra cost\n• Priority support upgrade (normally $12K/year) included\n\n📊 Total Value: $47,000 in savings over 2 years\n\nI\'ve also included a comparison sheet showing how we stack up against the alternatives you mentioned. While Competitor X may have a lower sticker price, when you factor in the migration costs, feature gaps, and your team\'s existing training investment with us, I think you\'ll see the total cost of ownership favors staying.\n\nI know you mentioned needing to present options to your CFO by Friday. Would it help if I joined that call to answer any questions directly?\n\nLet\'s find a solution that works for GlobalTech.',
+              closing: 'Committed to your success,',
+              signature: 'David Park\nCustomer Success Director\nGlobalTech Account Team\n(555) 456-7890'
+            },
+            'ProposalDocument__udmo': {
+              title: 'Contract Renewal Proposal',
+              client: 'GlobalTech',
+              preparedFor: 'Mark Johnson, Director of Operations',
+              preparedBy: 'David Park, Customer Success Director',
+              date: '2024-01-20',
+              validUntil: '2024-01-31',
+              executiveSummary: 'This renewal proposal reflects our commitment to GlobalTech\'s continued success with a comprehensive package that delivers $47,000 in value over 2 years.',
+              sections: [
+                {
+                  title: 'Partnership Summary',
+                  content: '3-year partnership highlights:\n• 340% ROI achieved\n• 99.8% uptime delivered\n• 12,000+ user adoption\n• 4.8/5 satisfaction score'
+                },
+                {
+                  title: 'Renewal Benefits',
+                  content: 'Your loyalty renewal includes:\n• 18% discount (8% above standard)\n• 2-year price lock guarantee\n• 2 additional Enterprise seats\n• Priority support upgrade'
+                },
+                {
+                  title: 'Competitive Comparison',
+                  content: 'Why staying makes sense:\n• Zero migration costs\n• No productivity loss during transition\n• Existing team expertise retained\n• Roadmap features you requested are coming Q2'
+                }
+              ],
+              pricing: [
+                { item: 'Enterprise License Renewal (Annual)', qty: 1, price: 72000 },
+                { item: 'Loyalty Discount (18%)', qty: 1, price: -12960 },
+                { item: 'Additional Enterprise Seats (2)', qty: 2, price: 0 },
+                { item: 'Priority Support Upgrade', qty: 1, price: 0 }
+              ],
+              totalPrice: 59040,
+              discount: '2-Year Price Lock Included'
+            },
+            'MeetingAgenda__udmo': {
+              title: 'CFO Renewal Discussion',
+              date: 'Friday, January 26, 2024',
+              time: '11:00 AM - 11:30 AM EST',
+              attendees: ['Mark Johnson (GlobalTech)', 'CFO (GlobalTech)', 'David Park (Customer Success)', 'VP Sales (if needed)'],
+              objectives: ['Present renewal value proposition', 'Address competitive concerns', 'Align on renewal terms'],
+              agenda: [
+                { time: '11:00 - 11:05', topic: 'Partnership recap and value delivered', owner: 'David Park' },
+                { time: '11:05 - 11:15', topic: 'Renewal package details', owner: 'David Park' },
+                { time: '11:15 - 11:20', topic: 'Competitive comparison', owner: 'David Park' },
+                { time: '11:20 - 11:28', topic: 'Questions and discussion', owner: 'All' },
+                { time: '11:28 - 11:30', topic: 'Decision timeline and next steps', owner: 'David Park' }
+              ],
+              preMeetingMaterials: ['Renewal proposal', 'ROI summary report', 'Competitive comparison sheet']
+            }
+          }
         }
       ]
     };
@@ -413,17 +943,30 @@
     function renderCenterPanel() {
       var contentType = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
 
-      // Build tabs
+      // Build tabs - DMO outputs first, then UDMO outputs
       var tabsHtml = '';
       if (contentType) {
-        var tabs = contentType.outputs.slice(0, 3);
-        if (contentType.udmo) tabs.push(contentType.udmo);
-        tabs.forEach(function(tab, i) {
-          var icons = { 'Summary': '📝', 'Priority': '🎯', 'Sentiment': '💭', 'Draft Response': '✉️', 'Knowledge Article': '📚', 'Internal Note': '📋', 'Call Summary': '📞' };
+        // DMO output tabs (structured fields)
+        var dmoTabs = contentType.outputs.slice(0, 3);
+        dmoTabs.forEach(function(tab, i) {
+          var icons = { 'Summary': '📝', 'Priority': '🎯', 'Sentiment': '💭', 'Title': '📰', 'Problem': '❗', 'Solution': '✅', 'Subject': '📧', 'Tone': '🎭', 'Confidence': '📊', 'Safety': '🛡️', 'Key Points': '📌', 'Action Items': '✓' };
           tabsHtml += '<button class="output-tab' + (state.activeOutputTab === i ? ' active' : '') + '" onclick="setActiveTab(' + i + ')">' +
             '<span class="output-tab-icon">' + (icons[tab] || '📄') + '</span>' + tab +
             '</button>';
         });
+
+        // UDMO output tabs (unstructured content) - with divider
+        if (contentType.udmos && contentType.udmos.length > 0) {
+          contentType.udmos.forEach(function(udmo, i) {
+            var udmoInfo = UDMO_CATALOG[udmo.id] || {};
+            var tabIndex = dmoTabs.length + i;
+            var isFirst = i === 0;
+            tabsHtml += '<button class="output-tab' + (isFirst ? ' udmo-tab' : '') + (state.activeOutputTab === tabIndex ? ' active' : '') + '" onclick="setActiveTab(' + tabIndex + ')">' +
+              '<span class="output-tab-icon">' + (udmoInfo.icon || '📄') + '</span>' + udmo.name +
+              '<span class="udmo-type-badge">' + (udmoInfo.contentType || 'Text') + '</span>' +
+              '</button>';
+          });
+        }
       }
 
       var bodyHtml = '';
@@ -473,9 +1016,20 @@
 
       var data = outputs[state.currentRecordIndex];
       var html = '';
+      var dmoTabCount = contentType.outputs.slice(0, 3).length;
 
-      // Different layouts based on active tab
-      if (state.activeOutputTab === 0) {
+      // Check if we're on a UDMO tab
+      if (contentType.udmos && state.activeOutputTab >= dmoTabCount) {
+        var udmoIndex = state.activeOutputTab - dmoTabCount;
+        var udmoConfig = contentType.udmos[udmoIndex];
+        if (udmoConfig && data.__udmo && data.__udmo[udmoConfig.id]) {
+          html = renderUDMO(udmoConfig.id, data.__udmo[udmoConfig.id]);
+        } else {
+          html = '<div class="output-placeholder"><div class="output-placeholder-icon">📄</div><div class="output-placeholder-text">UDMO content not available</div></div>';
+        }
+      }
+      // DMO tab views
+      else if (state.activeOutputTab === 0) {
         // Summary/Main view
         html += '<div class="generated-section">';
         html += '<div class="generated-label">Summary</div>';
@@ -486,7 +1040,8 @@
         html += '<div class="field-grid">';
         if (data.Priority) {
           html += '<div class="field-item"><div class="generated-label">Priority</div>';
-          html += '<span class="field-badge ' + data.Priority.toLowerCase() + '">' + data.Priority + '</span></div>';
+          var prioClass = data.Priority.toLowerCase() === 'critical' ? 'high' : data.Priority.toLowerCase();
+          html += '<span class="field-badge ' + prioClass + '">' + data.Priority + '</span></div>';
         }
         if (data.Sentiment) {
           var sentimentClass = data.Sentiment.toLowerCase().indexOf('positive') > -1 ? 'positive' : (data.Sentiment.toLowerCase().indexOf('negative') > -1 || data.Sentiment.toLowerCase().indexOf('angry') > -1 || data.Sentiment.toLowerCase().indexOf('frustrated') > -1 ? 'negative' : 'neutral');
@@ -501,47 +1056,275 @@
           html += '<div class="field-item"><div class="generated-label">Tone</div>';
           html += '<div class="generated-value">' + esc(data.Tone) + '</div></div>';
         }
+        if (data.Confidence) {
+          html += '<div class="field-item"><div class="generated-label">Confidence</div>';
+          html += '<span class="field-badge positive">' + data.Confidence + '</span></div>';
+        }
+        if (data.Safety) {
+          var safetyClass = data.Safety.toLowerCase().indexOf('approved') > -1 ? 'positive' : (data.Safety.toLowerCase().indexOf('review') > -1 ? 'medium' : 'neutral');
+          html += '<div class="field-item"><div class="generated-label">Safety</div>';
+          html += '<span class="field-badge ' + safetyClass + '">' + data.Safety + '</span></div>';
+        }
         html += '</div>';
-
-        // Action items if present
-        if (data.ActionItems) {
-          html += '<div class="generated-section" style="margin-top:20px;">';
-          html += '<div class="generated-label">Action Items</div>';
-          html += '<div class="generated-value large">' + esc(data.ActionItems) + '</div>';
-          html += '</div>';
-        }
-      } else if (state.activeOutputTab === 3 || (contentType && contentType.udmo && state.activeOutputTab === contentType.outputs.slice(0,3).length)) {
-        // UDMO content (Draft Response, KB Article, etc.)
-        if (data.DraftNote) {
-          html += '<div class="generated-section">';
-          html += '<div class="generated-label">Internal Note</div>';
-          html += '<div class="generated-value large">' + esc(data.DraftNote) + '</div>';
-          html += '</div>';
-        }
-        if (data.Body) {
-          html += '<div class="generated-section">';
-          html += '<div class="generated-label">' + (data.Subject ? 'Email Body' : 'Content') + '</div>';
-          html += '<div class="generated-value large">' + esc(data.Body) + '</div>';
-          html += '</div>';
-        }
-        if (data.Solution) {
-          html += '<div class="generated-section">';
-          html += '<div class="generated-label">Solution</div>';
-          html += '<div class="generated-value large">' + esc(data.Solution) + '</div>';
-          html += '</div>';
-        }
       } else {
-        // Individual field view
+        // Individual DMO field view
         var tabs = contentType.outputs.slice(0, 3);
         var fieldName = tabs[state.activeOutputTab];
         if (fieldName && data[fieldName]) {
           html += '<div class="generated-section">';
           html += '<div class="generated-label">' + fieldName + '</div>';
-          html += '<div class="generated-value large">' + esc(data[fieldName]) + '</div>';
+          if (fieldName === 'Priority') {
+            var prioClass = data[fieldName].toLowerCase() === 'critical' ? 'high' : data[fieldName].toLowerCase();
+            html += '<span class="field-badge ' + prioClass + '" style="font-size:16px;padding:8px 16px;">' + data[fieldName] + '</span>';
+          } else if (fieldName === 'Sentiment') {
+            var sentClass = data[fieldName].toLowerCase().indexOf('positive') > -1 ? 'positive' : (data[fieldName].toLowerCase().indexOf('negative') > -1 || data[fieldName].toLowerCase().indexOf('angry') > -1 || data[fieldName].toLowerCase().indexOf('frustrated') > -1 ? 'negative' : 'neutral');
+            html += '<span class="field-badge ' + sentClass + '" style="font-size:16px;padding:8px 16px;">' + data[fieldName] + '</span>';
+          } else {
+            html += '<div class="generated-value large">' + esc(data[fieldName]) + '</div>';
+          }
           html += '</div>';
         }
       }
 
+      return html;
+    }
+
+    // UDMO Renderers - Type-specific rendering for unstructured content
+    function renderUDMO(udmoType, data) {
+      switch(udmoType) {
+        case 'InternalNote__udmo':
+          return renderInternalNoteUDMO(data);
+        case 'DraftResponse__udmo':
+        case 'EmailDraft__udmo':
+          return renderEmailUDMO(data);
+        case 'KnowledgeArticle__udmo':
+          return renderKnowledgeArticleUDMO(data);
+        case 'FAQDocument__udmo':
+          return renderFAQUDMO(data);
+        case 'ProposalDocument__udmo':
+          return renderProposalUDMO(data);
+        case 'MeetingAgenda__udmo':
+          return renderMeetingAgendaUDMO(data);
+        default:
+          return '<div class="generated-value large">' + esc(JSON.stringify(data, null, 2)) + '</div>';
+      }
+    }
+
+    function renderInternalNoteUDMO(data) {
+      var html = '<div class="udmo-container udmo-note">';
+      html += '<div class="udmo-note-header">';
+      html += '<div class="udmo-note-title">📋 ' + esc(data.title || 'Internal Note') + '</div>';
+      if (data.priority) {
+        var prioClass = data.priority.toLowerCase() === 'critical' ? 'high' : data.priority.toLowerCase();
+        html += '<span class="udmo-note-priority ' + prioClass + '">' + data.priority + '</span>';
+      }
+      html += '</div>';
+      html += '<div class="udmo-note-body">' + esc(data.content || '') + '</div>';
+      if (data.tags && data.tags.length > 0) {
+        html += '<div class="udmo-note-tags">';
+        data.tags.forEach(function(tag) {
+          html += '<span class="udmo-note-tag">' + esc(tag) + '</span>';
+        });
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderEmailUDMO(data) {
+      var html = '<div class="udmo-container udmo-email">';
+      html += '<div class="udmo-email-header">';
+      html += '<div class="udmo-email-field"><span class="udmo-email-label">To:</span><span class="udmo-email-value">' + esc(data.to || '') + '</span></div>';
+      if (data.cc) {
+        html += '<div class="udmo-email-field"><span class="udmo-email-label">Cc:</span><span class="udmo-email-value">' + esc(data.cc) + '</span></div>';
+      }
+      html += '<div class="udmo-email-field"><span class="udmo-email-label">Subject:</span><span class="udmo-email-value" style="font-weight:600;">' + esc(data.subject || '') + '</span></div>';
+      html += '</div>';
+      html += '<div class="udmo-email-body">';
+      html += '<p style="margin-bottom:16px;">' + esc(data.greeting || '') + '</p>';
+      html += '<div style="white-space:pre-wrap;">' + esc(data.body || '') + '</div>';
+      html += '<p style="margin-top:16px;">' + esc(data.closing || '') + '</p>';
+      html += '</div>';
+      html += '<div class="udmo-email-signature">' + esc(data.signature || '').replace(/\n/g, '<br>') + '</div>';
+      html += '</div>';
+      return html;
+    }
+
+    function renderKnowledgeArticleUDMO(data) {
+      var html = '<div class="udmo-container udmo-article">';
+      // Header
+      html += '<div class="udmo-article-header">';
+      html += '<div class="udmo-article-title">' + esc(data.title || '') + '</div>';
+      html += '<div class="udmo-article-meta">';
+      html += '<span>Article #' + esc(data.articleNumber || '') + '</span>';
+      html += '<span>Updated: ' + esc(data.lastUpdated || '') + '</span>';
+      html += '<span>👁 ' + (data.views || 0) + ' views</span>';
+      html += '<span>👍 ' + (data.helpful || 0) + '% helpful</span>';
+      html += '</div>';
+      html += '</div>';
+      // Table of Contents
+      if (data.tableOfContents && data.tableOfContents.length > 0) {
+        html += '<div class="udmo-article-toc">';
+        html += '<div class="udmo-article-toc-title">In This Article</div>';
+        html += '<ul class="udmo-article-toc-list">';
+        data.tableOfContents.forEach(function(item) {
+          html += '<li>→ ' + esc(item) + '</li>';
+        });
+        html += '</ul>';
+        html += '</div>';
+      }
+      // Sections
+      html += '<div class="udmo-article-body">';
+      if (data.sections) {
+        data.sections.forEach(function(section) {
+          html += '<div class="udmo-article-section">';
+          html += '<h3>' + esc(section.title) + '</h3>';
+          html += '<p style="white-space:pre-wrap;">' + esc(section.content) + '</p>';
+          html += '</div>';
+        });
+      }
+      html += '</div>';
+      // Footer
+      if (data.relatedArticles && data.relatedArticles.length > 0) {
+        html += '<div class="udmo-article-footer">';
+        html += '<strong>Related Articles:</strong> ' + data.relatedArticles.map(function(a) { return esc(a); }).join(' • ');
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderFAQUDMO(data) {
+      var html = '<div class="udmo-container udmo-article">';
+      html += '<div class="udmo-article-header">';
+      html += '<div class="udmo-article-title">❓ ' + esc(data.title || 'FAQ') + '</div>';
+      html += '</div>';
+      html += '<div class="udmo-article-body">';
+      if (data.questions) {
+        data.questions.forEach(function(qa, i) {
+          html += '<div class="udmo-article-section">';
+          html += '<h3>Q' + (i + 1) + ': ' + esc(qa.q) + '</h3>';
+          html += '<p><strong>A:</strong> ' + esc(qa.a) + '</p>';
+          html += '</div>';
+        });
+      }
+      html += '</div>';
+      html += '</div>';
+      return html;
+    }
+
+    function renderProposalUDMO(data) {
+      if (!data) return '<div class="output-placeholder"><div class="output-placeholder-text">No proposal data</div></div>';
+
+      var html = '<div class="udmo-container udmo-proposal">';
+      // Header
+      html += '<div class="udmo-proposal-header">';
+      html += '<div class="udmo-proposal-title">' + esc(data.title || 'Proposal') + '</div>';
+      html += '<div class="udmo-proposal-subtitle">Prepared for ' + esc(data.preparedFor || '') + '</div>';
+      html += '</div>';
+      html += '<div class="udmo-proposal-body">';
+      // Meta info
+      html += '<div class="udmo-proposal-section">';
+      html += '<div style="display:flex;justify-content:space-between;font-size:12px;color:#706e6b;margin-bottom:16px;">';
+      html += '<span>Prepared by: ' + esc(data.preparedBy || '') + '</span>';
+      html += '<span>Date: ' + esc(data.date || '') + '</span>';
+      html += '<span>Valid until: ' + esc(data.validUntil || '') + '</span>';
+      html += '</div>';
+      html += '</div>';
+      // Executive Summary
+      if (data.executiveSummary) {
+        html += '<div class="udmo-proposal-section">';
+        html += '<h4>Executive Summary</h4>';
+        html += '<p style="background:#f3f3f3;padding:12px;border-radius:6px;font-size:14px;line-height:1.6;">' + esc(data.executiveSummary) + '</p>';
+        html += '</div>';
+      }
+      // Sections
+      if (data.sections) {
+        data.sections.forEach(function(section) {
+          html += '<div class="udmo-proposal-section">';
+          html += '<h4>' + esc(section.title) + '</h4>';
+          html += '<p style="white-space:pre-wrap;font-size:14px;line-height:1.6;">' + esc(section.content) + '</p>';
+          html += '</div>';
+        });
+      }
+      // Pricing table
+      if (data.pricing && data.pricing.length > 0) {
+        html += '<div class="udmo-proposal-section">';
+        html += '<h4>Investment Summary</h4>';
+        html += '<table class="udmo-proposal-table">';
+        html += '<tr><th>Item</th><th>Qty</th><th style="text-align:right;">Price</th></tr>';
+        data.pricing.forEach(function(item) {
+          var priceStr = item.price < 0 ? '-$' + Math.abs(item.price).toLocaleString() : '$' + item.price.toLocaleString();
+          if (item.price === 0) priceStr = 'Included';
+          html += '<tr><td>' + esc(item.item) + '</td><td>' + item.qty + '</td><td style="text-align:right;">' + priceStr + '</td></tr>';
+        });
+        html += '<tr class="udmo-proposal-total"><td colspan="2">Total Investment</td><td style="text-align:right;">$' + (data.totalPrice || 0).toLocaleString() + '</td></tr>';
+        html += '</table>';
+        if (data.discount) {
+          html += '<p style="text-align:right;font-size:12px;color:#2e844a;margin-top:8px;">✓ ' + esc(data.discount) + '</p>';
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+      html += '</div>';
+      return html;
+    }
+
+    function renderMeetingAgendaUDMO(data) {
+      if (!data) return '<div class="output-placeholder"><div class="output-placeholder-text">No agenda data</div></div>';
+
+      var html = '<div class="udmo-container udmo-article">';
+      html += '<div class="udmo-article-header">';
+      html += '<div class="udmo-article-title">📅 ' + esc(data.title || 'Meeting Agenda') + '</div>';
+      html += '<div class="udmo-article-meta">';
+      html += '<span>📆 ' + esc(data.date || 'TBD') + '</span>';
+      html += '<span>⏰ ' + esc(data.time || '') + '</span>';
+      html += '</div>';
+      html += '</div>';
+      html += '<div class="udmo-article-body">';
+      // Attendees
+      if (data.attendees && data.attendees.length > 0) {
+        html += '<div class="udmo-article-section">';
+        html += '<h3>Attendees</h3>';
+        html += '<p>' + data.attendees.map(function(a) { return '👤 ' + esc(a); }).join('<br>') + '</p>';
+        html += '</div>';
+      }
+      // Objectives
+      if (data.objectives && data.objectives.length > 0) {
+        html += '<div class="udmo-article-section">';
+        html += '<h3>Meeting Objectives</h3>';
+        html += '<ul>';
+        data.objectives.forEach(function(obj) {
+          html += '<li>' + esc(obj) + '</li>';
+        });
+        html += '</ul>';
+        html += '</div>';
+      }
+      // Agenda items
+      if (data.agenda && data.agenda.length > 0) {
+        html += '<div class="udmo-article-section">';
+        html += '<h3>Agenda</h3>';
+        html += '<table class="udmo-proposal-table">';
+        html += '<tr><th>Time</th><th>Topic</th><th>Owner</th></tr>';
+        data.agenda.forEach(function(item) {
+          html += '<tr><td>' + esc(item.time) + '</td><td>' + esc(item.topic) + '</td><td>' + esc(item.owner) + '</td></tr>';
+        });
+        html += '</table>';
+        html += '</div>';
+      }
+      // Pre-meeting materials
+      if (data.preMeetingMaterials && data.preMeetingMaterials.length > 0) {
+        html += '<div class="udmo-article-section">';
+        html += '<h3>Pre-Meeting Materials</h3>';
+        html += '<ul>';
+        data.preMeetingMaterials.forEach(function(mat) {
+          html += '<li>📎 ' + esc(mat) + '</li>';
+        });
+        html += '</ul>';
+        html += '</div>';
+      }
+      html += '</div>';
+      html += '</div>';
       return html;
     }
 
