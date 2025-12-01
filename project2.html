@@ -435,6 +435,54 @@
 
     .btn-done { padding: 10px 24px; background: #0176d3; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
     .btn-done:hover { background: #014486; }
+
+    /* ============ RECORDS TAB ============ */
+    .records-list { }
+    .records-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .records-title { font-size: 13px; font-weight: 600; color: #3e3e3c; }
+    .records-count { font-size: 12px; color: #706e6b; }
+    .record-item { padding: 10px 12px; border: 1px solid #e5e5e5; border-radius: 6px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+    .record-item:hover { border-color: #0176d3; background: #f8fbfe; }
+    .record-item.active { border-color: #0176d3; background: #e8f4fc; box-shadow: 0 0 0 2px rgba(1,118,211,0.2); }
+    .record-item-title { font-size: 13px; font-weight: 500; color: #3e3e3c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+    .record-item-meta { display: flex; align-items: center; gap: 8px; }
+    .record-item-id { font-size: 11px; color: #706e6b; }
+    .record-item-badge { font-size: 9px; padding: 2px 6px; border-radius: 8px; font-weight: 500; }
+    .record-item-badge.high { background: #fef0f0; color: #ea001e; }
+    .record-item-badge.medium { background: #fef7e0; color: #a96404; }
+    .record-item-badge.low { background: #e8f4e8; color: #2e844a; }
+    .record-item-badge.critical { background: #fef0f0; color: #ea001e; }
+
+    /* ============ SPLIT CENTER VIEW ============ */
+    .split-center { display: flex; flex: 1; gap: 16px; }
+    .prompt-panel { width: 45%; display: flex; flex-direction: column; }
+    .output-panel { flex: 1; display: flex; flex-direction: column; }
+
+    .prompt-card { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex: 1; display: flex; flex-direction: column; }
+    .prompt-card-header { padding: 12px 16px; border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: space-between; }
+    .prompt-card-title { font-size: 14px; font-weight: 600; color: #3e3e3c; display: flex; align-items: center; gap: 8px; }
+    .prompt-card-tokens { font-size: 11px; color: #706e6b; background: #f3f3f3; padding: 3px 8px; border-radius: 10px; }
+    .prompt-card-body { flex: 1; padding: 16px; overflow-y: auto; }
+    .prompt-box { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; font-size: 12px; font-family: 'SF Mono', Monaco, 'Courier New', monospace; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 100%; overflow-y: auto; }
+    .prompt-card-footer { padding: 12px 16px; border-top: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: space-between; background: #f9f9f9; }
+
+    /* Run Button */
+    .run-btn { display: flex; align-items: center; gap: 8px; background: #9333ea; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .run-btn:hover { background: #7e22ce; }
+    .run-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .run-btn .spinner { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* Token/Cost Estimates */
+    .usage-stats { display: flex; gap: 16px; font-size: 12px; }
+    .usage-stat { display: flex; flex-direction: column; }
+    .usage-stat-label { color: #706e6b; font-size: 10px; text-transform: uppercase; }
+    .usage-stat-value { color: #3e3e3c; font-weight: 500; }
+    .usage-stat-value.cost { color: #2e844a; }
+
+    /* Three-tab left panel */
+    .panel-tabs-three { display: flex; border-bottom: 1px solid #e5e5e5; }
+    .panel-tabs-three .panel-tab { flex: 1; padding: 10px 8px; font-size: 12px; text-align: center; }
   </style>
 </head>
 <body>
@@ -1305,14 +1353,17 @@
       var tabContentHtml = '';
       if (state.leftPanelTab === 'sources') {
         tabContentHtml = renderSourcesTab(sources, contentType);
+      } else if (state.leftPanelTab === 'records') {
+        tabContentHtml = renderRecordsTab(contentType);
       } else {
         tabContentHtml = renderConfigurationTab(contentType);
       }
 
       return '<div class="left-panel">' +
-        '<div class="panel-tabs">' +
+        '<div class="panel-tabs panel-tabs-three">' +
         '<button class="panel-tab' + (state.leftPanelTab === 'sources' ? ' active' : '') + '" onclick="setLeftPanelTab(\'sources\')">Sources</button>' +
-        '<button class="panel-tab' + (state.leftPanelTab === 'configuration' ? ' active' : '') + '" onclick="setLeftPanelTab(\'configuration\')">Configuration</button>' +
+        '<button class="panel-tab' + (state.leftPanelTab === 'records' ? ' active' : '') + '" onclick="setLeftPanelTab(\'records\')">Records</button>' +
+        '<button class="panel-tab' + (state.leftPanelTab === 'configuration' ? ' active' : '') + '" onclick="setLeftPanelTab(\'configuration\')">Config</button>' +
         '</div>' +
         '<div class="panel-content">' + tabContentHtml + '</div>' +
         '</div>';
@@ -1367,6 +1418,94 @@
       }
 
       return html;
+    }
+
+    function renderRecordsTab(contentType) {
+      if (!contentType) {
+        return '<div class="sources-hint">Select a content type to see test records.</div>';
+      }
+
+      var records = SAMPLE_DATA[state.selectedContentType] || [];
+      var html = '';
+
+      // Records header
+      html += '<div class="records-header">';
+      html += '<span class="records-title">Test Records</span>';
+      html += '<span class="records-count">(' + records.length + ')</span>';
+      html += '</div>';
+
+      if (records.length > 0) {
+        html += '<div class="records-list">';
+        records.forEach(function(record, idx) {
+          var title = record.title || record.subject || record.name || record.contact || 'Record ' + (idx + 1);
+          var id = record.id || 'REC-' + (idx + 1);
+          var priority = record.priority || record.type || '';
+          var isActive = state.currentRecordIndex === idx;
+
+          html += '<div class="record-item' + (isActive ? ' active' : '') + '" onclick="selectRecord(' + idx + ')">';
+          html += '<div class="record-item-title">' + esc(title) + '</div>';
+          html += '<div class="record-item-meta">';
+          html += '<span class="record-item-id">' + esc(id) + '</span>';
+          if (priority) {
+            var prioClass = priority.toLowerCase();
+            html += '<span class="record-item-badge ' + prioClass + '">' + esc(priority) + '</span>';
+          }
+          html += '</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+
+        // Usage estimates
+        var inputTokens = estimateInputTokens();
+        var outputTokens = estimateOutputTokens();
+        var cost = ((inputTokens * 0.00001) + (outputTokens * 0.00003)).toFixed(4);
+
+        html += '<div class="sources-hint" style="margin-top:16px;background:#f9f9f9;border:1px solid #e5e5e5;">';
+        html += '<div style="font-size:11px;font-weight:600;color:#706e6b;margin-bottom:8px;">ESTIMATED USAGE</div>';
+        html += '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Input</span><span>' + inputTokens + ' tokens</span></div>';
+        html += '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Output</span><span>~' + outputTokens + ' tokens</span></div>';
+        html += '<div style="display:flex;justify-content:space-between;font-size:12px;border-top:1px solid #e5e5e5;padding-top:8px;margin-top:8px;"><span>Est. Cost</span><span style="color:#2e844a;font-weight:500;">$' + cost + '</span></div>';
+        html += '</div>';
+      } else {
+        html += '<div class="sources-hint">No test records available for this content type.</div>';
+      }
+
+      return html;
+    }
+
+    function selectRecord(idx) {
+      state.currentRecordIndex = idx;
+      state.currentView = 'welcome'; // Reset view when changing record
+      state.generatedData = null;
+      render();
+    }
+
+    function estimateInputTokens() {
+      // Rough estimate based on selected fields and record data
+      var baseTokens = 200; // System prompt
+      var fieldsTokens = 0;
+
+      if (state.selectedContentType && selectedInputFields[state.selectedContentType]) {
+        for (var dmoKey in selectedInputFields[state.selectedContentType]) {
+          fieldsTokens += selectedInputFields[state.selectedContentType][dmoKey].length * 25;
+        }
+      }
+
+      var recordTokens = 150; // Average record content
+      return baseTokens + fieldsTokens + recordTokens;
+    }
+
+    function estimateOutputTokens() {
+      // Rough estimate based on output fields and UDMOs
+      var fieldsTokens = 0;
+      var outputFields = getSelectedOutputFields(state.selectedContentType);
+      fieldsTokens = outputFields.length * 50;
+
+      var udmoTokens = 0;
+      var udmos = getSelectedOutputUDMOs(state.selectedContentType);
+      udmoTokens = udmos.length * 300;
+
+      return fieldsTokens + udmoTokens;
     }
 
     function renderConfigurationTab(contentType) {
@@ -1600,21 +1739,21 @@
         }
       }
 
-      var bodyHtml = '';
+      var outputBodyHtml = '';
       if (state.currentView === 'welcome') {
-        bodyHtml = '<div class="output-placeholder">' +
+        outputBodyHtml = '<div class="output-placeholder">' +
           '<div class="output-placeholder-icon">✨</div>' +
           '<div class="output-placeholder-text">No content generated yet</div>' +
-          '<div class="output-placeholder-hint">Use the assistant on the right to get started</div>' +
+          '<div class="output-placeholder-hint">Click "Run" to generate content for the selected record</div>' +
           '</div>';
       } else if (state.currentView === 'generating') {
-        bodyHtml = '<div class="output-placeholder">' +
+        outputBodyHtml = '<div class="output-placeholder">' +
           '<div class="loading-spinner"></div>' +
           '<div class="output-placeholder-text" style="margin-top:16px;">Generating content...</div>' +
           '<div class="output-placeholder-hint">This usually takes a few seconds</div>' +
           '</div>';
       } else if (state.currentView === 'results' && state.generatedData) {
-        bodyHtml = renderGeneratedContent();
+        outputBodyHtml = renderGeneratedContent();
       }
 
       var records = state.selectedContentType ? (SAMPLE_DATA[state.selectedContentType] || []) : [];
@@ -1629,19 +1768,146 @@
       // Bulk mode toggle for results view
       var bulkHtml = (state.currentView === 'results') ? renderBulkModeToggle() + renderBulkProgress() : '';
 
+      // Generate the resolved prompt
+      var prompt = generateResolvedPrompt();
+      var inputTokens = estimateInputTokens();
+      var outputTokens = estimateOutputTokens();
+
+      // Split center view: Prompt Panel (left) + Output Panel (right)
       return '<div class="center-panel">' +
-        '<div class="output-tabs">' + (tabsHtml || '<div style="padding:12px;color:#706e6b;font-size:13px;">Output Preview</div>') + '</div>' +
         '<div class="output-content">' +
         bulkHtml +
+        '<div class="split-center">' +
+
+        // LEFT: Prompt Panel
+        '<div class="prompt-panel">' +
+        '<div class="prompt-card">' +
+        '<div class="prompt-card-header">' +
+        '<div class="prompt-card-title">📝 Resolved Prompt</div>' +
+        '<span class="prompt-card-tokens">' + inputTokens + ' tokens</span>' +
+        '</div>' +
+        '<div class="prompt-card-body">' +
+        '<pre class="prompt-box">' + esc(prompt) + '</pre>' +
+        '</div>' +
+        '<div class="prompt-card-footer">' +
+        '<div class="usage-stats">' +
+        '<div class="usage-stat"><span class="usage-stat-label">Input</span><span class="usage-stat-value">' + inputTokens + '</span></div>' +
+        '<div class="usage-stat"><span class="usage-stat-label">Output</span><span class="usage-stat-value">~' + outputTokens + '</span></div>' +
+        '<div class="usage-stat"><span class="usage-stat-label">Cost</span><span class="usage-stat-value cost">$' + ((inputTokens * 0.00001) + (outputTokens * 0.00003)).toFixed(4) + '</span></div>' +
+        '</div>' +
+        '<button class="run-btn" onclick="runGeneration()"' + (state.currentView === 'generating' || !contentType ? ' disabled' : '') + '>' +
+        (state.currentView === 'generating' ? '<svg class="spinner" width="16" height="16" viewBox="0 0 24 24"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Running...' : '▶ Run') +
+        '</button>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+
+        // RIGHT: Output Panel
+        '<div class="output-panel">' +
         '<div class="output-card">' +
         '<div class="output-card-header">' +
-        '<div class="output-card-title">' + (contentType ? contentType.name : 'Generated Content') + '</div>' +
+        '<div class="output-card-title">✨ ' + (contentType ? contentType.name : 'Generated Output') + '</div>' +
         paginationHtml +
         '</div>' +
-        '<div class="output-card-body">' + bodyHtml + '</div>' +
+        '<div class="output-tabs" style="padding:0 16px;border-bottom:1px solid #e5e5e5;">' + (tabsHtml || '<div style="padding:12px 0;color:#706e6b;font-size:13px;">Output Preview</div>') + '</div>' +
+        '<div class="output-card-body">' + outputBodyHtml + '</div>' +
         '</div>' +
         '</div>' +
-        '</div>';
+
+        '</div>' + // close split-center
+        '</div>' + // close output-content
+        '</div>'; // close center-panel
+    }
+
+    function generateResolvedPrompt() {
+      if (!state.selectedContentType) {
+        return 'Select a content type to see the resolved prompt.';
+      }
+
+      var contentType = CONTENT_TYPES[state.selectedContentType];
+      var records = SAMPLE_DATA[state.selectedContentType] || [];
+      var record = records[state.currentRecordIndex];
+
+      if (!record) {
+        return 'No record selected.';
+      }
+
+      // Get selected input fields
+      var inputFieldsText = '';
+      if (selectedInputFields[state.selectedContentType]) {
+        for (var dmoKey in selectedInputFields[state.selectedContentType]) {
+          var dmo = DMO_CATALOG[dmoKey];
+          var fields = selectedInputFields[state.selectedContentType][dmoKey];
+          if (dmo && fields.length > 0) {
+            inputFieldsText += '\n[' + dmo.displayName + ' Fields: ' + fields.join(', ') + ']';
+          }
+        }
+      }
+
+      // Get selected output fields
+      var outputFields = getSelectedOutputFields(state.selectedContentType);
+      var outputUDMOs = getSelectedOutputUDMOs(state.selectedContentType);
+
+      // Build the prompt
+      var prompt = '=== SYSTEM ===\n';
+      prompt += 'You are Content Foundry, an AI assistant that generates structured content for Salesforce.\n';
+      prompt += 'Task: ' + contentType.name + '\n';
+      prompt += 'Description: ' + contentType.desc + '\n\n';
+
+      prompt += '=== INPUT CONFIGURATION ===';
+      prompt += inputFieldsText || '\n[Default fields selected]';
+      prompt += '\n\n';
+
+      prompt += '=== RECORD DATA ===\n';
+      for (var key in record) {
+        if (record.hasOwnProperty(key)) {
+          var value = record[key];
+          if (typeof value === 'string' && value.length > 100) {
+            value = value.substring(0, 100) + '...';
+          }
+          prompt += key + ': ' + value + '\n';
+        }
+      }
+      prompt += '\n';
+
+      prompt += '=== OUTPUT REQUIREMENTS ===\n';
+      prompt += 'Generate the following structured fields:\n';
+      outputFields.forEach(function(field) {
+        prompt += '- ' + field + '\n';
+      });
+
+      if (outputUDMOs.length > 0) {
+        prompt += '\nAlso generate the following documents:\n';
+        outputUDMOs.forEach(function(udmoId) {
+          var udmo = UDMO_CATALOG[udmoId];
+          if (udmo) {
+            prompt += '- ' + udmo.name + ' (' + udmo.contentType + '): ' + udmo.desc + '\n';
+          }
+        });
+      }
+
+      prompt += '\n=== INSTRUCTIONS ===\n';
+      prompt += '1. Analyze the input record data carefully\n';
+      prompt += '2. Generate accurate, contextual content for each output field\n';
+      prompt += '3. Ensure all generated content is professional and appropriate\n';
+      prompt += '4. Include confidence scores and safety flags where applicable';
+
+      return prompt;
+    }
+
+    function runGeneration() {
+      if (!state.selectedContentType || state.currentView === 'generating') return;
+
+      state.currentView = 'generating';
+      render();
+
+      // Simulate API call with timeout
+      setTimeout(function() {
+        state.currentView = 'results';
+        state.generatedData = GENERATED_OUTPUTS[state.selectedContentType] ?
+          GENERATED_OUTPUTS[state.selectedContentType][state.currentRecordIndex] : null;
+        render();
+      }, 1500);
     }
 
     function renderGeneratedContent() {
