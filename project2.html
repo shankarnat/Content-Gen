@@ -3777,9 +3777,9 @@
         response += '<br><strong>Output Fields</strong> (' + fields.length + '):<br>• ' + fields.join(', ');
         response += '<br><br><strong>Documents</strong> (' + udmos.length + '):<br>• ' +
           (udmos.length > 0 ? udmos.map(function(u) { return UDMO_CATALOG[u] ? UDMO_CATALOG[u].icon + ' ' + UDMO_CATALOG[u].name : u; }).join('<br>• ') : 'None');
-        response += '<br><br>Use the <strong>Sources</strong> tab on the left to edit input fields, or ask me to add/remove fields and documents.';
+        response += '<br><br>Use the <strong>Output</strong> tab on the left to edit settings, or ask me to add/remove fields and documents.';
         state.setupMessages.push({ role: 'agent', content: response });
-        state.leftPanelTab = 'sources'; // Switch to sources tab
+        state.leftPanelTab = 'output'; // Switch to output tab
         render();
         return;
       }
