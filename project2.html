@@ -3760,10 +3760,27 @@
       }
 
       // Handle configuration commands
-      // Add field
-      if (lowerMsg.indexOf('add') > -1 && lowerMsg.indexOf('field') > -1) {
-        var fieldMatch = message.match(/add\s+(?:a\s+)?["']?(\w+)["']?\s*field/i) || message.match(/add\s+["']?(\w+)["']?/i);
-        if (fieldMatch) {
+
+      // Change use case
+      if (lowerMsg.indexOf('change') > -1 && (lowerMsg.indexOf('use case') > -1 || lowerMsg.indexOf('usecase') > -1 || lowerMsg.indexOf('template') > -1)) {
+        response = '👋 Going back to use case selection...';
+        state.setupMessages.push({ role: 'agent', content: response });
+        render();
+        setTimeout(function() { resetToWelcome(); }, 500);
+        return;
+      }
+      // Run
+      else if (lowerMsg === 'run' || lowerMsg === '▶ run' || lowerMsg.indexOf('run') > -1 && (lowerMsg.indexOf('generation') > -1 || lowerMsg.indexOf('generate') > -1 || lowerMsg.indexOf('execute') > -1 || lowerMsg.indexOf('start') > -1) || lowerMsg === 'generate') {
+        response = '🚀 Starting generation...';
+        state.setupMessages.push({ role: 'agent', content: response });
+        render();
+        runGeneration();
+        return;
+      }
+      // Add field - with or without specific name
+      else if (lowerMsg.indexOf('add') > -1 && lowerMsg.indexOf('field') > -1) {
+        var fieldMatch = message.match(/add\s+(?:a\s+)?["']?(\w+)["']?\s*field/i);
+        if (fieldMatch && fieldMatch[1].toLowerCase() !== 'a' && fieldMatch[1].toLowerCase() !== 'field') {
           var fieldName = fieldMatch[1].charAt(0).toUpperCase() + fieldMatch[1].slice(1);
           var fields = getSelectedOutputFields(state.selectedContentType);
           if (fields.indexOf(fieldName) === -1) {
@@ -3773,6 +3790,9 @@
           } else {
             response = '<strong>' + fieldName + '</strong> already exists.';
           }
+        } else {
+          // Just "Add field" without name - suggest options
+          response = 'Which field would you like to add? Try:<br>• "Add Priority field"<br>• "Add Confidence field"<br>• "Add Sentiment field"<br>• "Add Score field"<br>• "Add Category field"';
         }
       }
       // Remove field
@@ -3791,14 +3811,16 @@
           }
         }
       }
-      // Add document/UDMO
+      // Add document/UDMO - with or without specific type
       else if ((lowerMsg.indexOf('add') > -1 || lowerMsg.indexOf('include') > -1) &&
-               (lowerMsg.indexOf('draft') > -1 || lowerMsg.indexOf('email') > -1 || lowerMsg.indexOf('document') > -1 || lowerMsg.indexOf('article') > -1 || lowerMsg.indexOf('note') > -1)) {
+               (lowerMsg.indexOf('document') > -1 || lowerMsg.indexOf('doc') > -1 || lowerMsg.indexOf('draft') > -1 || lowerMsg.indexOf('email') > -1 || lowerMsg.indexOf('article') > -1 || lowerMsg.indexOf('note') > -1 || lowerMsg.indexOf('proposal') > -1)) {
         var udmoToAdd = null;
         if (lowerMsg.indexOf('email') > -1 || lowerMsg.indexOf('draft') > -1) udmoToAdd = 'DraftResponse__udmo';
-        else if (lowerMsg.indexOf('article') > -1 || lowerMsg.indexOf('kb') > -1) udmoToAdd = 'KnowledgeArticle__udmo';
-        else if (lowerMsg.indexOf('note') > -1) udmoToAdd = 'InternalNote__udmo';
+        else if (lowerMsg.indexOf('article') > -1 || lowerMsg.indexOf('kb') > -1 || lowerMsg.indexOf('knowledge') > -1) udmoToAdd = 'KnowledgeArticle__udmo';
+        else if (lowerMsg.indexOf('note') > -1 || lowerMsg.indexOf('internal') > -1) udmoToAdd = 'InternalNote__udmo';
         else if (lowerMsg.indexOf('proposal') > -1) udmoToAdd = 'ProposalDocument__udmo';
+        else if (lowerMsg.indexOf('faq') > -1) udmoToAdd = 'FAQDocument__udmo';
+        else if (lowerMsg.indexOf('agenda') > -1 || lowerMsg.indexOf('meeting') > -1) udmoToAdd = 'MeetingAgenda__udmo';
 
         if (udmoToAdd && UDMO_CATALOG[udmoToAdd]) {
           var currentUDMOs = getSelectedOutputUDMOs(state.selectedContentType);
@@ -3809,26 +3831,22 @@
           } else {
             response = '<strong>' + UDMO_CATALOG[udmoToAdd].name + '</strong> already included.';
           }
+        } else {
+          // Just "Add document" without type - suggest options
+          response = 'Which document would you like to add? Try:<br>• "Add draft email"<br>• "Add knowledge article"<br>• "Add internal note"<br>• "Add proposal"<br>• "Add FAQ"<br>• "Add meeting agenda"';
         }
       }
-      // Run
-      else if (lowerMsg.indexOf('run') > -1 || lowerMsg.indexOf('generate') > -1 || lowerMsg.indexOf('execute') > -1) {
-        response = '🚀 Starting generation...';
-        state.setupMessages.push({ role: 'agent', content: response });
-        render();
-        runGeneration();
-        return;
-      }
       // Show config
-      else if (lowerMsg.indexOf('show') > -1 || lowerMsg.indexOf('config') > -1 || lowerMsg.indexOf('list') > -1 || lowerMsg.indexOf('what') > -1) {
+      else if (lowerMsg === 'show config' || lowerMsg === 'show current config' || lowerMsg.indexOf('show') > -1 && lowerMsg.indexOf('config') > -1 || lowerMsg.indexOf('list') > -1 || (lowerMsg.indexOf('what') > -1 && (lowerMsg.indexOf('config') > -1 || lowerMsg.indexOf('field') > -1 || lowerMsg.indexOf('have') > -1))) {
         var fields = getSelectedOutputFields(state.selectedContentType);
         var udmos = getSelectedOutputUDMOs(state.selectedContentType);
-        response = '<strong>Current Config:</strong><br>• Fields: ' + fields.join(', ') + '<br>• Docs: ' +
+        var records = SAMPLE_DATA[state.selectedContentType] || [];
+        response = '<strong>Current Config:</strong><br>• Records: ' + records.length + '<br>• Fields: ' + fields.join(', ') + '<br>• Docs: ' +
           (udmos.length > 0 ? udmos.map(function(u) { return UDMO_CATALOG[u] ? UDMO_CATALOG[u].name : u; }).join(', ') : 'None');
       }
       // Help
       else {
-        response = 'Try: "Add [name] field", "Include draft email", "Remove [field]", "Run", or "Show config"';
+        response = 'I can help you with:<br>• "Run" - generate content<br>• "Add [name] field" - add output field<br>• "Add document" - add document output<br>• "Show config" - see current settings<br>• "Change use case" - pick different template';
       }
 
       state.setupMessages.push({ role: 'agent', content: response });
