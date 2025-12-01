@@ -526,6 +526,67 @@
     /* Compact output config */
     .output-config-section { margin-bottom: 12px; }
     .output-config-title { font-size: 12px; margin-bottom: 8px; }
+
+    /* ============ SIMPLIFIED AGENT PANEL ============ */
+    .use-case-section { padding: 16px; }
+    .use-case-label { font-size: 10px; text-transform: uppercase; color: #706e6b; margin-bottom: 6px; font-weight: 600; }
+    .use-case-selector { width: 100%; padding: 10px 12px; border: 1px solid #d8d8d8; border-radius: 6px; font-size: 13px; background: white; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23706e6b' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+    .use-case-selector:focus { outline: none; border-color: #0176d3; }
+
+    .current-use-case { background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fc 100%); border: 1px solid #0176d3; border-radius: 8px; padding: 16px; margin: 16px; }
+    .current-use-case-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .current-use-case-icon { font-size: 28px; }
+    .current-use-case-info { flex: 1; }
+    .current-use-case-name { font-size: 16px; font-weight: 600; color: #032d60; }
+    .current-use-case-desc { font-size: 12px; color: #706e6b; margin-top: 2px; }
+    .current-use-case-stats { display: flex; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(1,118,211,0.2); }
+    .use-case-stat { text-align: center; }
+    .use-case-stat-value { font-size: 18px; font-weight: 600; color: #0176d3; }
+    .use-case-stat-label { font-size: 10px; color: #706e6b; text-transform: uppercase; }
+
+    .use-case-actions { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 16px; }
+    .use-case-action-btn { flex: 1; padding: 10px; border: 1px solid #d8d8d8; border-radius: 6px; background: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .use-case-action-btn:hover { background: #f3f3f3; border-color: #0176d3; }
+    .use-case-action-btn.primary { background: #0176d3; color: white; border-color: #0176d3; }
+    .use-case-action-btn.primary:hover { background: #014486; }
+
+    .use-case-list { padding: 0 16px; }
+    .use-case-list-title { font-size: 11px; text-transform: uppercase; color: #706e6b; margin-bottom: 8px; font-weight: 600; }
+    .use-case-mini { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e5e5e5; border-radius: 6px; margin-bottom: 6px; cursor: pointer; transition: all 0.15s; }
+    .use-case-mini:hover { border-color: #0176d3; background: #f8fbfe; }
+    .use-case-mini.active { border-color: #0176d3; background: #e8f4fc; }
+    .use-case-mini-icon { font-size: 18px; }
+    .use-case-mini-name { font-size: 13px; color: #3e3e3c; flex: 1; }
+    .use-case-mini-arrow { color: #706e6b; }
+
+    .new-template-btn { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 2px dashed #d8d8d8; border-radius: 6px; margin: 16px; cursor: pointer; transition: all 0.15s; background: #fafafa; }
+    .new-template-btn:hover { border-color: #9333ea; background: #faf5ff; }
+    .new-template-btn-icon { font-size: 18px; color: #9333ea; }
+    .new-template-btn-text { font-size: 13px; color: #3e3e3c; }
+
+    /* ============ TEMPLATE BUILDER MODAL ============ */
+    .template-builder { padding: 0; }
+    .template-step { margin-bottom: 24px; }
+    .template-step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .template-step-number { width: 24px; height: 24px; background: #0176d3; color: white; border-radius: 50%; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+    .template-step-title { font-size: 14px; font-weight: 500; color: #3e3e3c; }
+    .template-input { width: 100%; padding: 10px 12px; border: 1px solid #d8d8d8; border-radius: 6px; font-size: 13px; margin-bottom: 8px; }
+    .template-input:focus { outline: none; border-color: #0176d3; }
+    .template-textarea { width: 100%; padding: 10px 12px; border: 1px solid #d8d8d8; border-radius: 6px; font-size: 13px; min-height: 60px; resize: vertical; }
+    .template-textarea:focus { outline: none; border-color: #0176d3; }
+
+    .template-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .template-chip { padding: 6px 12px; background: #e8f4fc; border: 1px solid #0176d3; border-radius: 16px; font-size: 12px; color: #0176d3; display: flex; align-items: center; gap: 6px; }
+    .template-chip.output { background: #e8f4e8; border-color: #2e844a; color: #2e844a; }
+    .template-chip.udmo { background: #f3e8ff; border-color: #9333ea; color: #9333ea; }
+    .template-chip-remove { cursor: pointer; font-size: 14px; }
+    .template-add-chip { padding: 6px 12px; background: white; border: 1px dashed #d8d8d8; border-radius: 16px; font-size: 12px; color: #706e6b; cursor: pointer; }
+    .template-add-chip:hover { border-color: #0176d3; color: #0176d3; }
+
+    .icon-picker { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-top: 8px; }
+    .icon-option { padding: 8px; text-align: center; font-size: 18px; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; }
+    .icon-option:hover { background: #f3f3f3; }
+    .icon-option.selected { background: #e8f4fc; border-color: #0176d3; }
   </style>
 </head>
 <body>
@@ -1321,8 +1382,22 @@
       // Prompt preview toggle
       promptPreviewOpen: false,
       // Editable prompt
-      editedPrompt: null // null means use generated prompt
+      editedPrompt: null, // null means use generated prompt
+      // Template builder
+      templateBuilderOpen: false,
+      newTemplate: {
+        id: '',
+        name: '',
+        icon: '📄',
+        desc: '',
+        sources: [],
+        outputs: [],
+        udmos: []
+      }
     };
+
+    // Custom templates storage
+    var customTemplates = {};
 
     // Runtime selections (per content type)
     var selectedInputDMOs = {}; // { contentTypeId: [dmoKey, ...] }
@@ -1358,7 +1433,7 @@
     // ============ RENDER FUNCTIONS ============
     function render() {
       var app = document.getElementById('app');
-      app.innerHTML = renderHeader() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + renderRightPanel() + '</div>' + renderPublishModal() + renderInputDMOSelectorModal() + renderFieldSelectorModal();
+      app.innerHTML = renderHeader() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + renderRightPanel() + '</div>' + renderPublishModal() + renderInputDMOSelectorModal() + renderFieldSelectorModal() + renderTemplateBuilderModal();
     }
 
     function renderHeader() {
@@ -2791,6 +2866,206 @@
       render();
     }
 
+    // ============ TEMPLATE BUILDER ============
+    function openTemplateBuilder() {
+      state.templateBuilderOpen = true;
+      state.newTemplate = {
+        id: '',
+        name: '',
+        icon: '📄',
+        desc: '',
+        sources: [],
+        outputs: ['Summary'],
+        udmos: []
+      };
+      render();
+    }
+
+    function closeTemplateBuilder() {
+      state.templateBuilderOpen = false;
+      render();
+    }
+
+    function updateTemplateField(field, value) {
+      state.newTemplate[field] = value;
+      // Don't re-render on every keystroke for text inputs
+    }
+
+    function setTemplateIcon(icon) {
+      state.newTemplate.icon = icon;
+      render();
+    }
+
+    function addTemplateSource(sourceKey) {
+      if (state.newTemplate.sources.indexOf(sourceKey) === -1) {
+        state.newTemplate.sources.push(sourceKey);
+        render();
+      }
+    }
+
+    function removeTemplateSource(sourceKey) {
+      var idx = state.newTemplate.sources.indexOf(sourceKey);
+      if (idx > -1) {
+        state.newTemplate.sources.splice(idx, 1);
+        render();
+      }
+    }
+
+    function addTemplateOutput(field) {
+      if (field && state.newTemplate.outputs.indexOf(field) === -1) {
+        state.newTemplate.outputs.push(field);
+        render();
+      }
+    }
+
+    function removeTemplateOutput(field) {
+      var idx = state.newTemplate.outputs.indexOf(field);
+      if (idx > -1) {
+        state.newTemplate.outputs.splice(idx, 1);
+        render();
+      }
+    }
+
+    function toggleTemplateUDMO(udmoId) {
+      var idx = state.newTemplate.udmos.indexOf(udmoId);
+      if (idx > -1) {
+        state.newTemplate.udmos.splice(idx, 1);
+      } else {
+        state.newTemplate.udmos.push(udmoId);
+      }
+      render();
+    }
+
+    function saveTemplate() {
+      var t = state.newTemplate;
+      var nameInput = document.getElementById('templateName');
+      var descInput = document.getElementById('templateDesc');
+
+      if (nameInput) t.name = nameInput.value;
+      if (descInput) t.desc = descInput.value;
+
+      if (!t.name) {
+        alert('Please enter a template name');
+        return;
+      }
+
+      // Generate ID from name
+      t.id = t.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+      // Map sources to source names
+      var sourceNames = t.sources.map(function(dmoKey) {
+        var dmo = DMO_CATALOG[dmoKey];
+        return dmo ? dmo.name : dmoKey;
+      });
+
+      // Create the template
+      var newTemplate = {
+        id: t.id,
+        name: t.name,
+        icon: t.icon,
+        desc: t.desc || 'Custom template',
+        sources: sourceNames,
+        outputs: t.outputs,
+        udmos: t.udmos.map(function(id) { return { id: id, name: UDMO_CATALOG[id] ? UDMO_CATALOG[id].name : id }; })
+      };
+
+      // Add to custom templates
+      customTemplates[t.id] = newTemplate;
+
+      // Also add to CONTENT_TYPES for full compatibility
+      CONTENT_TYPES[t.id] = newTemplate;
+
+      // Create empty sample data
+      SAMPLE_DATA[t.id] = [{ id: 'SAMPLE-001', name: 'Sample Record 1' }];
+
+      // Select the new template
+      state.selectedContentType = t.id;
+      state.templateBuilderOpen = false;
+      render();
+
+      alert('Template "' + t.name + '" created successfully!');
+    }
+
+    function renderTemplateBuilderModal() {
+      if (!state.templateBuilderOpen) return '';
+
+      var t = state.newTemplate;
+      var icons = ['📄', '📝', '📊', '📈', '📋', '📑', '📰', '📧', '💼', '🎯', '✨', '🔮', '💡', '🚀', '⚡', '🎨'];
+
+      var html = '<div class="template-builder">';
+
+      // Step 1: Basic Info
+      html += '<div class="template-step">';
+      html += '<div class="template-step-header"><span class="template-step-number">1</span><span class="template-step-title">Basic Information</span></div>';
+      html += '<input type="text" class="template-input" id="templateName" placeholder="Template name (e.g., Lead Scorer)" value="' + esc(t.name) + '">';
+      html += '<textarea class="template-textarea" id="templateDesc" placeholder="Description...">' + esc(t.desc) + '</textarea>';
+      html += '<div class="use-case-label" style="margin-top:12px;">Icon</div>';
+      html += '<div class="icon-picker">';
+      icons.forEach(function(icon) {
+        html += '<div class="icon-option' + (t.icon === icon ? ' selected' : '') + '" onclick="setTemplateIcon(\'' + icon + '\')">' + icon + '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+
+      // Step 2: Input Sources
+      html += '<div class="template-step">';
+      html += '<div class="template-step-header"><span class="template-step-number">2</span><span class="template-step-title">Input Sources</span></div>';
+      html += '<div class="template-chips">';
+      t.sources.forEach(function(dmoKey) {
+        var dmo = DMO_CATALOG[dmoKey];
+        html += '<span class="template-chip">' + (dmo ? dmo.icon + ' ' + dmo.name : dmoKey) + ' <span class="template-chip-remove" onclick="removeTemplateSource(\'' + dmoKey + '\')">×</span></span>';
+      });
+      html += '<select class="template-add-chip" onchange="if(this.value){addTemplateSource(this.value);this.value=\'\';}" style="border-style:solid;padding:4px 8px;">';
+      html += '<option value="">+ Add Source</option>';
+      for (var dmoKey in DMO_CATALOG) {
+        if (t.sources.indexOf(dmoKey) === -1) {
+          var dmo = DMO_CATALOG[dmoKey];
+          html += '<option value="' + dmoKey + '">' + dmo.icon + ' ' + dmo.name + '</option>';
+        }
+      }
+      html += '</select>';
+      html += '</div>';
+      html += '</div>';
+
+      // Step 3: Output Fields
+      html += '<div class="template-step">';
+      html += '<div class="template-step-header"><span class="template-step-number">3</span><span class="template-step-title">Output Fields</span></div>';
+      html += '<div class="template-chips">';
+      t.outputs.forEach(function(field) {
+        html += '<span class="template-chip output">' + field + ' <span class="template-chip-remove" onclick="removeTemplateOutput(\'' + field + '\')">×</span></span>';
+      });
+      html += '</div>';
+      html += '<div style="display:flex;gap:8px;margin-top:8px;">';
+      html += '<input type="text" class="template-input" id="newOutputField" placeholder="Field name..." style="margin:0;flex:1;">';
+      html += '<button class="add-field-btn" onclick="var i=document.getElementById(\'newOutputField\');addTemplateOutput(i.value);i.value=\'\';">+ Add</button>';
+      html += '</div>';
+      html += '</div>';
+
+      // Step 4: Document Outputs (UDMOs)
+      html += '<div class="template-step">';
+      html += '<div class="template-step-header"><span class="template-step-number">4</span><span class="template-step-title">Document Outputs</span></div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">';
+      for (var udmoKey in UDMO_CATALOG) {
+        var udmo = UDMO_CATALOG[udmoKey];
+        var isSelected = t.udmos.indexOf(udmoKey) > -1;
+        html += '<div class="template-chip udmo" style="cursor:pointer;opacity:' + (isSelected ? '1' : '0.5') + ';justify-content:flex-start;" onclick="toggleTemplateUDMO(\'' + udmoKey + '\')">';
+        html += '<input type="checkbox" ' + (isSelected ? 'checked' : '') + ' style="margin-right:4px;">';
+        html += udmo.icon + ' ' + udmo.name;
+        html += '</div>';
+      }
+      html += '</div>';
+      html += '</div>';
+
+      html += '</div>';
+
+      return '<div class="modal-overlay" onclick="if(event.target===this)closeTemplateBuilder()">' +
+        '<div class="modal" style="width:600px;max-height:90vh;">' +
+        '<div class="modal-header"><div class="modal-title">✨ Create New Template</div><button class="modal-close" onclick="closeTemplateBuilder()">×</button></div>' +
+        '<div class="modal-body" style="max-height:65vh;overflow-y:auto;">' + html + '</div>' +
+        '<div class="modal-footer"><button class="btn-cancel" onclick="closeTemplateBuilder()">Cancel</button><button class="btn-publish" onclick="saveTemplate()">Create Template</button></div>' +
+        '</div></div>';
+    }
+
     // ============ CLOUD TABS RENDERER ============
     function renderCloudTabs() {
       var html = '<div class="cloud-tabs">';
@@ -2811,68 +3086,80 @@
     }
 
     function renderRightPanel() {
-      var messagesHtml = '';
+      var html = '';
+      var currentCT = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
+      var allTemplates = Object.assign({}, CONTENT_TYPES, customTemplates);
 
-      if (state.currentView === 'welcome') {
-        // Welcome view with quick options
-        messagesHtml = '<div class="agent-welcome">' +
-          '<div class="agent-avatar-placeholder">🤖</div>' +
-          '<div class="agent-greeting">Hi there!</div>' +
-          '<div class="agent-intro">I\'m your Content Foundry assistant. Tell me what content you\'d like to create, or pick from the options below.</div>' +
-          '</div>' +
-          '<div class="quick-options">';
+      // Current use case display (if selected)
+      if (currentCT) {
+        var records = SAMPLE_DATA[state.selectedContentType] || [];
+        var outputFields = getSelectedOutputFields(state.selectedContentType);
+        var udmos = getSelectedOutputUDMOs(state.selectedContentType);
 
-        for (var key in CONTENT_TYPES) {
-          var ct = CONTENT_TYPES[key];
-          messagesHtml += '<div class="quick-option" onclick="selectContentType(\'' + key + '\')">' +
-            '<span class="quick-option-icon">' + ct.icon + '</span>' +
-            '<div class="quick-option-text">' +
-            '<div class="quick-option-title">' + ct.name + '</div>' +
-            '<div class="quick-option-desc">' + ct.desc + '</div>' +
-            '</div>' +
-            '<span class="quick-option-arrow">›</span>' +
-            '</div>';
-        }
-        messagesHtml += '</div>';
-      } else {
-        // Chat view
-        messagesHtml = '<div class="chat-messages">';
-        state.messages.forEach(function(msg) {
-          messagesHtml += '<div class="chat-message ' + msg.role + ' fade-in">' +
-            '<div class="chat-bubble">' + msg.content + '</div>' +
-            '</div>';
-        });
-        if (state.isTyping) {
-          messagesHtml += '<div class="chat-message agent"><div class="chat-bubble chat-typing"><span></span><span></span><span></span></div></div>';
-        }
-        messagesHtml += '</div>';
+        html += '<div class="current-use-case">';
+        html += '<div class="current-use-case-header">';
+        html += '<span class="current-use-case-icon">' + currentCT.icon + '</span>';
+        html += '<div class="current-use-case-info">';
+        html += '<div class="current-use-case-name">' + currentCT.name + '</div>';
+        html += '<div class="current-use-case-desc">' + currentCT.desc + '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="current-use-case-stats">';
+        html += '<div class="use-case-stat"><div class="use-case-stat-value">' + records.length + '</div><div class="use-case-stat-label">Records</div></div>';
+        html += '<div class="use-case-stat"><div class="use-case-stat-value">' + outputFields.length + '</div><div class="use-case-stat-label">Fields</div></div>';
+        html += '<div class="use-case-stat"><div class="use-case-stat-value">' + udmos.length + '</div><div class="use-case-stat-label">Docs</div></div>';
+        html += '</div>';
+        html += '</div>';
 
-        // Suggested actions based on state
-        if (state.currentView === 'results') {
-          messagesHtml += '<div class="suggested-prompt" onclick="sendMessage(\'Generate for all records\')">' +
-            '<span class="suggested-prompt-text">"Run for all ' + (SAMPLE_DATA[state.selectedContentType] || []).length + ' records"</span>' +
-            '<span class="suggested-prompt-arrow">›</span>' +
-            '</div>';
-        }
+        // Quick actions
+        html += '<div class="use-case-actions">';
+        html += '<button class="use-case-action-btn" onclick="state.leftPanelTab=\'output\';render()">⚙️ Configure</button>';
+        html += '<button class="use-case-action-btn primary" onclick="runGeneration()">▶ Run</button>';
+        html += '</div>';
       }
+
+      // Use case list
+      html += '<div class="use-case-list">';
+      html += '<div class="use-case-list-title">' + (currentCT ? 'Switch Use Case' : 'Select Use Case') + '</div>';
+
+      for (var key in allTemplates) {
+        var ct = allTemplates[key];
+        var isActive = state.selectedContentType === key;
+        if (currentCT && isActive) continue; // Skip current one in list
+
+        html += '<div class="use-case-mini' + (isActive ? ' active' : '') + '" onclick="switchUseCase(\'' + key + '\')">';
+        html += '<span class="use-case-mini-icon">' + ct.icon + '</span>';
+        html += '<span class="use-case-mini-name">' + ct.name + '</span>';
+        html += '<span class="use-case-mini-arrow">›</span>';
+        html += '</div>';
+      }
+      html += '</div>';
+
+      // New template button
+      html += '<div class="new-template-btn" onclick="openTemplateBuilder()">';
+      html += '<span class="new-template-btn-icon">✨</span>';
+      html += '<span class="new-template-btn-text">Create New Template</span>';
+      html += '</div>';
 
       return '<div class="right-panel">' +
         '<div class="agent-header">' +
-        '<div class="agent-title">Agentforce <span class="agent-info-btn">i</span></div>' +
+        '<div class="agent-title">Use Cases</div>' +
         '<div class="agent-actions">' +
-        '<button class="agent-action-btn" onclick="resetToWelcome()" title="Start Over">🔄</button>' +
-        '<button class="agent-action-btn" title="Pin">📌</button>' +
-        '<button class="agent-action-btn" title="Close">✕</button>' +
+        '<button class="agent-action-btn" onclick="resetToWelcome()" title="Clear Selection">🔄</button>' +
         '</div>' +
         '</div>' +
-        '<div class="agent-body">' + messagesHtml + '</div>' +
-        '<div class="agent-input">' +
-        '<div class="chat-input-container">' +
-        '<textarea class="chat-input" placeholder="Write your own prompt..." onkeydown="handleInputKeydown(event)"></textarea>' +
-        '<button class="chat-send-btn" onclick="sendCurrentInput()">➤</button>' +
-        '</div>' +
-        '</div>' +
+        '<div class="agent-body" style="padding:0;">' + html + '</div>' +
         '</div>';
+    }
+
+    function switchUseCase(typeId) {
+      state.selectedContentType = typeId;
+      state.currentRecordIndex = 0;
+      state.currentView = 'welcome';
+      state.generatedData = null;
+      state.editedPrompt = null;
+      state.activeOutputTab = 0;
+      render();
     }
 
     function resetToWelcome() {
