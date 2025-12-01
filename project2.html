@@ -3664,6 +3664,7 @@
         // Action chips - all peer level, Run is just another action
         html += '<div class="quick-suggestions">';
         html += '<div class="quick-suggestion run-chip" onclick="runGeneration()">' + (state.currentView === 'generating' ? '⏳ Running...' : '▶ Run') + '</div>';
+        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Configure\')">Configure</div>';
         html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Add field\')">Add field</div>';
         html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Add document\')">Add document</div>';
         html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Show config\')">Show config</div>';
@@ -3761,8 +3762,29 @@
 
       // Handle configuration commands
 
+      // Configure - show configuration options
+      if (lowerMsg === 'configure' || lowerMsg === 'config' || lowerMsg === 'settings' || lowerMsg === 'setup' ||
+          (lowerMsg.indexOf('configure') > -1 && lowerMsg.indexOf('show') === -1)) {
+        var fields = getSelectedOutputFields(state.selectedContentType);
+        var udmos = getSelectedOutputUDMOs(state.selectedContentType);
+        var sources = getSourcesForTypeWithDMO(state.selectedContentType);
+        response = '<strong>⚙️ Configuration Options:</strong><br><br>';
+        response += '<strong>Input Sources</strong> (' + sources.length + '):<br>';
+        sources.forEach(function(s) {
+          var selectedFields = getSelectedFieldsForDMO(state.selectedContentType, s.dmoKey);
+          response += '• ' + s.icon + ' ' + s.name + ' - ' + selectedFields.length + ' fields selected<br>';
+        });
+        response += '<br><strong>Output Fields</strong> (' + fields.length + '):<br>• ' + fields.join(', ');
+        response += '<br><br><strong>Documents</strong> (' + udmos.length + '):<br>• ' +
+          (udmos.length > 0 ? udmos.map(function(u) { return UDMO_CATALOG[u] ? UDMO_CATALOG[u].icon + ' ' + UDMO_CATALOG[u].name : u; }).join('<br>• ') : 'None');
+        response += '<br><br>Use the <strong>Sources</strong> tab on the left to edit input fields, or ask me to add/remove fields and documents.';
+        state.setupMessages.push({ role: 'agent', content: response });
+        state.leftPanelTab = 'sources'; // Switch to sources tab
+        render();
+        return;
+      }
       // Change use case
-      if (lowerMsg.indexOf('change') > -1 && (lowerMsg.indexOf('use case') > -1 || lowerMsg.indexOf('usecase') > -1 || lowerMsg.indexOf('template') > -1)) {
+      else if (lowerMsg.indexOf('change') > -1 && (lowerMsg.indexOf('use case') > -1 || lowerMsg.indexOf('usecase') > -1 || lowerMsg.indexOf('template') > -1)) {
         response = '👋 Going back to use case selection...';
         state.setupMessages.push({ role: 'agent', content: response });
         render();
@@ -3846,7 +3868,7 @@
       }
       // Help
       else {
-        response = 'I can help you with:<br>• "Run" - generate content<br>• "Add [name] field" - add output field<br>• "Add document" - add document output<br>• "Show config" - see current settings<br>• "Change use case" - pick different template';
+        response = 'I can help you with:<br>• "Run" - generate content<br>• "Configure" - view/edit all settings<br>• "Add [name] field" - add output field<br>• "Add document" - add document output<br>• "Show config" - quick config summary<br>• "Change use case" - pick different template';
       }
 
       state.setupMessages.push({ role: 'agent', content: response });
