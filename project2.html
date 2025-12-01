@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Foundry - Agent Experience</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f3f3; height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header */
+    .header { background: #032d60; color: white; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .back-btn { background: none; border: none; color: white; cursor: pointer; font-size: 18px; padding: 4px 8px; border-radius: 4px; }
+    .back-btn:hover { background: rgba(255,255,255,0.1); }
+    .header-title { font-size: 16px; font-weight: 500; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .header-btn { background: none; border: none; color: white; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 4px; }
+    .header-btn:hover { background: rgba(255,255,255,0.1); }
+
+    /* Toolbar */
+    .toolbar { background: white; border-bottom: 1px solid #e5e5e5; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .toolbar-left { display: flex; align-items: center; gap: 8px; }
+    .view-toggle { display: flex; border: 1px solid #d8d8d8; border-radius: 4px; overflow: hidden; }
+    .view-btn { padding: 6px 10px; background: white; border: none; cursor: pointer; font-size: 14px; }
+    .view-btn.active { background: #0176d3; color: white; }
+    .toolbar-right { display: flex; align-items: center; gap: 12px; }
+    .status-text { font-size: 13px; color: #706e6b; }
+    .save-btn { padding: 6px 16px; background: white; border: 1px solid #0176d3; color: #0176d3; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500; }
+    .save-btn:hover { background: #f3f3f3; }
+    .publish-btn { padding: 6px 16px; background: #0176d3; border: none; color: white; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500; }
+    .publish-btn:hover { background: #014486; }
+    .publish-btn:disabled { background: #d8d8d8; cursor: not-allowed; }
+
+    /* Main Layout */
+    .main-container { display: flex; flex: 1; overflow: hidden; }
+
+    /* Left Panel - Sources */
+    .left-panel { width: 280px; background: white; border-right: 1px solid #e5e5e5; display: flex; flex-direction: column; }
+    .panel-tabs { display: flex; border-bottom: 1px solid #e5e5e5; }
+    .panel-tab { flex: 1; padding: 12px 16px; font-size: 13px; font-weight: 500; color: #706e6b; background: none; border: none; cursor: pointer; border-bottom: 3px solid transparent; }
+    .panel-tab.active { color: #0176d3; border-bottom-color: #0176d3; }
+    .panel-tab:hover { background: #f3f3f3; }
+    .panel-content { flex: 1; overflow-y: auto; padding: 16px; }
+
+    /* Sources Section */
+    .sources-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .sources-title { font-size: 13px; font-weight: 600; color: #3e3e3c; }
+    .sources-count { font-size: 12px; color: #706e6b; }
+    .add-source-btn { width: 24px; height: 24px; border-radius: 50%; background: #0176d3; color: white; border: none; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+    .add-source-btn:hover { background: #014486; }
+    .source-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f3f3f3; border-radius: 6px; margin-bottom: 8px; }
+    .source-icon { font-size: 18px; }
+    .source-info { flex: 1; min-width: 0; }
+    .source-name { font-size: 13px; color: #3e3e3c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .source-meta { font-size: 11px; color: #706e6b; }
+    .source-delete { background: none; border: none; color: #706e6b; cursor: pointer; font-size: 14px; padding: 4px; }
+    .source-delete:hover { color: #ea001e; }
+    .sources-hint { font-size: 12px; color: #706e6b; background: #f3f3f3; padding: 12px; border-radius: 6px; margin-top: auto; line-height: 1.5; }
+
+    /* Center Panel - Output */
+    .center-panel { flex: 1; display: flex; flex-direction: column; background: #f3f3f3; min-width: 0; }
+    .output-tabs { display: flex; background: white; border-bottom: 1px solid #e5e5e5; padding: 0 16px; gap: 4px; }
+    .output-tab { padding: 12px 16px; font-size: 13px; color: #706e6b; background: none; border: none; cursor: pointer; border-bottom: 3px solid transparent; display: flex; align-items: center; gap: 6px; }
+    .output-tab.active { color: #0176d3; border-bottom-color: #0176d3; }
+    .output-tab:hover { background: #f3f3f3; }
+    .output-tab-icon { font-size: 14px; }
+    .output-content { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
+    .output-card { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex: 1; display: flex; flex-direction: column; }
+    .output-card-header { padding: 12px 16px; border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: space-between; }
+    .output-card-title { font-size: 14px; font-weight: 600; color: #3e3e3c; }
+    .output-pagination { display: flex; align-items: center; gap: 8px; }
+    .page-input { width: 40px; padding: 4px 8px; border: 1px solid #d8d8d8; border-radius: 4px; text-align: center; font-size: 13px; }
+    .page-total { font-size: 13px; color: #706e6b; }
+    .page-btn { width: 28px; height: 28px; border: 1px solid #d8d8d8; background: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .page-btn:hover { background: #f3f3f3; }
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .output-card-body { flex: 1; padding: 20px; overflow-y: auto; }
+    .output-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #706e6b; text-align: center; }
+    .output-placeholder-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+    .output-placeholder-text { font-size: 14px; margin-bottom: 8px; }
+    .output-placeholder-hint { font-size: 12px; color: #969492; }
+
+    /* Generated Content Styles */
+    .generated-section { margin-bottom: 24px; }
+    .generated-section:last-child { margin-bottom: 0; }
+    .generated-label { font-size: 11px; font-weight: 600; color: #706e6b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .generated-value { font-size: 14px; color: #3e3e3c; line-height: 1.6; }
+    .generated-value.large { font-size: 15px; background: #f3f3f3; padding: 16px; border-radius: 6px; white-space: pre-wrap; }
+    .field-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .field-item { }
+    .field-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .field-badge.high { background: #fef0f0; color: #ea001e; }
+    .field-badge.medium { background: #fef7e0; color: #a96404; }
+    .field-badge.low { background: #e8f4e8; color: #2e844a; }
+    .field-badge.positive { background: #e8f4e8; color: #2e844a; }
+    .field-badge.negative { background: #fef0f0; color: #ea001e; }
+    .field-badge.neutral { background: #f3f3f3; color: #706e6b; }
+
+    /* Right Panel - Agent */
+    .right-panel { width: 360px; background: white; border-left: 1px solid #e5e5e5; display: flex; flex-direction: column; }
+    .agent-header { padding: 12px 16px; border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: space-between; }
+    .agent-title { font-size: 16px; font-weight: 600; color: #0176d3; display: flex; align-items: center; gap: 8px; }
+    .agent-info-btn { width: 18px; height: 18px; border-radius: 50%; background: #0176d3; color: white; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .agent-actions { display: flex; gap: 8px; }
+    .agent-action-btn { background: none; border: none; color: #706e6b; cursor: pointer; font-size: 16px; padding: 4px; }
+    .agent-action-btn:hover { color: #0176d3; }
+    .agent-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; }
+    .agent-welcome { text-align: center; margin-bottom: 24px; }
+    .agent-avatar { width: 120px; height: 120px; margin: 0 auto 16px; }
+    .agent-avatar img { width: 100%; height: 100%; object-fit: contain; }
+    .agent-avatar-placeholder { width: 120px; height: 120px; margin: 0 auto 16px; background: linear-gradient(135deg, #e8daef 0%, #d4e6f1 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+    .agent-greeting { font-size: 18px; font-weight: 600; color: #3e3e3c; margin-bottom: 12px; }
+    .agent-intro { font-size: 14px; color: #706e6b; line-height: 1.5; }
+
+    /* Quick Options */
+    .quick-options { margin-bottom: 20px; }
+    .quick-option { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid #d8d8d8; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+    .quick-option:hover { border-color: #0176d3; background: #f8fbfe; }
+    .quick-option.selected { border-color: #0176d3; background: #e8f4fc; }
+    .quick-option-icon { font-size: 20px; }
+    .quick-option-text { flex: 1; }
+    .quick-option-title { font-size: 14px; font-weight: 500; color: #3e3e3c; }
+    .quick-option-desc { font-size: 12px; color: #706e6b; margin-top: 2px; }
+    .quick-option-arrow { color: #0176d3; font-size: 18px; }
+
+    /* Chat Messages */
+    .chat-messages { flex: 1; display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; }
+    .chat-message { max-width: 90%; }
+    .chat-message.agent { align-self: flex-start; }
+    .chat-message.user { align-self: flex-end; }
+    .chat-bubble { padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.5; }
+    .chat-message.agent .chat-bubble { background: #f3f3f3; color: #3e3e3c; border-bottom-left-radius: 4px; }
+    .chat-message.user .chat-bubble { background: #0176d3; color: white; border-bottom-right-radius: 4px; }
+    .chat-typing { display: flex; gap: 4px; padding: 12px 16px; }
+    .chat-typing span { width: 8px; height: 8px; background: #706e6b; border-radius: 50%; animation: typing 1.4s infinite; }
+    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+
+    /* Suggested Prompt */
+    .suggested-prompt { border: 1px solid #0176d3; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.15s; }
+    .suggested-prompt:hover { background: #f8fbfe; }
+    .suggested-prompt-text { font-size: 14px; color: #0176d3; font-weight: 500; }
+    .suggested-prompt-arrow { color: #0176d3; font-size: 18px; }
+
+    /* Chat Input */
+    .agent-input { border-top: 1px solid #e5e5e5; padding: 16px; }
+    .chat-input-container { display: flex; gap: 8px; align-items: flex-end; }
+    .chat-input { flex: 1; padding: 12px 16px; border: 1px solid #d8d8d8; border-radius: 8px; font-size: 14px; resize: none; min-height: 44px; max-height: 120px; font-family: inherit; }
+    .chat-input:focus { outline: none; border-color: #0176d3; box-shadow: 0 0 0 2px rgba(1,118,211,0.2); }
+    .chat-send-btn { width: 44px; height: 44px; background: #0176d3; border: none; border-radius: 8px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .chat-send-btn:hover { background: #014486; }
+    .chat-send-btn:disabled { background: #d8d8d8; cursor: not-allowed; }
+
+    /* Animations */
+    .fade-in { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Loading State */
+    .loading-spinner { width: 24px; height: 24px; border: 3px solid #e5e5e5; border-top-color: #0176d3; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Run Button in Output */
+    .run-all-btn { padding: 8px 20px; background: #0176d3; border: none; color: white; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .run-all-btn:hover { background: #014486; }
+    .run-all-btn:disabled { background: #d8d8d8; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    // ============ DATA (Reused from index.html concepts) ============
+    var CONTENT_TYPES = {
+      'case-summary': {
+        id: 'case-summary',
+        name: 'Case Summaries',
+        icon: '📋',
+        desc: 'Summarize support cases with priority and sentiment',
+        sources: ['Cases', 'Email Messages'],
+        outputs: ['Summary', 'Priority', 'Sentiment', 'Category', 'Action Items'],
+        udmo: 'Internal Note'
+      },
+      'kb-article': {
+        id: 'kb-article',
+        name: 'Knowledge Articles',
+        icon: '📚',
+        desc: 'Generate KB articles from resolved cases',
+        sources: ['Resolved Cases'],
+        outputs: ['Title', 'Problem', 'Solution', 'Category'],
+        udmo: 'Knowledge Article'
+      },
+      'email-response': {
+        id: 'email-response',
+        name: 'Email Responses',
+        icon: '✉️',
+        desc: 'Draft personalized email responses',
+        sources: ['Cases', 'Email Messages', 'Contacts'],
+        outputs: ['Subject', 'Greeting', 'Body', 'Closing', 'Tone'],
+        udmo: 'Draft Response'
+      },
+      'call-summary': {
+        id: 'call-summary',
+        name: 'Call Summaries',
+        icon: '📞',
+        desc: 'Summarize sales and support calls',
+        sources: ['Voice Calls', 'Contacts', 'Opportunities'],
+        outputs: ['Summary', 'Key Points', 'Action Items', 'Next Steps', 'Sentiment'],
+        udmo: 'Call Summary'
+      },
+      'lead-enrichment': {
+        id: 'lead-enrichment',
+        name: 'Lead Enrichment',
+        icon: '🎯',
+        desc: 'Score and enrich leads with insights',
+        sources: ['Leads', 'Web Activity', 'Email Activity'],
+        outputs: ['Score', 'Fit Rating', 'Engagement Level', 'Recommended Actions'],
+        udmo: null
+      }
+    };
+
+    // Sample records for each content type
+    var SAMPLE_DATA = {
+      'case-summary': [
+        { id: 'CASE-001', title: 'Cannot login to dashboard', customer: 'John Smith', company: 'Acme Corp', priority: 'High', created: '2024-01-18', body: 'User reports being unable to access the dashboard after password reset. Error code E-5502 appears when attempting to login. This is blocking their quarterly report.' },
+        { id: 'CASE-002', title: 'Feature request: Dark mode', customer: 'Sarah Jones', company: 'TechStart Inc', priority: 'Low', created: '2024-01-19', body: 'Customer requesting dark mode for the application. They mention it would help reduce eye strain during long work sessions.' },
+        { id: 'CASE-003', title: 'Billing discrepancy - URGENT', customer: 'Michael Chen', company: 'Global Finance', priority: 'Critical', created: '2024-01-20', body: 'Customer charged $499 instead of $299 on invoice INV-2024-0892. This is the second time this has happened. Customer is threatening to dispute with bank.' },
+        { id: 'CASE-004', title: 'API rate limits question', customer: 'Dev Team', company: 'StartupCo', priority: 'Medium', created: '2024-01-17', body: 'Planning to integrate API into mobile app. Need clarification on rate limits for Pro plan, burst capacity, and webhook support.' }
+      ],
+      'kb-article': [
+        { id: 'RC-001', title: 'OAuth token expired - API connection failed', resolution: 'Regenerate OAuth token in Connected Apps settings', category: 'Technical', satisfaction: 5 },
+        { id: 'RC-002', title: 'Reports showing wrong timezone', resolution: 'Update timezone in Settings > Time & Language', category: 'Configuration', satisfaction: 4 },
+        { id: 'RC-003', title: 'CSV import failing silently', resolution: 'Convert file to UTF-8 without BOM encoding', category: 'Technical', satisfaction: 5 }
+      ],
+      'email-response': [
+        { id: 'EMAIL-001', subject: 'Error uploading files', from: 'john.smith@acmecorp.com', body: 'I keep getting error code E-5502 when uploading files larger than 25MB.', tone: 'Frustrated' },
+        { id: 'EMAIL-002', subject: 'Love your product!', from: 'sarah@happycustomer.com', body: 'Just wanted to say your new dashboard is amazing! Could you add PDF export?', tone: 'Positive' },
+        { id: 'EMAIL-003', subject: 'Billing discrepancy - URGENT', from: 'mark.johnson@globaltech.io', body: 'I was charged $499 instead of $299. Please issue a refund immediately.', tone: 'Angry' }
+      ],
+      'call-summary': [
+        { id: 'CALL-001', contact: 'John Smith, VP Engineering', company: 'Acme Corp', duration: '32:15', type: 'Discovery', transcript: 'Discussed pricing, competitor comparison, and implementation timeline.' },
+        { id: 'CALL-002', contact: 'Sarah Jones, CTO', company: 'TechStart Inc', duration: '18:45', type: 'Follow-up', transcript: 'Customer loves the API flexibility, ready for procurement discussion.' }
+      ],
+      'lead-enrichment': [
+        { id: 'LEAD-001', name: 'David Wilson', company: 'New Prospect Inc', title: 'Director of IT', source: 'Web', status: 'Working' },
+        { id: 'LEAD-002', name: 'Emily Davis', company: 'Startup Co', title: 'CEO', source: 'Referral', status: 'New' }
+      ]
+    };
+
+    // Generated output samples
+    var GENERATED_OUTPUTS = {
+      'case-summary': [
+        {
+          Summary: 'Customer John Smith from Acme Corp is experiencing a critical login issue after a password reset. Error code E-5502 is preventing dashboard access, which is blocking their quarterly report preparation.',
+          Priority: 'High',
+          Sentiment: 'Frustrated',
+          Category: 'Technical - Authentication',
+          ActionItems: '1. Check password reset logs\n2. Verify account status\n3. Test E-5502 error reproduction\n4. Escalate if auth service issue',
+          DraftNote: 'Login issue post password reset. Error E-5502 blocking quarterly report. Customer frustrated - needs urgent resolution. Check auth service logs and account status.'
+        },
+        {
+          Summary: 'Feature request from Sarah Jones at TechStart Inc for dark mode functionality. Non-urgent enhancement request to reduce eye strain.',
+          Priority: 'Low',
+          Sentiment: 'Positive',
+          Category: 'Feature Request - UI',
+          ActionItems: '1. Log feature request\n2. Add to product backlog\n3. Send acknowledgment to customer',
+          DraftNote: 'Dark mode feature request. Customer cites eye strain during long sessions. Add to Q2 backlog for consideration.'
+        },
+        {
+          Summary: 'URGENT: Michael Chen from Global Finance was overcharged $200 (charged $499 vs $299). This is a repeat billing issue. Customer threatening bank dispute.',
+          Priority: 'Critical',
+          Sentiment: 'Angry',
+          Category: 'Billing - Overcharge',
+          ActionItems: '1. Immediately verify invoice\n2. Process refund for $200\n3. Investigate recurring billing bug\n4. Call customer personally',
+          DraftNote: 'CRITICAL: Repeat overcharge issue. Customer threatening chargeback. Immediate refund required. Escalate billing bug to engineering.'
+        },
+        {
+          Summary: 'Technical inquiry from StartupCo dev team about API integration. Need clarification on Pro plan rate limits, burst capacity, and webhook callbacks.',
+          Priority: 'Medium',
+          Sentiment: 'Neutral',
+          Category: 'Pre-Sales - Technical',
+          ActionItems: '1. Send API documentation link\n2. Clarify Pro plan limits (1000 req/min)\n3. Confirm webhook support\n4. Schedule technical call if needed',
+          DraftNote: 'API integration questions for mobile app. Send rate limit docs and webhook specs. Potential upsell opportunity if needs exceed Pro limits.'
+        }
+      ],
+      'kb-article': [
+        {
+          Title: 'How to Fix OAuth Token Expired Error (API Connection Failed)',
+          Problem: 'When connecting to the API, you receive an error message indicating that the OAuth token has expired and the connection has failed.',
+          Solution: '1. Navigate to Setup > Connected Apps\n2. Find your application in the list\n3. Click "Manage" and then "Edit Policies"\n4. Under OAuth Policies, click "Regenerate Token"\n5. Copy the new token and update your application credentials\n6. Test the connection to verify it works',
+          Category: 'API & Integration',
+          RelatedArticles: 'API Authentication Guide, OAuth 2.0 Setup, Troubleshooting Connection Issues'
+        },
+        {
+          Title: 'Reports Showing Wrong Timezone - How to Fix',
+          Problem: 'Reports and dashboards are displaying times in the wrong timezone, causing confusion with scheduled events and data analysis.',
+          Solution: '1. Click your profile icon in the top right\n2. Select "Settings"\n3. Navigate to "Time & Language"\n4. Select your correct timezone from the dropdown\n5. Click "Save"\n6. Refresh your reports to see the updated times',
+          Category: 'Reports & Analytics',
+          RelatedArticles: 'Report Configuration Guide, Dashboard Setup, Time Zone Best Practices'
+        }
+      ],
+      'email-response': [
+        {
+          Subject: 'Re: Error uploading files - Solution Found',
+          Greeting: 'Hi John,',
+          Body: 'Thank you for reaching out about the file upload issue you\'re experiencing.\n\nI\'ve looked into error code E-5502, and this typically occurs when files exceed our current upload limit. Here\'s how to resolve this:\n\n1. For files over 25MB, please use our bulk upload tool at app.company.com/bulk-upload\n2. Alternatively, you can compress files before uploading\n3. If you need to upload larger files regularly, I can enable the Enterprise file limit for your account\n\nI understand this is blocking your quarterly report, so I\'ve prioritized your ticket. Would you like me to enable the higher limit for your account?',
+          Closing: 'Best regards,\nSupport Team',
+          Tone: 'Professional, Helpful'
+        }
+      ]
+    };
+
+    // ============ STATE ============
+    var state = {
+      currentView: 'welcome', // welcome, generating, results
+      selectedContentType: null,
+      currentRecordIndex: 0,
+      messages: [],
+      isTyping: false,
+      generatedData: null,
+      activeOutputTab: 0
+    };
+
+    // ============ HELPER FUNCTIONS ============
+    function esc(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function getSourcesForType(typeId) {
+      var type = CONTENT_TYPES[typeId];
+      if (!type) return [];
+      return type.sources.map(function(s, i) {
+        var counts = { 'Cases': 156, 'Email Messages': 89, 'Resolved Cases': 234, 'Voice Calls': 45, 'Contacts': 1250, 'Opportunities': 78, 'Leads': 312, 'Web Activity': 5420, 'Email Activity': 890 };
+        var icons = { 'Cases': '📁', 'Email Messages': '📧', 'Resolved Cases': '✅', 'Voice Calls': '📞', 'Contacts': '👤', 'Opportunities': '💰', 'Leads': '🎯', 'Web Activity': '🌐', 'Email Activity': '📩' };
+        return { name: s, count: counts[s] || 100, icon: icons[s] || '📊' };
+      });
+    }
+
+    // ============ RENDER FUNCTIONS ============
+    function render() {
+      var app = document.getElementById('app');
+      app.innerHTML = renderHeader() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + renderRightPanel() + '</div>';
+    }
+
+    function renderHeader() {
+      return '<div class="header">' +
+        '<div class="header-left">' +
+        '<button class="back-btn">←</button>' +
+        '<span class="header-title">Content Foundry</span>' +
+        '</div>' +
+        '<div class="header-right">' +
+        '<button class="header-btn">🔧 Settings</button>' +
+        '<button class="header-btn">❓ Help</button>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderToolbar() {
+      var hasContent = state.currentView === 'results';
+      return '<div class="toolbar">' +
+        '<div class="toolbar-left">' +
+        '<div class="view-toggle">' +
+        '<button class="view-btn active">⚙️</button>' +
+        '<button class="view-btn">📄</button>' +
+        '<button class="view-btn">📊</button>' +
+        '</div>' +
+        '</div>' +
+        '<div class="toolbar-right">' +
+        '<span class="status-text">' + (hasContent ? 'Ready to publish' : 'Draft') + '</span>' +
+        '<button class="save-btn">Save</button>' +
+        '<button class="publish-btn"' + (hasContent ? '' : ' disabled') + '>Publish</button>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderLeftPanel() {
+      var sources = state.selectedContentType ? getSourcesForType(state.selectedContentType) : [];
+
+      var sourcesHtml = '';
+      if (sources.length > 0) {
+        sources.forEach(function(s) {
+          sourcesHtml += '<div class="source-item">' +
+            '<span class="source-icon">' + s.icon + '</span>' +
+            '<div class="source-info">' +
+            '<div class="source-name">' + s.name + '</div>' +
+            '<div class="source-meta">' + s.count.toLocaleString() + ' records</div>' +
+            '</div>' +
+            '<button class="source-delete">🗑️</button>' +
+            '</div>';
+        });
+      } else {
+        sourcesHtml = '<div class="sources-hint">Select a content type to see available data sources.</div>';
+      }
+
+      return '<div class="left-panel">' +
+        '<div class="panel-tabs">' +
+        '<button class="panel-tab active">Sources</button>' +
+        '<button class="panel-tab">Configuration</button>' +
+        '</div>' +
+        '<div class="panel-content">' +
+        '<div class="sources-header">' +
+        '<div><span class="sources-title">Data Sources</span> <span class="sources-count">(' + sources.length + ')</span></div>' +
+        '<button class="add-source-btn">+</button>' +
+        '</div>' +
+        sourcesHtml +
+        (sources.length > 0 ? '<div class="sources-hint" style="margin-top:20px;">These data sources will be used to generate your content. The assistant automatically selects the right data.</div>' : '') +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderCenterPanel() {
+      var contentType = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
+
+      // Build tabs
+      var tabsHtml = '';
+      if (contentType) {
+        var tabs = contentType.outputs.slice(0, 3);
+        if (contentType.udmo) tabs.push(contentType.udmo);
+        tabs.forEach(function(tab, i) {
+          var icons = { 'Summary': '📝', 'Priority': '🎯', 'Sentiment': '💭', 'Draft Response': '✉️', 'Knowledge Article': '📚', 'Internal Note': '📋', 'Call Summary': '📞' };
+          tabsHtml += '<button class="output-tab' + (state.activeOutputTab === i ? ' active' : '') + '" onclick="setActiveTab(' + i + ')">' +
+            '<span class="output-tab-icon">' + (icons[tab] || '📄') + '</span>' + tab +
+            '</button>';
+        });
+      }
+
+      var bodyHtml = '';
+      if (state.currentView === 'welcome') {
+        bodyHtml = '<div class="output-placeholder">' +
+          '<div class="output-placeholder-icon">✨</div>' +
+          '<div class="output-placeholder-text">No content generated yet</div>' +
+          '<div class="output-placeholder-hint">Use the assistant on the right to get started</div>' +
+          '</div>';
+      } else if (state.currentView === 'generating') {
+        bodyHtml = '<div class="output-placeholder">' +
+          '<div class="loading-spinner"></div>' +
+          '<div class="output-placeholder-text" style="margin-top:16px;">Generating content...</div>' +
+          '<div class="output-placeholder-hint">This usually takes a few seconds</div>' +
+          '</div>';
+      } else if (state.currentView === 'results' && state.generatedData) {
+        bodyHtml = renderGeneratedContent();
+      }
+
+      var records = state.selectedContentType ? (SAMPLE_DATA[state.selectedContentType] || []) : [];
+      var paginationHtml = state.currentView === 'results' ?
+        '<div class="output-pagination">' +
+        '<input type="text" class="page-input" value="' + (state.currentRecordIndex + 1) + '" onchange="goToRecord(this.value)">' +
+        '<span class="page-total">/ ' + records.length + '</span>' +
+        '<button class="page-btn" onclick="prevRecord()"' + (state.currentRecordIndex === 0 ? ' disabled' : '') + '>▲</button>' +
+        '<button class="page-btn" onclick="nextRecord()"' + (state.currentRecordIndex >= records.length - 1 ? ' disabled' : '') + '>▼</button>' +
+        '</div>' : '';
+
+      return '<div class="center-panel">' +
+        '<div class="output-tabs">' + (tabsHtml || '<div style="padding:12px;color:#706e6b;font-size:13px;">Output Preview</div>') + '</div>' +
+        '<div class="output-content">' +
+        '<div class="output-card">' +
+        '<div class="output-card-header">' +
+        '<div class="output-card-title">' + (contentType ? contentType.name : 'Generated Content') + '</div>' +
+        paginationHtml +
+        '</div>' +
+        '<div class="output-card-body">' + bodyHtml + '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderGeneratedContent() {
+      var contentType = CONTENT_TYPES[state.selectedContentType];
+      var outputs = GENERATED_OUTPUTS[state.selectedContentType];
+      if (!outputs || !outputs[state.currentRecordIndex]) return '<div class="output-placeholder"><div class="output-placeholder-text">No data available</div></div>';
+
+      var data = outputs[state.currentRecordIndex];
+      var html = '';
+
+      // Different layouts based on active tab
+      if (state.activeOutputTab === 0) {
+        // Summary/Main view
+        html += '<div class="generated-section">';
+        html += '<div class="generated-label">Summary</div>';
+        html += '<div class="generated-value large">' + esc(data.Summary || data.Title || data.Subject || '') + '</div>';
+        html += '</div>';
+
+        // Field grid for metadata
+        html += '<div class="field-grid">';
+        if (data.Priority) {
+          html += '<div class="field-item"><div class="generated-label">Priority</div>';
+          html += '<span class="field-badge ' + data.Priority.toLowerCase() + '">' + data.Priority + '</span></div>';
+        }
+        if (data.Sentiment) {
+          var sentimentClass = data.Sentiment.toLowerCase().indexOf('positive') > -1 ? 'positive' : (data.Sentiment.toLowerCase().indexOf('negative') > -1 || data.Sentiment.toLowerCase().indexOf('angry') > -1 || data.Sentiment.toLowerCase().indexOf('frustrated') > -1 ? 'negative' : 'neutral');
+          html += '<div class="field-item"><div class="generated-label">Sentiment</div>';
+          html += '<span class="field-badge ' + sentimentClass + '">' + data.Sentiment + '</span></div>';
+        }
+        if (data.Category) {
+          html += '<div class="field-item"><div class="generated-label">Category</div>';
+          html += '<div class="generated-value">' + esc(data.Category) + '</div></div>';
+        }
+        if (data.Tone) {
+          html += '<div class="field-item"><div class="generated-label">Tone</div>';
+          html += '<div class="generated-value">' + esc(data.Tone) + '</div></div>';
+        }
+        html += '</div>';
+
+        // Action items if present
+        if (data.ActionItems) {
+          html += '<div class="generated-section" style="margin-top:20px;">';
+          html += '<div class="generated-label">Action Items</div>';
+          html += '<div class="generated-value large">' + esc(data.ActionItems) + '</div>';
+          html += '</div>';
+        }
+      } else if (state.activeOutputTab === 3 || (contentType && contentType.udmo && state.activeOutputTab === contentType.outputs.slice(0,3).length)) {
+        // UDMO content (Draft Response, KB Article, etc.)
+        if (data.DraftNote) {
+          html += '<div class="generated-section">';
+          html += '<div class="generated-label">Internal Note</div>';
+          html += '<div class="generated-value large">' + esc(data.DraftNote) + '</div>';
+          html += '</div>';
+        }
+        if (data.Body) {
+          html += '<div class="generated-section">';
+          html += '<div class="generated-label">' + (data.Subject ? 'Email Body' : 'Content') + '</div>';
+          html += '<div class="generated-value large">' + esc(data.Body) + '</div>';
+          html += '</div>';
+        }
+        if (data.Solution) {
+          html += '<div class="generated-section">';
+          html += '<div class="generated-label">Solution</div>';
+          html += '<div class="generated-value large">' + esc(data.Solution) + '</div>';
+          html += '</div>';
+        }
+      } else {
+        // Individual field view
+        var tabs = contentType.outputs.slice(0, 3);
+        var fieldName = tabs[state.activeOutputTab];
+        if (fieldName && data[fieldName]) {
+          html += '<div class="generated-section">';
+          html += '<div class="generated-label">' + fieldName + '</div>';
+          html += '<div class="generated-value large">' + esc(data[fieldName]) + '</div>';
+          html += '</div>';
+        }
+      }
+
+      return html;
+    }
+
+    function renderRightPanel() {
+      var messagesHtml = '';
+
+      if (state.currentView === 'welcome') {
+        // Welcome view with quick options
+        messagesHtml = '<div class="agent-welcome">' +
+          '<div class="agent-avatar-placeholder">🤖</div>' +
+          '<div class="agent-greeting">Hi there!</div>' +
+          '<div class="agent-intro">I\'m your Content Foundry assistant. Tell me what content you\'d like to create, or pick from the options below.</div>' +
+          '</div>' +
+          '<div class="quick-options">';
+
+        for (var key in CONTENT_TYPES) {
+          var ct = CONTENT_TYPES[key];
+          messagesHtml += '<div class="quick-option" onclick="selectContentType(\'' + key + '\')">' +
+            '<span class="quick-option-icon">' + ct.icon + '</span>' +
+            '<div class="quick-option-text">' +
+            '<div class="quick-option-title">' + ct.name + '</div>' +
+            '<div class="quick-option-desc">' + ct.desc + '</div>' +
+            '</div>' +
+            '<span class="quick-option-arrow">›</span>' +
+            '</div>';
+        }
+        messagesHtml += '</div>';
+      } else {
+        // Chat view
+        messagesHtml = '<div class="chat-messages">';
+        state.messages.forEach(function(msg) {
+          messagesHtml += '<div class="chat-message ' + msg.role + ' fade-in">' +
+            '<div class="chat-bubble">' + msg.content + '</div>' +
+            '</div>';
+        });
+        if (state.isTyping) {
+          messagesHtml += '<div class="chat-message agent"><div class="chat-bubble chat-typing"><span></span><span></span><span></span></div></div>';
+        }
+        messagesHtml += '</div>';
+
+        // Suggested actions based on state
+        if (state.currentView === 'results') {
+          messagesHtml += '<div class="suggested-prompt" onclick="sendMessage(\'Generate for all records\')">' +
+            '<span class="suggested-prompt-text">"Run for all ' + (SAMPLE_DATA[state.selectedContentType] || []).length + ' records"</span>' +
+            '<span class="suggested-prompt-arrow">›</span>' +
+            '</div>';
+        }
+      }
+
+      return '<div class="right-panel">' +
+        '<div class="agent-header">' +
+        '<div class="agent-title">Agentforce <span class="agent-info-btn">i</span></div>' +
+        '<div class="agent-actions">' +
+        '<button class="agent-action-btn">🔄</button>' +
+        '<button class="agent-action-btn">📌</button>' +
+        '<button class="agent-action-btn">✕</button>' +
+        '</div>' +
+        '</div>' +
+        '<div class="agent-body">' + messagesHtml + '</div>' +
+        '<div class="agent-input">' +
+        '<div class="chat-input-container">' +
+        '<textarea class="chat-input" placeholder="Write your own prompt..." onkeydown="handleInputKeydown(event)"></textarea>' +
+        '<button class="chat-send-btn" onclick="sendCurrentInput()">➤</button>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+    }
+
+    // ============ EVENT HANDLERS ============
+    function selectContentType(typeId) {
+      state.selectedContentType = typeId;
+      state.currentView = 'generating';
+      state.messages = [];
+      state.activeOutputTab = 0;
+
+      var ct = CONTENT_TYPES[typeId];
+      addMessage('user', 'Generate ' + ct.name.toLowerCase());
+      render();
+
+      // Simulate agent response
+      setTimeout(function() {
+        state.isTyping = true;
+        render();
+
+        setTimeout(function() {
+          state.isTyping = false;
+          addMessage('agent', 'I\'ll create ' + ct.name.toLowerCase() + ' for you. I\'m using data from <strong>' + ct.sources.join('</strong> and <strong>') + '</strong>.');
+          render();
+
+          setTimeout(function() {
+            state.isTyping = true;
+            render();
+
+            setTimeout(function() {
+              state.isTyping = false;
+              state.currentView = 'results';
+              state.generatedData = GENERATED_OUTPUTS[typeId];
+              state.currentRecordIndex = 0;
+              addMessage('agent', '✅ Done! I\'ve generated ' + ct.name.toLowerCase() + ' for <strong>' + (SAMPLE_DATA[typeId] || []).length + ' records</strong>. You can browse through them using the pagination above, or ask me to refine the output.');
+              render();
+            }, 1500);
+          }, 500);
+        }, 1000);
+      }, 300);
+    }
+
+    function addMessage(role, content) {
+      state.messages.push({ role: role, content: content });
+    }
+
+    function setActiveTab(index) {
+      state.activeOutputTab = index;
+      render();
+    }
+
+    function nextRecord() {
+      var records = SAMPLE_DATA[state.selectedContentType] || [];
+      if (state.currentRecordIndex < records.length - 1) {
+        state.currentRecordIndex++;
+        render();
+      }
+    }
+
+    function prevRecord() {
+      if (state.currentRecordIndex > 0) {
+        state.currentRecordIndex--;
+        render();
+      }
+    }
+
+    function goToRecord(value) {
+      var records = SAMPLE_DATA[state.selectedContentType] || [];
+      var idx = parseInt(value, 10) - 1;
+      if (idx >= 0 && idx < records.length) {
+        state.currentRecordIndex = idx;
+        render();
+      }
+    }
+
+    function handleInputKeydown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendCurrentInput();
+      }
+    }
+
+    function sendCurrentInput() {
+      var input = document.querySelector('.chat-input');
+      if (input && input.value.trim()) {
+        sendMessage(input.value.trim());
+      }
+    }
+
+    function sendMessage(text) {
+      addMessage('user', esc(text));
+      state.isTyping = true;
+      render();
+
+      // Simulate response
+      setTimeout(function() {
+        state.isTyping = false;
+
+        if (text.toLowerCase().indexOf('all') > -1 || text.toLowerCase().indexOf('batch') > -1 || text.toLowerCase().indexOf('run') > -1) {
+          addMessage('agent', '🚀 Starting batch generation for all records. This will process in the background. I\'ll notify you when it\'s complete.');
+        } else if (text.toLowerCase().indexOf('formal') > -1) {
+          addMessage('agent', '✏️ I\'ve updated the tone to be more formal. The changes are reflected in the output.');
+        } else if (text.toLowerCase().indexOf('shorter') > -1 || text.toLowerCase().indexOf('brief') > -1) {
+          addMessage('agent', '✏️ I\'ve shortened the summaries to be more concise. Take a look at the updated output.');
+        } else {
+          addMessage('agent', 'I understand. Let me help you with that. Is there anything specific you\'d like me to adjust in the generated content?');
+        }
+        render();
+      }, 1200);
+    }
+
+    // ============ INIT ============
+    render();
+  </script>
+</body>
+</html>
