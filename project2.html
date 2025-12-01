@@ -626,6 +626,12 @@
     .quick-suggestion.run-chip:hover { background: #7e22ce; color: white; }
     .config-inline { color: #706e6b; font-size: 12px; }
 
+    /* Source selector dropdown in field modal */
+    .source-selector-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #e5e5e5; }
+    .source-selector-label { font-size: 13px; font-weight: 500; color: #3e3e3c; }
+    .source-selector-dropdown { flex: 1; padding: 10px 12px; border: 1px solid #d8d8d8; border-radius: 6px; font-size: 13px; background: white; cursor: pointer; }
+    .source-selector-dropdown:focus { outline: none; border-color: #0176d3; }
+
     /* Mode choice buttons for template creation */
     .mode-choice-container { display: flex; gap: 10px; margin-top: 12px; }
     .mode-choice-btn { flex: 1; padding: 14px 16px; border: 1px solid #e5e5e5; border-radius: 8px; background: white; cursor: pointer; text-align: center; transition: all 0.15s; }
@@ -2875,6 +2881,21 @@
     }
 
     // ============ FIELD SELECTOR MODAL ============
+    function openFieldSelectorFromChat() {
+      // Open field selector with first available source
+      var sources = getSourcesForTypeWithDMO(state.selectedContentType);
+      if (sources.length > 0 && sources[0].dmoKey) {
+        state.currentEditingDMO = sources[0].dmoKey;
+        state.fieldSelectorOpen = true;
+        render();
+      }
+    }
+
+    function switchFieldSelectorSource(dmoKey) {
+      state.currentEditingDMO = dmoKey;
+      render();
+    }
+
     function renderFieldSelectorModal() {
       if (!state.fieldSelectorOpen || !state.currentEditingDMO) return '';
 
@@ -2883,6 +2904,9 @@
 
       var selectedFields = getSelectedFieldsForDMO(state.selectedContentType, state.currentEditingDMO);
       var allFields = dmo.fields;
+
+      // Get all available sources for dropdown
+      var sources = getSourcesForTypeWithDMO(state.selectedContentType);
 
       // PII fields for marking
       var PII_FIELDS = {
@@ -2893,6 +2917,26 @@
       };
 
       var bodyHtml = '';
+
+      // Source dropdown selector
+      bodyHtml += '<div class="source-selector-row">';
+      bodyHtml += '<label class="source-selector-label">Input Source:</label>';
+      bodyHtml += '<select class="source-selector-dropdown" onchange="switchFieldSelectorSource(this.value)">';
+      sources.forEach(function(s) {
+        if (s.dmoKey) {
+          var isSelected = s.dmoKey === state.currentEditingDMO;
+          var srcSelectedFields = getSelectedFieldsForDMO(state.selectedContentType, s.dmoKey);
+          var srcDmo = DMO_CATALOG[s.dmoKey];
+          var srcTotalFields = srcDmo ? srcDmo.fields.length : 0;
+          bodyHtml += '<option value="' + s.dmoKey + '"' + (isSelected ? ' selected' : '') + '>' +
+            s.icon + ' ' + s.name + ' (' + srcSelectedFields.length + '/' + srcTotalFields + ' fields)' +
+            '</option>';
+        }
+      });
+      bodyHtml += '</select>';
+      bodyHtml += '</div>';
+
+      // Current source field list
       bodyHtml += '<div class="dmo-field-group">';
       bodyHtml += '<div class="dmo-field-group-header">';
       bodyHtml += '<span class="dmo-field-group-icon">' + dmo.icon + '</span>';
@@ -2922,9 +2966,9 @@
 
       return '<div class="modal-overlay" onclick="if(event.target===this)closeFieldSelector()">' +
         '<div class="modal" style="width:600px;">' +
-        '<div class="modal-header"><div class="modal-title">📋 Select Fields for ' + dmo.displayName + '</div><button class="modal-close" onclick="closeFieldSelector()">×</button></div>' +
+        '<div class="modal-header"><div class="modal-title">📋 Edit Input Fields</div><button class="modal-close" onclick="closeFieldSelector()">×</button></div>' +
         '<div class="modal-body">' + bodyHtml + '</div>' +
-        '<div class="modal-footer"><span style="font-size:12px;color:#706e6b;">' + selectedFields.length + ' fields selected</span><button class="btn-done" onclick="closeFieldSelector()">Done</button></div>' +
+        '<div class="modal-footer"><span style="font-size:12px;color:#706e6b;">' + selectedFields.length + ' fields selected for ' + dmo.displayName + '</span><button class="btn-done" onclick="closeFieldSelector()">Done</button></div>' +
         '</div></div>';
     }
 
@@ -3665,7 +3709,7 @@
         html += '<div class="quick-suggestions">';
         html += '<div class="quick-suggestion run-chip" onclick="runGeneration()">' + (state.currentView === 'generating' ? '⏳ Running...' : '▶ Run') + '</div>';
         html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Configure\')">Configure</div>';
-        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Add field\')">Add field</div>';
+        html += '<div class="quick-suggestion" onclick="openFieldSelectorFromChat()">Add field</div>';
         html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Add document\')">Add document</div>';
         html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Show config\')">Show config</div>';
         html += '<div class="quick-suggestion" onclick="resetToWelcome()">Change use case</div>';
@@ -3799,7 +3843,15 @@
         runGeneration();
         return;
       }
-      // Add field - with or without specific name
+      // Add field - opens input field selector modal
+      else if (lowerMsg === 'add field' || lowerMsg === 'add fields' || lowerMsg === 'edit fields' || lowerMsg === 'edit input' || lowerMsg === 'input fields') {
+        response = '📋 Opening input field editor...';
+        state.setupMessages.push({ role: 'agent', content: response });
+        render();
+        setTimeout(function() { openFieldSelectorFromChat(); }, 300);
+        return;
+      }
+      // Add specific output field by name
       else if (lowerMsg.indexOf('add') > -1 && lowerMsg.indexOf('field') > -1) {
         var fieldMatch = message.match(/add\s+(?:a\s+)?["']?(\w+)["']?\s*field/i);
         if (fieldMatch && fieldMatch[1].toLowerCase() !== 'a' && fieldMatch[1].toLowerCase() !== 'field') {
@@ -3808,13 +3860,17 @@
           if (fields.indexOf(fieldName) === -1) {
             fields.push(fieldName);
             selectedOutputFields[state.selectedContentType] = fields;
-            response = '✅ Added <strong>' + fieldName + '</strong> field.';
+            response = '✅ Added <strong>' + fieldName + '</strong> output field.';
           } else {
             response = '<strong>' + fieldName + '</strong> already exists.';
           }
         } else {
-          // Just "Add field" without name - suggest options
-          response = 'Which field would you like to add? Try:<br>• "Add Priority field"<br>• "Add Confidence field"<br>• "Add Sentiment field"<br>• "Add Score field"<br>• "Add Category field"';
+          // Open the field selector modal
+          response = '📋 Opening input field editor...';
+          state.setupMessages.push({ role: 'agent', content: response });
+          render();
+          setTimeout(function() { openFieldSelectorFromChat(); }, 300);
+          return;
         }
       }
       // Remove field
