@@ -501,6 +501,28 @@
     .agent-body { height: calc(100% - 140px); overflow-y: auto; }
     .panel-content { height: calc(100% - 42px); overflow-y: auto; }
 
+    /* Split Center Panel */
+    .split-panels { display: flex; gap: 12px; height: 100%; }
+    .prompt-side { width: 45%; display: flex; flex-direction: column; }
+    .output-side { flex: 1; display: flex; flex-direction: column; }
+
+    .prompt-edit-card { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); height: 100%; display: flex; flex-direction: column; }
+    .prompt-edit-header { padding: 10px 14px; border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: space-between; }
+    .prompt-edit-title { font-size: 13px; font-weight: 600; color: #3e3e3c; }
+    .prompt-edit-actions { display: flex; gap: 8px; }
+    .prompt-edit-btn { background: none; border: 1px solid #d8d8d8; color: #706e6b; font-size: 11px; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+    .prompt-edit-btn:hover { background: #f3f3f3; color: #3e3e3c; }
+    .prompt-edit-btn.reset { color: #ea001e; border-color: #ea001e; }
+    .prompt-edit-btn.reset:hover { background: #fef0f0; }
+    .prompt-edit-body { flex: 1; padding: 0; overflow: hidden; }
+    .prompt-textarea { width: 100%; height: 100%; border: none; resize: none; padding: 12px; font-size: 12px; font-family: 'SF Mono', Monaco, 'Courier New', monospace; line-height: 1.5; color: #3e3e3c; background: #fafafa; }
+    .prompt-textarea:focus { outline: none; background: white; }
+    .prompt-edit-footer { padding: 8px 14px; border-top: 1px solid #e5e5e5; background: #f9f9f9; display: flex; align-items: center; justify-content: space-between; }
+    .prompt-stats { font-size: 11px; color: #706e6b; display: flex; gap: 12px; }
+    .prompt-stat { }
+    .prompt-stat-value { font-weight: 500; color: #3e3e3c; }
+    .prompt-stat-value.cost { color: #2e844a; }
+
     /* Compact output config */
     .output-config-section { margin-bottom: 12px; }
     .output-config-title { font-size: 12px; margin-bottom: 8px; }
@@ -1297,7 +1319,9 @@
       // Left panel tab
       leftPanelTab: 'sources', // sources, records, output
       // Prompt preview toggle
-      promptPreviewOpen: false
+      promptPreviewOpen: false,
+      // Editable prompt
+      editedPrompt: null // null means use generated prompt
     };
 
     // Runtime selections (per content type)
@@ -1812,18 +1836,76 @@
         '</button>' +
         '</div>';
 
+      // Get the prompt (edited or generated)
+      var prompt = state.editedPrompt !== null ? state.editedPrompt : generateResolvedPrompt();
+      var isEdited = state.editedPrompt !== null;
+
       return '<div class="center-panel">' +
         runBarHtml +
-        '<div class="output-tabs">' + (tabsHtml || '<div style="padding:12px;color:#706e6b;font-size:13px;">Output Preview</div>') + '</div>' +
         '<div class="output-content">' +
-        '<div class="output-card">' +
-        '<div class="output-card-header">' +
-        '<div class="output-card-title">' + (contentType ? contentType.name : 'Generated Content') + '</div>' +
+        '<div class="split-panels">' +
+
+        // LEFT: Editable Prompt Panel
+        '<div class="prompt-side">' +
+        '<div class="prompt-edit-card">' +
+        '<div class="prompt-edit-header">' +
+        '<div class="prompt-edit-title">📝 Prompt' + (isEdited ? ' <span style="color:#0176d3;font-size:10px;">(edited)</span>' : '') + '</div>' +
+        '<div class="prompt-edit-actions">' +
+        (isEdited ? '<button class="prompt-edit-btn reset" onclick="resetPrompt()">Reset</button>' : '') +
+        '<button class="prompt-edit-btn" onclick="copyPrompt()">Copy</button>' +
         '</div>' +
+        '</div>' +
+        '<div class="prompt-edit-body">' +
+        '<textarea class="prompt-textarea" onchange="updatePrompt(this.value)" oninput="updatePromptStats()">' + esc(prompt) + '</textarea>' +
+        '</div>' +
+        '<div class="prompt-edit-footer">' +
+        '<div class="prompt-stats">' +
+        '<span class="prompt-stat"><span class="prompt-stat-value">' + inputTokens + '</span> in</span>' +
+        '<span class="prompt-stat"><span class="prompt-stat-value">~' + outputTokens + '</span> out</span>' +
+        '<span class="prompt-stat"><span class="prompt-stat-value cost">$' + ((inputTokens * 0.00001) + (outputTokens * 0.00003)).toFixed(4) + '</span></span>' +
+        '</div>' +
+        '<button class="run-btn" style="padding:6px 16px;font-size:12px;" onclick="runGeneration()"' + (state.currentView === 'generating' || !contentType ? ' disabled' : '') + '>' +
+        (state.currentView === 'generating' ? 'Running...' : '▶ Run') +
+        '</button>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+
+        // RIGHT: Output Panel
+        '<div class="output-side">' +
+        '<div class="output-card">' +
+        '<div class="output-card-header" style="padding:10px 14px;">' +
+        '<div class="output-card-title" style="font-size:13px;">✨ ' + (contentType ? contentType.name : 'Output') + '</div>' +
+        '</div>' +
+        '<div class="output-tabs" style="padding:0 12px;border-bottom:1px solid #e5e5e5;">' + (tabsHtml || '<div style="padding:8px 0;color:#706e6b;font-size:12px;">Output</div>') + '</div>' +
         '<div class="output-card-body">' + outputBodyHtml + '</div>' +
         '</div>' +
         '</div>' +
-        '</div>';
+
+        '</div>' + // close split-panels
+        '</div>' + // close output-content
+        '</div>'; // close center-panel
+    }
+
+    function updatePrompt(value) {
+      state.editedPrompt = value;
+    }
+
+    function resetPrompt() {
+      state.editedPrompt = null;
+      render();
+    }
+
+    function copyPrompt() {
+      var prompt = state.editedPrompt !== null ? state.editedPrompt : generateResolvedPrompt();
+      navigator.clipboard.writeText(prompt).then(function() {
+        alert('Prompt copied to clipboard!');
+      });
+    }
+
+    function updatePromptStats() {
+      // Could update token count in real-time, but for now just re-render would be expensive
+      // This is a placeholder for more sophisticated real-time updates
     }
 
     function generateResolvedPrompt() {
