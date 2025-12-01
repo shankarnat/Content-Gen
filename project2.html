@@ -226,6 +226,147 @@
     .run-all-btn { padding: 8px 20px; background: #0176d3; border: none; color: white; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
     .run-all-btn:hover { background: #014486; }
     .run-all-btn:disabled { background: #d8d8d8; cursor: not-allowed; }
+
+    /* ============ VOC FEATURES ============ */
+    /* Safety Rails */
+    .safety-flag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .safety-flag.safe { background: #e8f4e8; color: #2e844a; border: 1px solid #2e844a; }
+    .safety-flag.warning { background: #fef7e0; color: #a96404; border: 1px solid #f4c542; }
+    .safety-flag.review { background: #fef0f0; color: #ea001e; border: 1px solid #ea001e; }
+    .safety-reasons { margin-top: 8px; padding: 8px 12px; background: #fef7e0; border-radius: 6px; font-size: 12px; color: #a96404; }
+    .safety-reasons li { margin-bottom: 4px; }
+
+    /* Confidence Score */
+    .confidence-container { margin-bottom: 16px; }
+    .confidence-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .confidence-label { font-size: 11px; font-weight: 600; color: #706e6b; text-transform: uppercase; }
+    .confidence-value { font-size: 14px; font-weight: 700; }
+    .confidence-value.high { color: #2e844a; }
+    .confidence-value.medium { color: #a96404; }
+    .confidence-value.low { color: #ea001e; }
+    .confidence-bar { height: 8px; background: #e5e5e5; border-radius: 4px; overflow: hidden; }
+    .confidence-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+    .confidence-fill.high { background: linear-gradient(90deg, #2e844a, #4bc076); }
+    .confidence-fill.medium { background: linear-gradient(90deg, #a96404, #f4c542); }
+    .confidence-fill.low { background: linear-gradient(90deg, #ea001e, #ff6b6b); }
+
+    /* Language Badge */
+    .language-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #e8f4fc; border: 1px solid #0176d3; border-radius: 6px; font-size: 12px; color: #0176d3; }
+    .language-flag { font-size: 16px; }
+
+    /* Grounding Sources */
+    .grounding-container { margin-top: 16px; padding: 12px; background: #f3f3f3; border-radius: 8px; }
+    .grounding-title { font-size: 11px; font-weight: 600; color: #706e6b; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .grounding-sources { display: flex; flex-wrap: wrap; gap: 6px; }
+    .grounding-source { font-size: 11px; padding: 4px 8px; background: white; border: 1px solid #d8d8d8; border-radius: 4px; color: #3e3e3c; }
+    .grounding-source .dmo-name { color: #0176d3; font-weight: 500; }
+
+    /* Alternative Replies */
+    .alternatives-container { margin-top: 20px; }
+    .alternatives-title { font-size: 12px; font-weight: 600; color: #706e6b; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .alternative-card { padding: 12px 16px; background: white; border: 1px solid #d8d8d8; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+    .alternative-card:hover { border-color: #0176d3; background: #f8fbfe; }
+    .alternative-card.selected { border-color: #0176d3; background: #e8f4fc; }
+    .alternative-type { font-size: 11px; font-weight: 600; color: #0176d3; margin-bottom: 4px; text-transform: uppercase; }
+    .alternative-preview { font-size: 13px; color: #3e3e3c; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* VOC Summary Panel */
+    .voc-panel { background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    .voc-panel-title { font-size: 13px; font-weight: 600; color: #3e3e3c; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .voc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .voc-item { }
+    .voc-item-label { font-size: 10px; font-weight: 600; color: #706e6b; text-transform: uppercase; margin-bottom: 4px; }
+
+    /* ============ CLOUD TABS ============ */
+    .cloud-tabs { display: flex; background: white; border-bottom: 1px solid #e5e5e5; padding: 0 16px; }
+    .cloud-tab { padding: 12px 20px; font-size: 13px; font-weight: 500; color: #706e6b; background: none; border: none; cursor: pointer; border-bottom: 3px solid transparent; display: flex; align-items: center; gap: 8px; }
+    .cloud-tab:hover { color: #3e3e3c; background: #f3f3f3; }
+    .cloud-tab.active { color: #0176d3; border-bottom-color: #0176d3; }
+    .cloud-icon { font-size: 16px; }
+    .cloud-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+    .cloud-badge.service { background: #e8f4fc; color: #0176d3; }
+    .cloud-badge.sales { background: #e8f4e8; color: #2e844a; }
+    .cloud-badge.marketing { background: #fce8f3; color: #c41c7f; }
+    .cloud-badge.health { background: #fef7e0; color: #a96404; }
+
+    /* ============ BULK MODE ============ */
+    .bulk-toggle { display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: #f3f3f3; border-radius: 6px; margin-bottom: 12px; }
+    .bulk-toggle-label { font-size: 13px; color: #3e3e3c; }
+    .bulk-toggle-btns { display: flex; border: 1px solid #d8d8d8; border-radius: 4px; overflow: hidden; }
+    .bulk-toggle-btn { padding: 6px 12px; font-size: 12px; background: white; border: none; cursor: pointer; color: #706e6b; }
+    .bulk-toggle-btn.active { background: #0176d3; color: white; }
+    .bulk-toggle-btn:first-child { border-right: 1px solid #d8d8d8; }
+
+    .bulk-progress { margin: 16px 0; }
+    .bulk-progress-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: #706e6b; }
+    .bulk-progress-bar { height: 10px; background: #e5e5e5; border-radius: 5px; overflow: hidden; }
+    .bulk-progress-fill { height: 100%; background: linear-gradient(90deg, #0176d3, #04a5e5); border-radius: 5px; transition: width 0.3s; }
+    .bulk-stats { display: flex; gap: 16px; margin-top: 12px; }
+    .bulk-stat { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+    .bulk-stat-icon { font-size: 14px; }
+    .bulk-stat-value { font-weight: 600; }
+    .bulk-stat.success { color: #2e844a; }
+    .bulk-stat.warning { color: #a96404; }
+    .bulk-stat.error { color: #ea001e; }
+
+    .bulk-results { max-height: 300px; overflow-y: auto; border: 1px solid #e5e5e5; border-radius: 8px; }
+    .bulk-result-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid #e5e5e5; }
+    .bulk-result-item:last-child { border-bottom: none; }
+    .bulk-result-info { display: flex; align-items: center; gap: 10px; }
+    .bulk-result-id { font-size: 12px; font-weight: 500; color: #3e3e3c; }
+    .bulk-result-title { font-size: 12px; color: #706e6b; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bulk-result-status { font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
+    .bulk-result-status.success { background: #e8f4e8; color: #2e844a; }
+    .bulk-result-status.warning { background: #fef7e0; color: #a96404; }
+    .bulk-result-status.pending { background: #f3f3f3; color: #706e6b; }
+
+    /* ============ PUBLISH MODAL ============ */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal { background: white; border-radius: 12px; width: 900px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+    .modal-header { padding: 20px 24px; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 18px; font-weight: 600; color: #032d60; display: flex; align-items: center; gap: 10px; }
+    .modal-close { background: none; border: none; font-size: 24px; color: #706e6b; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+    .modal-close:hover { background: #f3f3f3; color: #3e3e3c; }
+    .modal-body { flex: 1; overflow-y: auto; padding: 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid #e5e5e5; display: flex; justify-content: flex-end; gap: 12px; background: #f9f9f9; }
+
+    .publish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .publish-section { margin-bottom: 20px; }
+    .publish-section-title { font-size: 14px; font-weight: 600; color: #032d60; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .publish-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .publish-form-group { margin-bottom: 12px; }
+    .publish-form-label { font-size: 11px; font-weight: 600; color: #706e6b; margin-bottom: 4px; display: block; }
+    .publish-form-input { width: 100%; padding: 8px 12px; border: 1px solid #d8d8d8; border-radius: 6px; font-size: 13px; }
+    .publish-form-input:focus { outline: none; border-color: #0176d3; box-shadow: 0 0 0 2px rgba(1,118,211,0.2); }
+    .publish-form-select { width: 100%; padding: 8px 12px; border: 1px solid #d8d8d8; border-radius: 6px; font-size: 13px; background: white; }
+
+    .publish-dmo-card { padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .publish-dmo-card.input { background: #e8f4fc; border: 1px solid #0176d3; }
+    .publish-dmo-card.output { background: #e8f4e8; border: 1px solid #2e844a; }
+    .publish-dmo-card.udmo { background: #f3e8ff; border: 1px solid #9333ea; }
+    .publish-dmo-icon { font-size: 18px; }
+    .publish-dmo-info { flex: 1; }
+    .publish-dmo-name { font-size: 13px; font-weight: 500; }
+    .publish-dmo-card.input .publish-dmo-name { color: #0176d3; }
+    .publish-dmo-card.output .publish-dmo-name { color: #2e844a; }
+    .publish-dmo-card.udmo .publish-dmo-name { color: #9333ea; }
+    .publish-dmo-fields { font-size: 11px; color: #706e6b; margin-top: 2px; }
+    .publish-dmo-badge { font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: 600; }
+
+    .api-endpoint { padding: 10px 12px; background: #f9f9f9; border: 1px solid #e5e5e5; border-radius: 6px; margin-bottom: 8px; }
+    .api-endpoint-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .api-method { font-size: 10px; padding: 2px 6px; border-radius: 3px; font-weight: 700; color: white; }
+    .api-method.get { background: #2e844a; }
+    .api-method.post { background: #0176d3; }
+    .api-endpoint-name { font-size: 12px; font-weight: 500; color: #3e3e3c; }
+    .api-endpoint-url { font-size: 11px; font-family: monospace; color: #706e6b; background: #f3f3f3; padding: 6px 8px; border-radius: 4px; word-break: break-all; }
+
+    .json-preview { background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 6px; font-size: 11px; font-family: monospace; max-height: 200px; overflow: auto; white-space: pre-wrap; }
+
+    .btn-publish { padding: 10px 24px; background: #0176d3; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .btn-publish:hover { background: #014486; }
+    .btn-cancel { padding: 10px 24px; background: white; color: #3e3e3c; border: 1px solid #d8d8d8; border-radius: 6px; font-size: 14px; cursor: pointer; }
+    .btn-cancel:hover { background: #f3f3f3; }
   </style>
 </head>
 <body>
@@ -410,6 +551,16 @@
           Priority: 'High',
           Sentiment: 'Frustrated',
           Category: 'Technical - Authentication',
+          // VOC Features
+          ConfidenceScore: 94,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { code: 'en', name: 'English', flag: '🇺🇸' },
+          GroundingSources: ['EmailMessage.Subject', 'EmailMessage.Body', 'Account.SupportTier', 'Account.HealthScore'],
+          SuggestedResponses: [
+            { type: 'Immediate Fix', template: 'Thank you for reporting this issue. I\'ve identified the root cause and am clearing your session cache now...' },
+            { type: 'Escalation Path', template: 'I\'m escalating this to our authentication team for immediate investigation. You\'ll receive an update within 30 minutes...' },
+            { type: 'Workaround', template: 'While we investigate, please try logging in using an incognito browser window or clearing your cookies...' }
+          ],
           // UDMO Content (Unstructured)
           __udmo: {
             'InternalNote__udmo': {
@@ -433,6 +584,15 @@
           Priority: 'Low',
           Sentiment: 'Positive',
           Category: 'Feature Request - UI',
+          // VOC Features
+          ConfidenceScore: 97,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { code: 'en', name: 'English', flag: '🇺🇸' },
+          GroundingSources: ['EmailMessage.Subject', 'EmailMessage.Body', 'Contact.PreferredChannel'],
+          SuggestedResponses: [
+            { type: 'Appreciation', template: 'Thank you so much for the kind words and great suggestion! We love hearing from engaged customers like you...' },
+            { type: 'Roadmap Update', template: 'Great news - dark mode is on our roadmap for Q3! I\'ve added you to the beta tester list...' }
+          ],
           __udmo: {
             'InternalNote__udmo': {
               title: 'Feature Request: Dark Mode UI',
@@ -455,6 +615,16 @@
           Priority: 'Critical',
           Sentiment: 'Angry',
           Category: 'Billing - Overcharge',
+          // VOC Features
+          ConfidenceScore: 91,
+          SafetyFlags: { needsReview: true, reasons: ['Customer mentioned bank dispute', 'Financial/legal implications', 'Repeat issue - churn risk'], riskLevel: 'warning' },
+          DetectedLanguage: { code: 'en', name: 'English', flag: '🇺🇸' },
+          GroundingSources: ['EmailMessage.Subject', 'EmailMessage.Body', 'EmailMessage.HasAttachment', 'Account.AnnualRevenue', 'Account.SupportTier'],
+          SuggestedResponses: [
+            { type: 'Immediate Refund', template: 'I sincerely apologize for this billing error. I have processed an immediate refund of $200 to your account...' },
+            { type: 'Executive Escalation', template: 'I\'m personally escalating this to our VP of Customer Success and our billing engineering team...' },
+            { type: 'Goodwill + Prevention', template: 'Along with the refund, I\'ve applied a $50 credit and flagged your account for manual billing review...' }
+          ],
           __udmo: {
             'InternalNote__udmo': {
               title: 'CRITICAL: Repeat Billing Overcharge - Escalation Required',
@@ -477,6 +647,15 @@
           Priority: 'Medium',
           Sentiment: 'Neutral',
           Category: 'Pre-Sales - Technical',
+          // VOC Features
+          ConfidenceScore: 88,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { code: 'en', name: 'English', flag: '🇺🇸' },
+          GroundingSources: ['EmailMessage.Subject', 'EmailMessage.Body', 'Account.Industry', 'Product.RateLimits'],
+          SuggestedResponses: [
+            { type: 'Technical Details', template: 'Great question! Here\'s a complete breakdown of our Pro plan API limits: 1,000 req/min standard, 1,500 burst...' },
+            { type: 'Upsell Opportunity', template: 'For a mobile app at scale, you might want to consider our Enterprise plan with 10x the rate limits...' }
+          ],
           __udmo: {
             'InternalNote__udmo': {
               title: 'API Integration Inquiry - Potential Upsell',
@@ -502,6 +681,13 @@
           Problem: 'When connecting to the API, you receive an error message indicating that the OAuth token has expired and the connection has failed.',
           Solution: '1. Navigate to Setup > Connected Apps\n2. Find your application\n3. Click "Regenerate Token"\n4. Update your application credentials',
           Category: 'API & Integration',
+          // VOC Features
+          ConfidenceScore: 96,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { code: 'en', name: 'English', flag: '🇺🇸' },
+          GroundingSources: ['ResolvedCase.Subject', 'ResolvedCase.Resolution', 'ResolvedCase.Comments', 'ResolvedCase.ProductArea'],
+          QualityScore: { completeness: 95, clarity: 92, accuracy: 98, overall: 95 },
+          PIIRemoved: ['CustomerName', 'Email', 'AccountNumber'],
           // UDMO Content
           __udmo: {
             'KnowledgeArticle__udmo': {
@@ -565,6 +751,13 @@
           Problem: 'Reports and dashboards are displaying times in the wrong timezone, causing confusion with scheduled events and data analysis.',
           Solution: '1. Go to Settings\n2. Navigate to Time & Language\n3. Select correct timezone\n4. Save and refresh reports',
           Category: 'Reports & Analytics',
+          // VOC Features
+          ConfidenceScore: 93,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { code: 'en', name: 'English', flag: '🇺🇸' },
+          GroundingSources: ['ResolvedCase.Subject', 'ResolvedCase.Resolution', 'ResolvedCase.Comments'],
+          QualityScore: { completeness: 90, clarity: 95, accuracy: 94, overall: 93 },
+          PIIRemoved: ['CustomerName', 'CompanyName'],
           __udmo: {
             'KnowledgeArticle__udmo': {
               title: 'Reports Showing Wrong Timezone - Complete Fix Guide',
@@ -623,6 +816,13 @@
           Problem: 'CSV file imports appear to complete but no data is imported, with no error message displayed.',
           Solution: 'Convert file to UTF-8 without BOM encoding using a text editor or spreadsheet application.',
           Category: 'Data Management',
+          // VOC Features
+          ConfidenceScore: 98,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { code: 'en', name: 'English', flag: '🇺🇸' },
+          GroundingSources: ['ResolvedCase.Subject', 'ResolvedCase.Resolution', 'ResolvedCase.Comments', 'ResolvedCase.RootCause'],
+          QualityScore: { completeness: 98, clarity: 96, accuracy: 99, overall: 98 },
+          PIIRemoved: ['CustomerName', 'FileName', 'AccountId'],
           __udmo: {
             'KnowledgeArticle__udmo': {
               title: 'CSV Import Failing Silently - Complete Troubleshooting Guide',
@@ -684,6 +884,16 @@
           Tone: 'Professional, Consultative',
           Confidence: '92%',
           Safety: 'Approved',
+          // VOC Features
+          ConfidenceScore: 92,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { code: 'en', name: 'English', flag: '🇺🇸' },
+          GroundingSources: ['Account.Name', 'Account.Industry', 'Opportunity.Amount', 'Opportunity.Stage', 'Opportunity.NextStep'],
+          SuggestedResponses: [
+            { type: 'Technical Focus', template: 'I\'d like to schedule a technical deep-dive with your IT team to address the API concerns Sarah mentioned...' },
+            { type: 'ROI Focus', template: 'Based on similar deployments in financial services, here\'s a breakdown of the expected ROI timeline...' },
+            { type: 'Reference Call', template: 'I\'d like to arrange a reference call with Global Bank, who faced similar data consolidation challenges...' }
+          ],
           // UDMO Content
           __udmo: {
             'EmailDraft__udmo': {
@@ -748,6 +958,15 @@
           Tone: 'Friendly, Enthusiastic',
           Confidence: '88%',
           Safety: 'Approved',
+          // VOC Features
+          ConfidenceScore: 88,
+          SafetyFlags: { needsReview: false, reasons: [], riskLevel: 'safe' },
+          DetectedLanguage: { code: 'en', name: 'English', flag: '🇺🇸' },
+          GroundingSources: ['Account.Name', 'Account.Industry', 'Account.EmployeeCount', 'Lead.Source'],
+          SuggestedResponses: [
+            { type: 'Startup Focus', template: 'I see TechStart is in the HR tech space - we have a startup program with special pricing that might be perfect for you...' },
+            { type: 'Quick Scheduling', template: 'I\'ve got some openings this week. Would Tuesday at 10am or Wednesday at 2pm work for a quick 30-minute demo?' }
+          ],
           __udmo: {
             'EmailDraft__udmo': {
               to: 'sarah.jones@techstart.io',
@@ -780,6 +999,16 @@
           Tone: 'Professional, Retention-focused',
           Confidence: '85%',
           Safety: 'Review - Discount mentioned',
+          // VOC Features
+          ConfidenceScore: 85,
+          SafetyFlags: { needsReview: true, reasons: ['Non-standard discount (18% vs 10% max)', 'Price lock commitment mentioned', 'Competitive mention may need review'], riskLevel: 'warning' },
+          DetectedLanguage: { code: 'en', name: 'English', flag: '🇺🇸' },
+          GroundingSources: ['Account.Name', 'Account.TotalContractValue', 'Opportunity.Stage', 'Opportunity.CompetitorPresence', 'Account.CustomerSince'],
+          SuggestedResponses: [
+            { type: 'Value Focus', template: 'I want to emphasize the value you\'ve seen over our 3-year partnership and the ROI we\'ve delivered...' },
+            { type: 'Competitive Counter', template: 'I\'ve prepared a detailed TCO comparison showing why migration costs and feature gaps favor staying...' },
+            { type: 'CFO Support', template: 'I\'d be happy to join your CFO presentation to address questions about our renewal package directly...' }
+          ],
           __udmo: {
             'EmailDraft__udmo': {
               to: 'mark.johnson@globaltech.io',
@@ -849,7 +1078,32 @@
       messages: [],
       isTyping: false,
       generatedData: null,
-      activeOutputTab: 0
+      activeOutputTab: 0,
+      // Cloud & Filter
+      activeCloud: 'all', // all, service, sales, marketing, health
+      // Bulk Mode
+      bulkMode: false,
+      bulkProgress: 0,
+      bulkResults: [],
+      // Publish Modal
+      publishModalOpen: false,
+      publishConfig: {
+        pipelineName: 'My Content Pipeline',
+        trigger: 'manual',
+        environment: 'sandbox',
+        model: 'gpt-4o',
+        dailyLimit: 1000,
+        autoPublish: false
+      }
+    };
+
+    // Cloud definitions
+    var CLOUDS = {
+      'all': { name: 'All Clouds', icon: '☁️' },
+      'service': { name: 'Service Cloud', icon: '🛠️' },
+      'sales': { name: 'Sales Cloud', icon: '💼' },
+      'marketing': { name: 'Marketing Cloud', icon: '📢' },
+      'health': { name: 'Health Cloud', icon: '🏥' }
     };
 
     // ============ HELPER FUNCTIONS ============
@@ -871,7 +1125,7 @@
     // ============ RENDER FUNCTIONS ============
     function render() {
       var app = document.getElementById('app');
-      app.innerHTML = renderHeader() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + renderRightPanel() + '</div>';
+      app.innerHTML = renderHeader() + renderCloudTabs() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + renderRightPanel() + '</div>' + renderPublishModal();
     }
 
     function renderHeader() {
@@ -900,7 +1154,7 @@
         '<div class="toolbar-right">' +
         '<span class="status-text">' + (hasContent ? 'Ready to publish' : 'Draft') + '</span>' +
         '<button class="save-btn">Save</button>' +
-        '<button class="publish-btn"' + (hasContent ? '' : ' disabled') + '>Publish</button>' +
+        '<button class="publish-btn" onclick="openPublishModal()"' + (hasContent ? '' : ' disabled') + '>Publish</button>' +
         '</div>' +
         '</div>';
     }
@@ -995,9 +1249,13 @@
         '<button class="page-btn" onclick="nextRecord()"' + (state.currentRecordIndex >= records.length - 1 ? ' disabled' : '') + '>▼</button>' +
         '</div>' : '';
 
+      // Bulk mode toggle for results view
+      var bulkHtml = (state.currentView === 'results') ? renderBulkModeToggle() + renderBulkProgress() : '';
+
       return '<div class="center-panel">' +
         '<div class="output-tabs">' + (tabsHtml || '<div style="padding:12px;color:#706e6b;font-size:13px;">Output Preview</div>') + '</div>' +
         '<div class="output-content">' +
+        bulkHtml +
         '<div class="output-card">' +
         '<div class="output-card-header">' +
         '<div class="output-card-title">' + (contentType ? contentType.name : 'Generated Content') + '</div>' +
@@ -1084,6 +1342,12 @@
           }
           html += '</div>';
         }
+      }
+
+      // Add VOC Panel for all views (Summary tab shows full VOC)
+      if (state.activeOutputTab === 0) {
+        html += renderVOCPanel(data);
+        html += renderAlternativeReplies(data);
       }
 
       return html;
@@ -1326,6 +1590,342 @@
       html += '</div>';
       html += '</div>';
       return html;
+    }
+
+    // ============ VOC RENDERERS ============
+    function renderVOCPanel(data) {
+      if (!data) return '';
+      var html = '<div class="voc-panel">';
+      html += '<div class="voc-panel-title">🎯 AI Quality Metrics</div>';
+      html += '<div class="voc-grid">';
+
+      // Confidence Score
+      if (data.ConfidenceScore !== undefined) {
+        var confClass = data.ConfidenceScore >= 90 ? 'high' : (data.ConfidenceScore >= 70 ? 'medium' : 'low');
+        html += '<div class="voc-item">';
+        html += '<div class="voc-item-label">Confidence</div>';
+        html += '<div class="confidence-container">';
+        html += '<div class="confidence-header"><span class="confidence-value ' + confClass + '">' + data.ConfidenceScore + '%</span></div>';
+        html += '<div class="confidence-bar"><div class="confidence-fill ' + confClass + '" style="width:' + data.ConfidenceScore + '%"></div></div>';
+        html += '</div></div>';
+      }
+
+      // Safety Flags
+      if (data.SafetyFlags) {
+        html += '<div class="voc-item">';
+        html += '<div class="voc-item-label">Safety</div>';
+        var safetyClass = data.SafetyFlags.riskLevel || 'safe';
+        var safetyIcon = safetyClass === 'safe' ? '✓' : (safetyClass === 'warning' ? '⚠' : '⚠');
+        var safetyText = safetyClass === 'safe' ? 'Safe' : (safetyClass === 'warning' ? 'Review Needed' : 'Review Required');
+        html += '<div class="safety-flag ' + safetyClass + '">' + safetyIcon + ' ' + safetyText + '</div>';
+        html += '</div>';
+      }
+
+      // Language
+      if (data.DetectedLanguage) {
+        html += '<div class="voc-item">';
+        html += '<div class="voc-item-label">Language</div>';
+        html += '<div class="language-badge"><span class="language-flag">' + (data.DetectedLanguage.flag || '🌐') + '</span>' + data.DetectedLanguage.name + '</div>';
+        html += '</div>';
+      }
+
+      // Quality Score (for KB articles)
+      if (data.QualityScore) {
+        html += '<div class="voc-item">';
+        html += '<div class="voc-item-label">Quality</div>';
+        var qClass = data.QualityScore.overall >= 90 ? 'high' : (data.QualityScore.overall >= 70 ? 'medium' : 'low');
+        html += '<div class="confidence-container">';
+        html += '<div class="confidence-header"><span class="confidence-value ' + qClass + '">' + data.QualityScore.overall + '%</span></div>';
+        html += '<div class="confidence-bar"><div class="confidence-fill ' + qClass + '" style="width:' + data.QualityScore.overall + '%"></div></div>';
+        html += '</div></div>';
+      }
+
+      html += '</div>'; // close voc-grid
+
+      // Safety Reasons (if any)
+      if (data.SafetyFlags && data.SafetyFlags.reasons && data.SafetyFlags.reasons.length > 0) {
+        html += '<div class="safety-reasons"><strong>⚠ Review Reasons:</strong><ul style="margin:4px 0 0 16px;padding:0;">';
+        data.SafetyFlags.reasons.forEach(function(reason) {
+          html += '<li>' + esc(reason) + '</li>';
+        });
+        html += '</ul></div>';
+      }
+
+      // Grounding Sources
+      if (data.GroundingSources && data.GroundingSources.length > 0) {
+        html += '<div class="grounding-container">';
+        html += '<div class="grounding-title">📍 Grounding Sources</div>';
+        html += '<div class="grounding-sources">';
+        data.GroundingSources.forEach(function(src) {
+          var parts = src.split('.');
+          html += '<span class="grounding-source"><span class="dmo-name">' + esc(parts[0]) + '</span>.' + esc(parts[1] || '') + '</span>';
+        });
+        html += '</div></div>';
+      }
+
+      // PII Removed (for KB)
+      if (data.PIIRemoved && data.PIIRemoved.length > 0) {
+        html += '<div style="margin-top:12px;font-size:11px;color:#2e844a;"><span style="background:#e8f4e8;padding:3px 8px;border-radius:4px;">🔒 PII Anonymized: ' + data.PIIRemoved.join(', ') + '</span></div>';
+      }
+
+      html += '</div>'; // close voc-panel
+      return html;
+    }
+
+    function renderAlternativeReplies(data) {
+      if (!data || !data.SuggestedResponses || data.SuggestedResponses.length === 0) return '';
+
+      var html = '<div class="alternatives-container">';
+      html += '<div class="alternatives-title">💡 Alternative Responses</div>';
+      data.SuggestedResponses.forEach(function(alt, i) {
+        html += '<div class="alternative-card" onclick="selectAlternative(' + i + ')">';
+        html += '<div class="alternative-type">' + esc(alt.type) + '</div>';
+        html += '<div class="alternative-preview">' + esc(alt.template) + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+      return html;
+    }
+
+    // ============ BULK MODE RENDERER ============
+    function renderBulkModeToggle() {
+      return '<div class="bulk-toggle">' +
+        '<span class="bulk-toggle-label">Processing Mode:</span>' +
+        '<div class="bulk-toggle-btns">' +
+        '<button class="bulk-toggle-btn' + (!state.bulkMode ? ' active' : '') + '" onclick="setBulkMode(false)">Single</button>' +
+        '<button class="bulk-toggle-btn' + (state.bulkMode ? ' active' : '') + '" onclick="setBulkMode(true)">Bulk</button>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderBulkProgress() {
+      if (!state.bulkMode || state.bulkProgress === 0) return '';
+
+      var total = 4; // Mock total records
+      var processed = Math.floor(state.bulkProgress / 100 * total);
+      var success = Math.floor(processed * 0.75);
+      var warning = processed - success;
+
+      var html = '<div class="bulk-progress">';
+      html += '<div class="bulk-progress-header"><span>Processing ' + processed + ' of ' + total + ' records</span><span>' + state.bulkProgress + '%</span></div>';
+      html += '<div class="bulk-progress-bar"><div class="bulk-progress-fill" style="width:' + state.bulkProgress + '%"></div></div>';
+      html += '<div class="bulk-stats">';
+      html += '<div class="bulk-stat success"><span class="bulk-stat-icon">✓</span><span class="bulk-stat-value">' + success + '</span> Success</div>';
+      html += '<div class="bulk-stat warning"><span class="bulk-stat-icon">⚠</span><span class="bulk-stat-value">' + warning + '</span> Review</div>';
+      html += '</div>';
+      html += '</div>';
+      return html;
+    }
+
+    function setBulkMode(enabled) {
+      state.bulkMode = enabled;
+      render();
+    }
+
+    // ============ PUBLISH MODAL ============
+    function renderPublishModal() {
+      if (!state.publishModalOpen) return '';
+
+      var contentType = CONTENT_TYPES[state.selectedContentType];
+      if (!contentType) return '';
+
+      var pipelineId = state.publishConfig.pipelineName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+      var html = '<div class="modal-overlay" onclick="if(event.target===this)closePublishModal()">';
+      html += '<div class="modal">';
+
+      // Header
+      html += '<div class="modal-header">';
+      html += '<div class="modal-title">🚀 Publish Pipeline</div>';
+      html += '<button class="modal-close" onclick="closePublishModal()">×</button>';
+      html += '</div>';
+
+      // Body
+      html += '<div class="modal-body">';
+      html += '<div class="publish-grid">';
+
+      // LEFT COLUMN
+      html += '<div style="border-right:1px solid #e5e5e5;padding-right:24px;">';
+
+      // Pipeline Parameters
+      html += '<div class="publish-section">';
+      html += '<div class="publish-section-title">⚙️ Pipeline Parameters</div>';
+      html += '<div class="publish-form-group">';
+      html += '<label class="publish-form-label">Pipeline Name</label>';
+      html += '<input type="text" class="publish-form-input" value="' + esc(state.publishConfig.pipelineName) + '" onchange="updatePublishConfig(\'pipelineName\', this.value)">';
+      html += '</div>';
+
+      html += '<div class="publish-form-row">';
+      html += '<div class="publish-form-group"><label class="publish-form-label">Trigger</label>';
+      html += '<select class="publish-form-select" onchange="updatePublishConfig(\'trigger\', this.value)">';
+      html += '<option value="manual"' + (state.publishConfig.trigger === 'manual' ? ' selected' : '') + '>👆 Manual</option>';
+      html += '<option value="scheduled"' + (state.publishConfig.trigger === 'scheduled' ? ' selected' : '') + '>⏰ Scheduled</option>';
+      html += '<option value="event"' + (state.publishConfig.trigger === 'event' ? ' selected' : '') + '>⚡ Event</option>';
+      html += '</select></div>';
+
+      html += '<div class="publish-form-group"><label class="publish-form-label">Environment</label>';
+      html += '<select class="publish-form-select" onchange="updatePublishConfig(\'environment\', this.value)">';
+      html += '<option value="sandbox"' + (state.publishConfig.environment === 'sandbox' ? ' selected' : '') + '>🧪 Sandbox</option>';
+      html += '<option value="production"' + (state.publishConfig.environment === 'production' ? ' selected' : '') + '>🚀 Production</option>';
+      html += '</select></div>';
+      html += '</div>';
+
+      html += '<div class="publish-form-row">';
+      html += '<div class="publish-form-group"><label class="publish-form-label">AI Model</label>';
+      html += '<select class="publish-form-select" onchange="updatePublishConfig(\'model\', this.value)">';
+      html += '<option value="gpt-4o"' + (state.publishConfig.model === 'gpt-4o' ? ' selected' : '') + '>GPT-4o</option>';
+      html += '<option value="gpt-4o-mini"' + (state.publishConfig.model === 'gpt-4o-mini' ? ' selected' : '') + '>GPT-4o-mini</option>';
+      html += '<option value="claude-3-5-sonnet"' + (state.publishConfig.model === 'claude-3-5-sonnet' ? ' selected' : '') + '>Claude 3.5 Sonnet</option>';
+      html += '</select></div>';
+
+      html += '<div class="publish-form-group"><label class="publish-form-label">Daily Limit</label>';
+      html += '<input type="number" class="publish-form-input" value="' + state.publishConfig.dailyLimit + '" min="1" max="100000" onchange="updatePublishConfig(\'dailyLimit\', this.value)">';
+      html += '</div>';
+      html += '</div>';
+      html += '</div>'; // close parameters section
+
+      // Input DMOs
+      html += '<div class="publish-section">';
+      html += '<div class="publish-section-title">📥 Input Data</div>';
+      contentType.sources.forEach(function(src) {
+        var icons = { 'Cases': '📁', 'Email Messages': '📧', 'Resolved Cases': '✅', 'Voice Calls': '📞', 'Contacts': '👤', 'Opportunities': '💰' };
+        html += '<div class="publish-dmo-card input">';
+        html += '<span class="publish-dmo-icon">' + (icons[src] || '📊') + '</span>';
+        html += '<div class="publish-dmo-info"><div class="publish-dmo-name">' + esc(src) + '</div>';
+        html += '<div class="publish-dmo-fields">All fields selected</div></div>';
+        html += '</div>';
+      });
+      html += '</div>';
+
+      // Output DMOs + UDMOs
+      html += '<div class="publish-section">';
+      html += '<div class="publish-section-title">📤 Outputs</div>';
+
+      // Structured output
+      html += '<div class="publish-dmo-card output">';
+      html += '<span class="publish-dmo-icon">📊</span>';
+      html += '<div class="publish-dmo-info"><div class="publish-dmo-name">' + esc(contentType.name) + ' Output</div>';
+      html += '<div class="publish-dmo-fields">' + contentType.outputs.join(', ') + '</div></div>';
+      html += '<span class="publish-dmo-badge" style="background:#e8f4e8;color:#2e844a;">Structured</span>';
+      html += '</div>';
+
+      // UDMOs
+      if (contentType.udmos && contentType.udmos.length > 0) {
+        contentType.udmos.forEach(function(udmo) {
+          var udmoInfo = UDMO_CATALOG[udmo.id] || {};
+          html += '<div class="publish-dmo-card udmo">';
+          html += '<span class="publish-dmo-icon">' + (udmoInfo.icon || '📄') + '</span>';
+          html += '<div class="publish-dmo-info"><div class="publish-dmo-name">' + esc(udmo.name) + '</div>';
+          html += '<div class="publish-dmo-fields">' + (udmoInfo.desc || 'Unstructured content') + '</div></div>';
+          html += '<span class="publish-dmo-badge" style="background:#f3e8ff;color:#9333ea;">' + (udmoInfo.contentType || 'Text') + '</span>';
+          html += '</div>';
+        });
+      }
+      html += '</div>';
+
+      html += '</div>'; // close left column
+
+      // RIGHT COLUMN
+      html += '<div>';
+
+      // API Endpoints
+      html += '<div class="publish-section">';
+      html += '<div class="publish-section-title">🔌 API Endpoints</div>';
+
+      // Structured endpoint
+      html += '<div class="api-endpoint">';
+      html += '<div class="api-endpoint-header"><span class="api-method get">GET</span><span class="api-endpoint-name">Structured Output</span></div>';
+      html += '<div class="api-endpoint-url">/content-foundry/' + esc(pipelineId) + '/outputs</div>';
+      html += '</div>';
+
+      // UDMO endpoints
+      if (contentType.udmos && contentType.udmos.length > 0) {
+        contentType.udmos.forEach(function(udmo) {
+          html += '<div class="api-endpoint">';
+          html += '<div class="api-endpoint-header"><span class="api-method get">GET</span><span class="api-endpoint-name">' + esc(udmo.name) + '</span></div>';
+          html += '<div class="api-endpoint-url">/content-foundry/' + esc(pipelineId) + '/documents/' + esc(udmo.id) + '</div>';
+          html += '</div>';
+        });
+      }
+
+      // Webhook endpoint
+      html += '<div class="api-endpoint">';
+      html += '<div class="api-endpoint-header"><span class="api-method post">POST</span><span class="api-endpoint-name">Webhook Trigger</span></div>';
+      html += '<div class="api-endpoint-url">/content-foundry/' + esc(pipelineId) + '/webhook</div>';
+      html += '</div>';
+      html += '</div>';
+
+      // JSON Preview
+      html += '<div class="publish-section">';
+      html += '<div class="publish-section-title">📋 Configuration</div>';
+      var configJSON = {
+        name: state.publishConfig.pipelineName,
+        trigger: state.publishConfig.trigger,
+        environment: state.publishConfig.environment,
+        model: state.publishConfig.model,
+        dailyLimit: state.publishConfig.dailyLimit,
+        inputs: contentType.sources,
+        outputs: { structured: contentType.outputs, udmos: contentType.udmos ? contentType.udmos.map(function(u) { return u.id; }) : [] }
+      };
+      html += '<div class="json-preview">' + esc(JSON.stringify(configJSON, null, 2)) + '</div>';
+      html += '</div>';
+
+      html += '</div>'; // close right column
+      html += '</div>'; // close grid
+      html += '</div>'; // close body
+
+      // Footer
+      html += '<div class="modal-footer">';
+      html += '<button class="btn-cancel" onclick="closePublishModal()">Cancel</button>';
+      html += '<button class="btn-publish" onclick="publishPipeline()">🚀 Publish to ' + (state.publishConfig.environment === 'sandbox' ? 'Sandbox' : 'Production') + '</button>';
+      html += '</div>';
+
+      html += '</div></div>'; // close modal
+      return html;
+    }
+
+    function openPublishModal() {
+      state.publishModalOpen = true;
+      render();
+    }
+
+    function closePublishModal() {
+      state.publishModalOpen = false;
+      render();
+    }
+
+    function updatePublishConfig(key, value) {
+      state.publishConfig[key] = value;
+      render();
+    }
+
+    function publishPipeline() {
+      alert('Pipeline "' + state.publishConfig.pipelineName + '" published to ' + state.publishConfig.environment + '!');
+      closePublishModal();
+    }
+
+    function selectAlternative(index) {
+      // Would swap in the selected alternative
+      console.log('Selected alternative', index);
+    }
+
+    // ============ CLOUD TABS RENDERER ============
+    function renderCloudTabs() {
+      var html = '<div class="cloud-tabs">';
+      for (var cloudKey in CLOUDS) {
+        var cloud = CLOUDS[cloudKey];
+        html += '<button class="cloud-tab' + (state.activeCloud === cloudKey ? ' active' : '') + '" onclick="setActiveCloud(\'' + cloudKey + '\')">';
+        html += '<span class="cloud-icon">' + cloud.icon + '</span>';
+        html += cloud.name;
+        html += '</button>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function setActiveCloud(cloud) {
+      state.activeCloud = cloud;
+      render();
     }
 
     function renderRightPanel() {
