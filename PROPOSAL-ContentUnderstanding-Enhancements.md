@@ -1,421 +1,602 @@
 # Content Understanding Studio Enhancement Proposal
+## Incremental Enhancement to project2.html
 
 ## Executive Summary
 
-This proposal outlines enhancements to transform Content Foundry into a comprehensive **Content Understanding Studio** inspired by Azure AI's document analysis capabilities. The goal is to add document-centric analysis features while maintaining the existing generative pipeline functionality.
+This proposal outlines **incremental enhancements** to `project2.html` to add document analysis capabilities inspired by Azure AI Content Understanding Studio. The approach preserves the existing agent-first experience, welcome page with quick options, and three-panel layout while adding file upload as an additional source type.
+
+**Key Principle**: Enhance, don't replace. The existing flow is excellent - we're adding document understanding as a new capability.
 
 ---
 
-## Current State Analysis
+## What We're Keeping (Unchanged)
 
-### Existing Strengths
-- Multi-cloud DMO/UDMO data model
-- LLM integration (OpenAI, Anthropic)
-- Pipeline execution with batch processing
-- Confidence scores and grounding sources (basic implementation)
-- Safety flags and PII detection
-- Agent-first experience (project2.html)
+### 1. Welcome Page with Quick Options
+The agent panel's quick options remain exactly as-is:
+- Case Summaries
+- Knowledge Articles
+- Email Responses
+- Call Summaries
+- Lead Enrichment
 
-### Gaps Identified
-Based on the Azure AI Content Understanding Studio reference:
-1. No document upload/preview functionality
-2. No prebuilt analyzer selection hierarchy
-3. Limited field extraction visualization
-4. No document region highlighting
-5. No analyzer result panels with structured output
+### 2. Three-Panel Layout
+```
++------------------+------------------------+------------------+
+|   Left Panel     |    Center Panel        |   Right Panel    |
+|   (Sources)      |    (Output/Preview)    |   (Agent)        |
++------------------+------------------------+------------------+
+```
+
+### 3. Agent-First Experience
+- Agent welcome with avatar
+- Quick option cards
+- Chat-based interaction
+- Suggested prompts
+
+### 4. Existing Data Sources
+- Cases, Email Messages, Resolved Cases
+- Voice Calls, Contacts, Opportunities
+- All existing DMO integrations
 
 ---
 
 ## Proposed Enhancements
 
-### 1. Document Analyzer UI (New Page: `analyzer.html`)
+### 1. New Content Type: "Document Analysis"
 
-Create a new dedicated analyzer experience matching the Azure pattern:
+Add to the existing `CONTENT_TYPES` object:
 
+```javascript
+'document-analysis': {
+  id: 'document-analysis',
+  name: 'Document Analysis',
+  icon: '📄',
+  desc: 'Extract fields from invoices, receipts, forms & more',
+  sources: ['Uploaded Documents'],  // Special source type
+  outputs: ['Extracted Fields', 'Confidence Scores', 'Document Preview'],
+  udmo: 'Extracted Data',
+  isAnalyzer: true,  // Flag to enable analyzer mode
+  analyzerTypes: {
+    'Procurement': ['Invoice', 'Receipt', 'Purchase Order'],
+    'Financial': ['Bank Statement', 'Tax Form'],
+    'Identity': ['Driver License', 'Passport', 'ID Card'],
+    'Healthcare': ['Insurance Card', 'Prescription'],
+    'General': ['Contract', 'Letter', 'Form']
+  }
+}
 ```
-+------------------+------------------------+------------------+
-|  Upload Panel    |   Document Preview     |  Fields Panel    |
-|  - Drag & drop   |   - PDF/Image render   |  - Extracted     |
-|  - File list     |   - Region highlights  |    fields list   |
-|  - Thumbnails    |   - Page navigation    |  - Confidence    |
-|                  |   - Zoom controls      |  - Grounding     |
-+------------------+------------------------+------------------+
-                   |    Run Analysis Button                    |
-                   +------------------------------------------+
-```
 
-#### Key Components:
-
-**Left Panel - Upload Zone**
-- Drag & drop file upload area
-- File thumbnail preview
-- Support for PDF, images (PNG, JPG), documents
-- "Browse for files" link
-- File list with delete option
-
-**Center Panel - Document Preview**
-- Document rendering with PDF.js or image display
-- Bounding box overlays for extracted fields
-- Color-coded regions (like Azure's pink/green/yellow boxes)
-- Page navigation (1 of N)
-- Zoom controls (+/-)
-- "Run analysis" button with auto-run toggle
-
-**Right Panel - Fields & Results**
-- **Fields Tab**: List of extracted fields with:
-  - Field name with colored status indicator
-  - Page reference (p.1, p.2)
-  - Table icon for tabular data
-  - Confidence percentage
-  - Expand/collapse for field values
-  - "Hide missing fields" toggle
-
-- **Result Tab**: Raw JSON/structured output
+This appears as another quick option card in the agent welcome screen.
 
 ---
 
-### 2. Prebuilt Analyzer Selection Hierarchy
+### 2. Enhanced Left Panel: File Upload Source
 
-Add hierarchical analyzer selection matching Azure's pattern:
+When "Document Analysis" is selected, the Sources panel transforms:
+
+**Before (existing sources)**:
+```
++---------------------------+
+| Sources | Configuration   |
++---------------------------+
+| Data Sources (3)      [+] |
+|                           |
+| 📁 Cases                  |
+|    156 records        🗑️  |
+|                           |
+| 📧 Email Messages         |
+|    89 records         🗑️  |
++---------------------------+
+```
+
+**After (with file upload)**:
+```
++---------------------------+
+| Sources | Configuration   |
++---------------------------+
+| Analyzer Type             |
+| [Procurement ▼]           |
+| [Invoice ▼]               |
++---------------------------+
+| Upload Document       [+] |
+|                           |
+| +---------------------+   |
+| |   ☁️ Drag & drop    |   |
+| |   files here or     |   |
+| |   Browse for files  |   |
+| +---------------------+   |
+|                           |
+| +---+ invoice.pdf     🗑️  |
+| |   | 1 page              |
+| +---+                     |
++---------------------------+
+| ℹ️ Supported: PDF, PNG,   |
+|    JPG, TIFF              |
++---------------------------+
+```
+
+**Implementation**: Add a new source type `uploaded-file` alongside existing DMO sources.
+
+---
+
+### 3. Enhanced Center Panel: Document Preview + Extracted Fields
+
+When analyzing documents, the center panel shows two views via tabs:
+
+**Tab Structure**:
+```
+| Document | Extracted Fields | Raw JSON |
+```
+
+**Document Tab** (new):
+```
++----------------------------------------+
+| Document Preview           [Auto-run ✓]|
++----------------------------------------+
+|  +--------------------------------+    |
+|  |                                |    |
+|  |   CONTOSO LTD.                |    |
+|  |                                |    |
+|  |   [Highlighted regions        |    |
+|  |    with bounding boxes]       |    |
+|  |                                |    |
+|  +--------------------------------+    |
+|                                        |
+|  [Run Analysis]     < 1 of 1 >  🔍+ 🔍-|
++----------------------------------------+
+```
+
+**Extracted Fields Tab** (new):
+```
++----------------------------------------+
+| Extracted Fields      Hide missing [✓] |
++----------------------------------------+
+| ● AmountDue              p.1    92.5%  |
+|   $150.00                        ▼     |
+|----------------------------------------|
+| ◐ BalanceForward         p.1    67.2%  |
+|   $45.00                         ▼     |
+|----------------------------------------|
+| ● BillingAddress         p.1    60.4%  |
+|   123 Bill St, Redmond WA        ▼     |
+|----------------------------------------|
+| ○ ShippingAddress        p.1     --    |
+|   (not found)                    ▼     |
++----------------------------------------+
+| Tokens: [Context 1,000]                |
++----------------------------------------+
+```
+
+**Status Indicators**:
+- ● Green filled: High confidence (>80%)
+- ◐ Yellow half: Medium confidence (50-80%)
+- ○ Empty circle: Low/missing (<50%)
+
+---
+
+### 4. Agent Integration for Document Analysis
+
+The agent guides users through document analysis:
+
+**Agent Flow**:
+```
+🤖 "Hi there! I'm your Content Foundry assistant."
+
+[📋 Case Summaries]
+[📚 Knowledge Articles]
+[✉️ Email Responses]
+[📄 Document Analysis]  ← NEW
+[📞 Call Summaries]
+```
+
+When user selects "Document Analysis":
 
 ```
-Document Type → Category → Specific Type
-    ↓              ↓           ↓
- Document     Procurement    Invoice
- Image        Financial      Receipt
- Audio        Identity       Tax Form
- Video        Healthcare     ID Card
+User: [Clicks Document Analysis]
+
+🤖 "Great choice! I can extract data from invoices, receipts,
+    forms, and more. What type of document would you like
+    to analyze?"
+
+[📦 Invoice or Receipt]
+[📋 Tax Form]
+[🪪 ID Document]
+[📝 General Document]
 ```
 
-#### Implementation:
+After upload:
+
+```
+🤖 "I've analyzed your invoice from Contoso Ltd. I found:
+
+    ✓ 12 fields extracted
+    ✓ 85% average confidence
+    ✓ 2 fields need review
+
+    Would you like me to:
+    • Create a Case from this invoice
+    • Generate a summary email
+    • Export the extracted data"
+
+[Create Case] [Email Summary] [Export JSON]
+```
+
+---
+
+### 5. Field Confidence Display Component
+
+Add a reusable component for showing extracted fields with confidence:
 
 ```javascript
-const ANALYZER_HIERARCHY = {
-  Document: {
-    Procurement: ['Invoice', 'Receipt', 'Purchase Order'],
-    Financial: ['Bank Statement', 'Tax Form W2', 'Tax Form 1099'],
-    Identity: ['US Driver License', 'US Passport', 'ID Card'],
-    Healthcare: ['Insurance Card', 'Medical Record', 'Prescription'],
-    General: ['Contract', 'Letter', 'Form']
+// New component for extracted field display
+function renderExtractedField(field) {
+  var confidenceClass = field.confidence > 0.8 ? 'high' :
+                        field.confidence > 0.5 ? 'medium' : 'low';
+  var statusIcon = field.confidence > 0.8 ? '●' :
+                   field.confidence > 0.5 ? '◐' : '○';
+
+  return `
+    <div class="extracted-field ${confidenceClass}">
+      <div class="field-header">
+        <span class="field-status">${statusIcon}</span>
+        <span class="field-name">${field.name}</span>
+        <span class="field-page">p.${field.page}</span>
+        <span class="field-confidence">${(field.confidence * 100).toFixed(1)}%</span>
+        <button class="field-expand">▼</button>
+      </div>
+      <div class="field-value">${field.value || '(not found)'}</div>
+      <div class="confidence-bar">
+        <div class="confidence-fill ${confidenceClass}"
+             style="width: ${field.confidence * 100}%"></div>
+      </div>
+    </div>
+  `;
+}
+```
+
+---
+
+### 6. New CSS Additions (Minimal)
+
+Add these styles to the existing stylesheet:
+
+```css
+/* Document Analysis Enhancements */
+.upload-zone {
+  border: 2px dashed #d8d8d8;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.upload-zone:hover { border-color: #0176d3; background: #f8fbfe; }
+.upload-zone.dragover { border-color: #0176d3; background: #e8f4fc; }
+
+.analyzer-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d8d8d8;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.file-thumbnail {
+  width: 48px;
+  height: 48px;
+  background: #f3f3f3;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Extracted Fields */
+.extracted-field {
+  padding: 12px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.extracted-field:hover { background: #f8fbfe; }
+.field-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.field-status { font-size: 10px; }
+.field-status.high { color: #2e844a; }
+.field-status.medium { color: #a96404; }
+.field-status.low { color: #706e6b; }
+.field-name { flex: 1; font-weight: 500; font-size: 13px; }
+.field-page { font-size: 11px; color: #706e6b; }
+.field-confidence { font-size: 12px; color: #706e6b; }
+.field-value {
+  font-size: 14px;
+  color: #3e3e3c;
+  margin-top: 4px;
+  padding-left: 18px;
+}
+.confidence-bar {
+  height: 4px;
+  background: #e5e5e5;
+  border-radius: 2px;
+  margin-top: 8px;
+  margin-left: 18px;
+}
+.confidence-fill { height: 100%; border-radius: 2px; }
+.confidence-fill.high { background: #2e844a; }
+.confidence-fill.medium { background: #a96404; }
+.confidence-fill.low { background: #ea001e; }
+
+/* Document Preview */
+.document-preview {
+  background: #f3f3f3;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.document-image {
+  max-width: 100%;
+  max-height: 500px;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.preview-controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+```
+
+---
+
+## Visual Mockup: Document Analysis Flow
+
+### Step 1: Welcome Screen (Unchanged + New Option)
+```
++------------------+------------------------+------------------+
+| Sources          | Output Preview         | 🤖 Agentforce    |
+| Configuration    |                        |                  |
++------------------+                        | Hi there!        |
+|                  |    ✨                  |                  |
+| Select content   |    No content          | [📋 Case Summ.]  |
+| type to see      |    generated yet       | [📚 KB Articles] |
+| sources          |                        | [✉️ Emails]      |
+|                  |                        | [📄 Doc Analysis]| ← NEW
+|                  |                        | [📞 Call Summ.]  |
++------------------+------------------------+------------------+
+```
+
+### Step 2: Document Analysis Selected
+```
++------------------+------------------------+------------------+
+| Sources | Config | Document | Fields | JSON| 🤖 Agentforce   |
++------------------+------------------------+------------------+
+| Analyzer Type    |                        | What type of     |
+| [Procurement ▼]  |    📄                  | document?        |
+| [Invoice ▼]      |                        |                  |
+|------------------|    Drop your           | [📦 Invoice]     |
+| Upload Document  |    document here       | [📋 Tax Form]    |
+|                  |                        | [🪪 ID Doc]      |
+| +-------------+  |    or click to         | [📝 General]     |
+| | ☁️ Drop    |  |    browse              |                  |
+| |   here     |  |                        |                  |
+| +-------------+  |                        |                  |
+|                  |                        |                  |
++------------------+------------------------+------------------+
+```
+
+### Step 3: Document Uploaded & Analyzed
+```
++------------------+------------------------+------------------+
+| Sources | Config | Document | Fields | JSON| 🤖 Agentforce   |
++------------------+------------------------+------------------+
+| Analyzer Type    | +--------------------+ | I found 12       |
+| [Procurement ▼]  | |  CONTOSO LTD.     | | fields!          |
+| [Invoice ▼]      | |                    | |                  |
+|------------------|  |  INVOICE          | | ✓ 10 high conf.  |
+| Uploaded (1)     | |  [highlighted     | | ◐ 2 need review  |
+|                  | |   regions]        | |                  |
+| +---+ invoice    | |                    | | Would you like   |
+| |   | .pdf   🗑️ | +--------------------+ | to:              |
+| +---+ 1 page     |                        |                  |
+|                  | [Run Analysis] [Auto✓] | [Create Case]    |
+| [+ Add File]     |     < 1/1 >    🔍+ 🔍- | [Export JSON]    |
++------------------+------------------------+------------------+
+```
+
+### Step 4: Fields Tab View
+```
++------------------+------------------------+------------------+
+| Sources | Config | Document | Fields | JSON| 🤖 Agentforce   |
++------------------+------------------------+------------------+
+| Analyzer Type    | Hide missing [✓]       | The BillingAddr  |
+| [Procurement ▼]  |                        | has 60% conf.    |
+| [Invoice ▼]      | ● AmountDue    92.5%   | Want me to       |
+|------------------|   $150.00              | verify it?       |
+| Uploaded (1)     |------------------------| |                |
+|                  | ● Vendor       88.2%   | [Yes, verify]    |
+| +---+ invoice    |   Contoso Ltd.         | [Looks correct]  |
+| |   | .pdf   🗑️ |------------------------|                  |
+| +---+ 1 page     | ◐ BillingAddr  60.4%   |                  |
+|                  |   123 Bill St...       |                  |
+| [+ Add File]     |------------------------|                  |
+|                  | ● InvoiceDate  95.1%   |                  |
+|                  |   01/15/2024           |                  |
+|                  |------------------------|                  |
+|                  | Tokens: [1,000]        |                  |
++------------------+------------------------+------------------+
+```
+
+---
+
+## Data Model Additions
+
+### Extended CONTENT_TYPES
+```javascript
+var CONTENT_TYPES = {
+  // ... existing types unchanged ...
+
+  'document-analysis': {
+    id: 'document-analysis',
+    name: 'Document Analysis',
+    icon: '📄',
+    desc: 'Extract fields from invoices, receipts, forms & more',
+    sources: ['Uploaded Documents'],
+    outputs: ['Extracted Fields'],
+    udmo: null,
+    isAnalyzer: true
+  }
+};
+```
+
+### New Analyzer Configuration
+```javascript
+var ANALYZER_TYPES = {
+  'Procurement': {
+    name: 'Procurement',
+    icon: '📦',
+    subtypes: {
+      'invoice': {
+        name: 'Invoice',
+        fields: ['VendorName', 'InvoiceNumber', 'InvoiceDate', 'DueDate',
+                 'AmountDue', 'BillingAddress', 'LineItems', 'TotalAmount']
+      },
+      'receipt': {
+        name: 'Receipt',
+        fields: ['MerchantName', 'TransactionDate', 'Items', 'Subtotal',
+                 'Tax', 'Total', 'PaymentMethod']
+      },
+      'purchase-order': {
+        name: 'Purchase Order',
+        fields: ['PONumber', 'Vendor', 'ShipTo', 'Items', 'Total']
+      }
+    }
   },
-  Image: {
-    General: ['Photo Analysis', 'Screenshot', 'Diagram'],
-    Document: ['Scanned Document', 'Whiteboard', 'Business Card']
+  'Financial': {
+    name: 'Financial',
+    icon: '💰',
+    subtypes: {
+      'bank-statement': { name: 'Bank Statement', fields: [...] },
+      'tax-w2': { name: 'Tax Form W2', fields: [...] }
+    }
   },
-  Audio: {
-    CallCenter: ['Support Call', 'Sales Call'],
-    Meeting: ['Transcript', 'Summary']
-  },
-  Video: {
-    Meeting: ['Recording Analysis'],
-    Content: ['Video Summary', 'Scene Detection']
+  // ... more categories
+};
+```
+
+### Extracted Field Structure
+```javascript
+var SAMPLE_EXTRACTED_DATA = {
+  'invoice-sample': {
+    documentType: 'Invoice',
+    confidence: 0.89,
+    fields: [
+      { name: 'VendorName', value: 'Contoso Ltd.', confidence: 0.95, page: 1 },
+      { name: 'InvoiceNumber', value: 'INV-2024-001', confidence: 0.98, page: 1 },
+      { name: 'AmountDue', value: '$150.00', confidence: 0.92, page: 1 },
+      { name: 'BillingAddress', value: '123 Bill St, Redmond WA', confidence: 0.604, page: 1 },
+      // ...
+    ],
+    tokenUsage: { context: 1000, input: 850, output: 420 }
   }
 };
 ```
 
 ---
 
-### 3. Field Schema & Extraction Panel
+## State Management Updates
 
-Enhanced field display matching Azure's right panel:
-
-#### Field List Item Structure:
-```
-[Status Dot] FieldName  [p.N] [Table Icon] [Confidence%]  [Expand]
-             └── Extracted Value
-```
-
-#### Status Indicators:
-- Green (filled): High confidence (>80%)
-- Yellow (warning): Medium confidence (50-80%)
-- Red (empty): Low confidence or missing (<50%)
-- Blue (outlined): Optional field not found
-
-#### Field Types Support:
-- **String**: Text extraction with spans
-- **Number**: Numeric values with formatting
-- **Date**: Date parsing with normalization
-- **Currency**: Amount with currency code
-- **Address**: Structured address components
-- **Table**: Row/column data with headers
-- **Selection Mark**: Checkbox/radio detection
-
----
-
-### 4. Confidence Score Visualization
-
-Enhance existing confidence implementation:
+Extend existing state object:
 
 ```javascript
-// Field-level confidence with visual indicators
-{
-  fieldName: "BillingAddress",
-  value: "123 Bill St, Redmond WA, 98052",
-  confidence: 0.604,  // 60.40%
-  page: 1,
-  boundingBox: [x1, y1, x2, y2],
-  spans: [{offset: 234, length: 32}]
-}
-```
+var state = {
+  // Existing state (unchanged)
+  currentView: 'welcome',
+  selectedContentType: null,
+  currentRecordIndex: 0,
+  messages: [],
+  isTyping: false,
+  generatedData: null,
+  activeOutputTab: 0,
 
-#### Visual Elements:
-- Progress bar under each field
-- Color gradient: Red → Yellow → Green
-- Percentage display
-- Hover tooltip with detailed metrics
-
----
-
-### 5. Grounding Sources & Spans
-
-Implement Azure's span-based grounding:
-
-```javascript
-// Span reference for extracted content
-{
-  field: "AmountDue",
-  value: "$150.00",
-  sources: [
-    {
-      type: "document",
-      page: 1,
-      boundingBox: {
-        polygon: [[x1,y1], [x2,y2], [x3,y3], [x4,y4]]
-      },
-      span: {
-        offset: 1542,
-        length: 7
-      }
-    }
-  ]
-}
-```
-
-#### Interaction:
-- Click field → highlight region in document
-- Click region → scroll to field in panel
-- Hover → temporary highlight
-
----
-
-### 6. Token Usage Display
-
-Add token context indicator (matching Azure's "Tokens: [Context 1,000]"):
-
-```javascript
-// Token tracking per analysis
-{
-  inputTokens: 850,
-  outputTokens: 420,
-  contextWindow: 1000,
-  estimatedCost: "$0.0127"
-}
+  // New state for document analysis
+  analyzerMode: {
+    isActive: false,
+    category: null,        // 'Procurement', 'Financial', etc.
+    subtype: null,         // 'invoice', 'receipt', etc.
+    uploadedFiles: [],     // [{name, size, dataUrl, thumbnail}]
+    extractedFields: [],   // [{name, value, confidence, page}]
+    currentFileIndex: 0,
+    hideMissingFields: true,
+    autoRun: true
+  }
+};
 ```
 
 ---
 
-## New Data Models
+## Implementation Plan (Incremental)
 
-### Analyzer Definition
-```typescript
-interface Analyzer {
-  id: string;
-  name: string;
-  type: 'prebuilt' | 'custom';
-  baseAnalyzerId?: string;  // For custom analyzers
-  category: string;
-  subCategory: string;
-  fieldSchema: FieldDefinition[];
-  segmentationMode?: 'page' | 'section' | 'paragraph';
-  addOns?: ('layout' | 'barcodes' | 'figures')[];
-}
-```
+### Phase 1: Add Document Analysis Option
+- [ ] Add 'document-analysis' to CONTENT_TYPES
+- [ ] Show new quick option card in agent panel
+- [ ] Add analyzer type selection to Sources panel
+- [ ] Basic file upload zone (no analysis yet)
 
-### Analysis Result
-```typescript
-interface AnalysisResult {
-  analyzerId: string;
-  contentType: string;
-  pages: PageResult[];
-  fields: ExtractedField[];
-  tables?: TableResult[];
-  confidence: {
-    overall: number;
-    byField: Record<string, number>;
-  };
-  processingTime: number;
-  tokenUsage: TokenUsage;
-}
-```
+### Phase 2: File Upload & Preview
+- [ ] Implement drag-and-drop file upload
+- [ ] Show file thumbnail in Sources panel
+- [ ] Display document image in center panel
+- [ ] Add "Document" tab to output tabs
 
-### Extracted Field
-```typescript
-interface ExtractedField {
-  name: string;
-  value: any;
-  valueType: 'string' | 'number' | 'date' | 'currency' | 'address' | 'array';
-  confidence: number;
-  page: number;
-  boundingBox?: BoundingBox;
-  spans?: Span[];
-  generationMethod: 'extract' | 'classify' | 'generate';
-}
-```
-
----
-
-## UI Mockup: Analyzer Page
-
-```
-+------------------------------------------------------------------------+
-| Content Foundry  |  Content Understanding Studio      Home Discover Build |
-+------------------------------------------------------------------------+
-| <- Try prebuilt analyzer                                                |
-+------------------------------------------------------------------------+
-| [Document v] [Procurement v] [Invoice v]  Learn more about analyzers   |
-+------------------------------------------------------------------------+
-|                  |                              |  Fields    Result     |
-|  [Upload Icon]   |  +----------------------+   |  Hide missing [Toggle] |
-|                  |  |                      |   |                        |
-|  Drag & drop     |  |   CONTOSO LTD.      |   |  * AmountDue    p.1    |
-|  files here or   |  |                      |   |    [----------]        |
-|  Browse for files|  |   INVOICE           |   |                        |
-|                  |  |   [Highlighted      |   |  * BalanceForward p.1  |
-|  +-------------+ |  |    regions with     |   |    [--------]          |
-|  | Sample      | |  |    color coding]    |   |                        |
-|  | invoice.pdf | |  |                      |   |  * BillingAddress p.1  |
-|  +-------------+ |  |                      |   |    60.40%              |
-|                  |  +----------------------+   |    123 Bill St...      |
-|                  |                              |                        |
-|                  |  [Run analysis] Auto-run [x] |  * CustomerName  p.1   |
-|                  |                              |    72.20%              |
-|                  |     < 1 of 1 >   [+][-]     |    Microsoft Finance   |
-+------------------+------------------------------+------------------------+
-|                                          Tokens: [Context 1,000]         |
-+------------------------------------------------------------------------+
-```
-
----
-
-## Implementation Phases
-
-### Phase 1: Core Analyzer UI (Week 1-2)
-- [ ] Create `analyzer.html` with three-panel layout
-- [ ] Implement file upload with drag-and-drop
-- [ ] Add prebuilt analyzer dropdown hierarchy
-- [ ] Basic document preview (images first)
-
-### Phase 2: Field Extraction Display (Week 2-3)
-- [ ] Fields panel with confidence indicators
-- [ ] Status dot coloring based on confidence
-- [ ] Field value display with type formatting
+### Phase 3: Field Extraction Display
+- [ ] Add "Fields" tab with extracted fields list
+- [ ] Implement confidence indicators (●◐○)
+- [ ] Add confidence bars under each field
 - [ ] Hide missing fields toggle
 
-### Phase 3: Document Highlighting (Week 3-4)
-- [ ] Integrate PDF.js for PDF rendering
-- [ ] Implement bounding box overlay system
-- [ ] Click-to-highlight interaction
-- [ ] Color-coded field regions
-
-### Phase 4: Advanced Features (Week 4-5)
-- [ ] Custom analyzer builder
-- [ ] Knowledge base training examples
-- [ ] Categorization with routing
-- [ ] Result export functionality
+### Phase 4: Agent Integration
+- [ ] Agent guides through document type selection
+- [ ] Agent summarizes extraction results
+- [ ] Suggested actions (Create Case, Export, etc.)
+- [ ] Agent can answer questions about extracted data
 
 ---
 
-## API Endpoints (New)
+## Files to Modify
 
-```
-POST /api/analyzer/analyze
-  - Upload file and run analysis
-  - Returns: AnalysisResult
+### Modified Only
+- `project2.html` - All changes in single file
+  - Add new CSS styles (append to existing)
+  - Add ANALYZER_TYPES data structure
+  - Extend CONTENT_TYPES with 'document-analysis'
+  - Add file upload rendering functions
+  - Add extracted fields rendering functions
+  - Extend state management
+  - Update agent conversation flows
 
-GET /api/analyzer/prebuilt
-  - List available prebuilt analyzers
-  - Returns: Analyzer[]
-
-POST /api/analyzer/custom
-  - Create custom analyzer from base
-  - Body: {baseAnalyzerId, fieldSchema, name}
-  - Returns: Analyzer
-
-GET /api/analyzer/:id/schema
-  - Get field schema for analyzer
-  - Returns: FieldDefinition[]
-```
+### No New Files Required
+All changes contained within project2.html to maintain simplicity.
 
 ---
 
-## Integration with Existing Features
+## Summary: What Changes vs. What Stays
 
-### DMO Bridge
-- Analysis results can populate DMO records
-- Field mappings from analyzer output to DMO fields
-- Enable pipeline triggers on analysis completion
-
-### Agent Integration
-- Agent can trigger document analysis
-- Natural language field extraction queries
-- "Analyze this invoice and extract the total"
-
-### Pipeline Connection
-- Use extracted fields as pipeline inputs
-- Chain analysis → transformation → generation
-- Batch document processing
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Welcome page | ✅ Unchanged | Add one new quick option |
+| Quick options | ✅ Unchanged | Keep all 5 existing |
+| Agent panel | ✅ Enhanced | New conversation flows for docs |
+| Sources panel | ✅ Enhanced | Add file upload zone |
+| Output tabs | ✅ Enhanced | Add Document & Fields tabs |
+| Three-panel layout | ✅ Unchanged | Same structure |
+| Existing content types | ✅ Unchanged | All work as before |
+| DMO data sources | ✅ Unchanged | Still available |
+| Chat interface | ✅ Unchanged | Same interaction model |
 
 ---
 
-## Technical Requirements
-
-### Frontend Dependencies
-- PDF.js for document rendering
-- Canvas API for bounding box overlays
-- FileReader API for uploads
-- Intersection Observer for lazy loading
-
-### Backend Dependencies
-- Multer for file uploads
-- Sharp for image processing
-- pdf-parse for PDF text extraction
-- Document AI SDK (Azure/Google) for advanced extraction
-
----
-
-## Success Metrics
-
-1. **Document Processing Time**: < 5 seconds for single page
-2. **Field Extraction Accuracy**: > 85% for prebuilt analyzers
-3. **UI Responsiveness**: < 100ms interaction latency
-4. **User Adoption**: 50% of users try analyzer within first session
-
----
-
-## Files to Create/Modify
-
-### New Files
-- `analyzer.html` - Main analyzer UI
-- `src/services/analyzer/` - Analyzer service module
-- `src/api/routes/analyzer.ts` - API endpoints
-- `src/types/analyzer.ts` - TypeScript interfaces
-
-### Modified Files
-- `index.html` - Add navigation link to analyzer
-- `project2.html` - Add analyzer integration option
-- `src/app.ts` - Register new routes
-
----
-
-## Next Steps
-
-1. Review and approve this proposal
-2. Create detailed technical design for Phase 1
-3. Set up development environment with PDF.js
-4. Begin implementation of `analyzer.html`
-
----
-
-*Proposal Version: 1.0*
+*Proposal Version: 2.0 (Incremental Approach)*
 *Date: 2024-01-20*
 *Author: Content Foundry Team*
