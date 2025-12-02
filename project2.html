@@ -674,6 +674,66 @@
     .template-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
     .template-suggestion { padding: 6px 12px; background: #f3f3f3; border-radius: 16px; font-size: 11px; color: #3e3e3c; cursor: pointer; }
     .template-suggestion:hover { background: #e8f4fc; color: #0176d3; }
+
+    /* ============ OUTCOME-BASED UI ============ */
+    /* Actions Panel (Right Panel) */
+    .actions-panel { padding: 16px; }
+    .actions-section { margin-bottom: 20px; }
+    .actions-section-title { font-size: 10px; text-transform: uppercase; color: #706e6b; margin-bottom: 10px; font-weight: 600; letter-spacing: 0.5px; }
+    .action-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 6px; }
+    .action-item:hover { background: #f3f3f3; }
+    .action-item.primary { background: #9333ea; color: white; }
+    .action-item.primary:hover { background: #7e22ce; }
+    .action-item-icon { font-size: 18px; width: 24px; text-align: center; }
+    .action-item-text { flex: 1; }
+    .action-item-label { font-size: 13px; font-weight: 500; }
+    .action-item-desc { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+    .action-divider { height: 1px; background: #e5e5e5; margin: 16px 0; }
+
+    .config-summary-box { background: #f9f9f9; border-radius: 8px; padding: 14px; margin-top: 12px; }
+    .config-summary-title { font-size: 11px; font-weight: 600; color: #706e6b; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .config-summary-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #3e3e3c; margin-bottom: 6px; }
+    .config-summary-item:last-child { margin-bottom: 0; }
+    .config-summary-icon { font-size: 14px; width: 20px; text-align: center; }
+    .config-summary-value { color: #0176d3; font-weight: 500; }
+
+    /* Outcome Cards (Center Panel Home) */
+    .outcome-home { padding: 40px 20px; max-width: 900px; margin: 0 auto; }
+    .outcome-home-title { font-size: 24px; font-weight: 600; color: #032d60; margin-bottom: 8px; text-align: center; }
+    .outcome-home-subtitle { font-size: 14px; color: #706e6b; margin-bottom: 32px; text-align: center; }
+
+    .outcome-category { margin-bottom: 28px; }
+    .outcome-category-title { font-size: 12px; font-weight: 600; color: #706e6b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; padding-left: 4px; }
+    .outcome-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+
+    .outcome-card { background: white; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; }
+    .outcome-card:hover { border-color: #0176d3; box-shadow: 0 4px 12px rgba(1,118,211,0.15); transform: translateY(-2px); }
+    .outcome-card-icon { font-size: 32px; margin-bottom: 12px; }
+    .outcome-card-name { font-size: 15px; font-weight: 600; color: #032d60; margin-bottom: 6px; }
+    .outcome-card-desc { font-size: 13px; color: #706e6b; line-height: 1.5; flex: 1; }
+    .outcome-card-meta { display: flex; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f3f3f3; }
+    .outcome-card-badge { font-size: 10px; padding: 3px 8px; background: #f3f3f3; border-radius: 10px; color: #706e6b; }
+    .outcome-card-badge.service { background: #e8f4fc; color: #0176d3; }
+    .outcome-card-badge.sales { background: #e8f4e8; color: #2e844a; }
+    .outcome-card-badge.marketing { background: #fce8f3; color: #c41c7f; }
+
+    .outcome-card.create-new { border-style: dashed; background: #fafafa; }
+    .outcome-card.create-new:hover { border-color: #9333ea; background: #faf5ff; }
+    .outcome-card.create-new .outcome-card-icon { color: #9333ea; }
+    .outcome-card.create-new .outcome-card-name { color: #9333ea; }
+
+    /* UDMO Results Cards */
+    .udmo-results-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e5e5; }
+    .udmo-results-title { font-size: 13px; font-weight: 600; color: #3e3e3c; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .udmo-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .udmo-result-card { background: #f9f9f9; border: 1px solid #e5e5e5; border-radius: 8px; padding: 14px; cursor: pointer; transition: all 0.15s; }
+    .udmo-result-card:hover { border-color: #9333ea; background: #faf5ff; }
+    .udmo-result-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .udmo-result-card-icon { font-size: 20px; }
+    .udmo-result-card-name { font-size: 13px; font-weight: 500; color: #3e3e3c; }
+    .udmo-result-card-actions { display: flex; gap: 8px; }
+    .udmo-result-action { font-size: 11px; color: #0176d3; cursor: pointer; padding: 4px 8px; border-radius: 4px; background: white; border: 1px solid #e5e5e5; }
+    .udmo-result-action:hover { background: #e8f4fc; border-color: #0176d3; }
   </style>
 </head>
 <body>
@@ -758,15 +818,24 @@
       }
     };
 
+    // Content type categories (inspired by Azure Content Understanding)
+    var CONTENT_CATEGORIES = {
+      'extract': { name: 'Extract', desc: 'Pull structured data from content' },
+      'summarize': { name: 'Summarize', desc: 'Create concise summaries' },
+      'generate': { name: 'Generate', desc: 'Create new content' },
+      'analyze': { name: 'Analyze', desc: 'Understand and classify content' }
+    };
+
     var CONTENT_TYPES = {
       'case-summary': {
         id: 'case-summary',
         name: 'Case Triage',
-        icon: '🤖',
-        desc: 'Classify cases with sentiment, priority + generate draft responses',
+        icon: '🔍',
+        category: 'analyze',
+        cloud: 'service',
+        desc: 'Classify cases by sentiment and priority, then generate agent notes and draft responses',
         sources: ['Cases', 'Email Messages'],
         outputs: ['Summary', 'Priority', 'Sentiment', 'Category'],
-        // Multiple UDMOs for Case Triage
         udmos: [
           { id: 'InternalNote__udmo', name: 'Agent Notes', primary: true },
           { id: 'DraftResponse__udmo', name: 'Draft Email' }
@@ -774,12 +843,13 @@
       },
       'kb-article': {
         id: 'kb-article',
-        name: 'KB Generator',
+        name: 'Knowledge Article',
         icon: '📚',
-        desc: 'Create knowledge base articles from resolved cases',
+        category: 'generate',
+        cloud: 'service',
+        desc: 'Transform resolved cases into searchable knowledge base articles',
         sources: ['Resolved Cases'],
         outputs: ['Title', 'Problem', 'Solution', 'Category'],
-        // Multiple UDMOs for KB Generation
         udmos: [
           { id: 'KnowledgeArticle__udmo', name: 'Full Article', primary: true },
           { id: 'FAQDocument__udmo', name: 'FAQ Format' }
@@ -787,12 +857,13 @@
       },
       'email-response': {
         id: 'email-response',
-        name: 'Email Follow-Up',
+        name: 'Email Response',
         icon: '✉️',
-        desc: 'Generate personalized follow-up emails + proposals',
+        category: 'generate',
+        cloud: 'sales',
+        desc: 'Generate personalized follow-up emails, proposals, and meeting agendas',
         sources: ['Cases', 'Email Messages', 'Contacts', 'Opportunities'],
         outputs: ['Subject', 'Tone', 'Confidence', 'Safety'],
-        // Multiple UDMOs for Email Follow-Up
         udmos: [
           { id: 'EmailDraft__udmo', name: 'Sales Email', primary: true },
           { id: 'ProposalDocument__udmo', name: 'Proposal' },
@@ -801,9 +872,11 @@
       },
       'call-summary': {
         id: 'call-summary',
-        name: 'Call Summaries',
+        name: 'Call Summary',
         icon: '📞',
-        desc: 'Summarize sales and support calls',
+        category: 'summarize',
+        cloud: 'sales',
+        desc: 'Summarize sales and support calls with key points and action items',
         sources: ['Voice Calls', 'Contacts', 'Opportunities'],
         outputs: ['Summary', 'Key Points', 'Action Items', 'Sentiment'],
         udmos: [
@@ -812,12 +885,49 @@
       },
       'lead-enrichment': {
         id: 'lead-enrichment',
-        name: 'Lead Enrichment',
+        name: 'Lead Scoring',
         icon: '🎯',
-        desc: 'Score and enrich leads with insights',
+        category: 'analyze',
+        cloud: 'sales',
+        desc: 'Score and enrich leads based on engagement signals',
         sources: ['Leads', 'Web Activity', 'Email Activity'],
         outputs: ['Score', 'Fit Rating', 'Engagement Level', 'Recommended Actions'],
         udmos: []
+      },
+      'contract-extract': {
+        id: 'contract-extract',
+        name: 'Contract Extraction',
+        icon: '📄',
+        category: 'extract',
+        cloud: 'sales',
+        desc: 'Extract key terms, dates, and clauses from contracts',
+        sources: ['Opportunities', 'Contacts'],
+        outputs: ['Key Terms', 'Effective Date', 'Expiration', 'Renewal Terms'],
+        udmos: []
+      },
+      'case-deflection': {
+        id: 'case-deflection',
+        name: 'Case Deflection',
+        icon: '🛡️',
+        category: 'analyze',
+        cloud: 'service',
+        desc: 'Match incoming cases to existing knowledge articles',
+        sources: ['Cases', 'Resolved Cases'],
+        outputs: ['Match Score', 'Suggested Article', 'Confidence', 'Deflection Rate'],
+        udmos: []
+      },
+      'meeting-notes': {
+        id: 'meeting-notes',
+        name: 'Meeting Notes',
+        icon: '📝',
+        category: 'summarize',
+        cloud: 'sales',
+        desc: 'Generate structured meeting notes with decisions and follow-ups',
+        sources: ['Voice Calls', 'Contacts', 'Opportunities'],
+        outputs: ['Attendees', 'Decisions', 'Action Items', 'Next Steps'],
+        udmos: [
+          { id: 'MeetingAgenda__udmo', name: 'Meeting Summary', primary: true }
+        ]
       }
     };
 
@@ -846,6 +956,18 @@
       'lead-enrichment': [
         { id: 'LEAD-001', name: 'David Wilson', company: 'New Prospect Inc', title: 'Director of IT', source: 'Web', status: 'Working' },
         { id: 'LEAD-002', name: 'Emily Davis', company: 'Startup Co', title: 'CEO', source: 'Referral', status: 'New' }
+      ],
+      'contract-extract': [
+        { id: 'CONTRACT-001', name: 'Enterprise License Agreement', client: 'Acme Corp', type: 'Subscription', value: '$125,000' },
+        { id: 'CONTRACT-002', name: 'Professional Services Agreement', client: 'TechStart Inc', type: 'Services', value: '$45,000' }
+      ],
+      'case-deflection': [
+        { id: 'CASE-101', title: 'How to reset password', channel: 'Web', priority: 'Low' },
+        { id: 'CASE-102', title: 'API rate limit exceeded', channel: 'Email', priority: 'Medium' }
+      ],
+      'meeting-notes': [
+        { id: 'MEET-001', title: 'Q1 Planning Session', attendees: 'John, Sarah, Mike', duration: '45:00', date: '2024-01-20' },
+        { id: 'MEET-002', title: 'Product Demo - Acme Corp', attendees: 'Sales Team, Acme CTO', duration: '30:00', date: '2024-01-22' }
       ]
     };
 
@@ -1940,37 +2062,116 @@
       render();
     }
 
+    // Render outcome-driven home screen with categorized use cases
+    function renderOutcomeHome() {
+      var html = '<div class="outcome-home">';
+      html += '<div class="outcome-home-title">What would you like to create?</div>';
+      html += '<div class="outcome-home-subtitle">Select a use case to get started, or create a custom template</div>';
+
+      var allTemplates = Object.assign({}, CONTENT_TYPES, customTemplates);
+
+      // Group by category
+      var categories = {
+        'analyze': { name: 'Analyze', icon: '🔍', desc: 'Classify and understand content', items: [] },
+        'extract': { name: 'Extract', icon: '📋', desc: 'Pull structured data from content', items: [] },
+        'summarize': { name: 'Summarize', icon: '📝', desc: 'Create concise summaries', items: [] },
+        'generate': { name: 'Generate', icon: '✨', desc: 'Create new content', items: [] }
+      };
+
+      // Sort templates into categories
+      for (var key in allTemplates) {
+        var ct = allTemplates[key];
+        var cat = ct.category || 'generate';
+        if (categories[cat]) {
+          categories[cat].items.push({ key: key, ct: ct });
+        }
+      }
+
+      // Render each category
+      for (var catKey in categories) {
+        var category = categories[catKey];
+        if (category.items.length === 0) continue;
+
+        html += '<div class="outcome-category">';
+        html += '<div class="outcome-category-title">' + category.icon + ' ' + category.name + '</div>';
+        html += '<div class="outcome-grid">';
+
+        category.items.forEach(function(item) {
+          var ct = item.ct;
+          var cloudClass = ct.cloud || 'service';
+          var cloudName = ct.cloud === 'sales' ? 'Sales Cloud' : (ct.cloud === 'marketing' ? 'Marketing Cloud' : 'Service Cloud');
+
+          html += '<div class="outcome-card" onclick="selectUseCaseAgentic(\'' + item.key + '\')">';
+          html += '<div class="outcome-card-icon">' + ct.icon + '</div>';
+          html += '<div class="outcome-card-name">' + ct.name + '</div>';
+          html += '<div class="outcome-card-desc">' + ct.desc + '</div>';
+          html += '<div class="outcome-card-meta">';
+          html += '<span class="outcome-card-badge ' + cloudClass + '">' + cloudName + '</span>';
+          if (ct.udmos && ct.udmos.length > 0) {
+            html += '<span class="outcome-card-badge">' + ct.udmos.length + ' doc' + (ct.udmos.length > 1 ? 's' : '') + '</span>';
+          }
+          html += '</div>';
+          html += '</div>';
+        });
+
+        html += '</div>'; // close outcome-grid
+        html += '</div>'; // close outcome-category
+      }
+
+      // Create Custom Template card
+      html += '<div class="outcome-category">';
+      html += '<div class="outcome-category-title">🛠️ Custom</div>';
+      html += '<div class="outcome-grid">';
+      html += '<div class="outcome-card create-new" onclick="openTemplateBuilder()">';
+      html += '<div class="outcome-card-icon">✨</div>';
+      html += '<div class="outcome-card-name">Create Custom Template</div>';
+      html += '<div class="outcome-card-desc">Build your own use case with custom sources, fields, and document outputs</div>';
+      html += '</div>';
+      html += '</div>';
+      html += '</div>';
+
+      html += '</div>'; // close outcome-home
+      return html;
+    }
+
     function renderCenterPanel() {
       var contentType = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
 
+      // If no content type selected, show outcome-driven home screen
+      if (!contentType) {
+        return '<div class="center-panel">' +
+          '<div class="output-content" style="overflow-y:auto;">' +
+          renderOutcomeHome() +
+          '</div>' +
+          '</div>';
+      }
+
       // Build tabs - Use SELECTED outputs (which reflect chat changes), not just contentType defaults
       var tabsHtml = '';
-      if (contentType) {
-        // DMO output tabs - use selected output fields (includes fields added via chat)
-        var selectedFields = getSelectedOutputFields(state.selectedContentType);
-        var dmoTabs = selectedFields.slice(0, 5); // Show up to 5 tabs
+      // DMO output tabs - use selected output fields (includes fields added via chat)
+      var selectedFields = getSelectedOutputFields(state.selectedContentType);
+      var dmoTabs = selectedFields.slice(0, 5); // Show up to 5 tabs
 
-        var icons = { 'Summary': '📝', 'Priority': '🎯', 'Sentiment': '💭', 'Title': '📰', 'Problem': '❗', 'Solution': '✅', 'Subject': '📧', 'Tone': '🎭', 'Confidence': '📊', 'Safety': '🛡️', 'Key Points': '📌', 'Action Items': '✓', 'Score': '💯', 'Category': '🏷️', 'Recommendation': '💡', 'NextSteps': '➡️' };
+      var icons = { 'Summary': '📝', 'Priority': '🎯', 'Sentiment': '💭', 'Title': '📰', 'Problem': '❗', 'Solution': '✅', 'Subject': '📧', 'Tone': '🎭', 'Confidence': '📊', 'Safety': '🛡️', 'Key Points': '📌', 'Action Items': '✓', 'Score': '💯', 'Category': '🏷️', 'Recommendation': '💡', 'NextSteps': '➡️', 'Key Terms': '📋', 'Effective Date': '📅', 'Expiration': '⏰', 'Renewal Terms': '🔄', 'Match Score': '🎯', 'Suggested Article': '📚', 'Deflection Rate': '📉', 'Attendees': '👥', 'Decisions': '✅', 'Next Steps': '➡️' };
 
-        dmoTabs.forEach(function(tab, i) {
-          tabsHtml += '<button class="output-tab' + (state.activeOutputTab === i ? ' active' : '') + '" onclick="setActiveTab(' + i + ')">' +
-            '<span class="output-tab-icon">' + (icons[tab] || '📄') + '</span>' + tab +
+      dmoTabs.forEach(function(tab, i) {
+        tabsHtml += '<button class="output-tab' + (state.activeOutputTab === i ? ' active' : '') + '" onclick="setActiveTab(' + i + ')">' +
+          '<span class="output-tab-icon">' + (icons[tab] || '📄') + '</span>' + tab +
+          '</button>';
+      });
+
+      // UDMO output tabs - use selected UDMOs (includes docs added via chat)
+      var selectedUDMOs = getSelectedOutputUDMOs(state.selectedContentType);
+      if (selectedUDMOs.length > 0) {
+        selectedUDMOs.forEach(function(udmoId, i) {
+          var udmoInfo = UDMO_CATALOG[udmoId] || {};
+          var tabIndex = dmoTabs.length + i;
+          var isFirst = i === 0;
+          tabsHtml += '<button class="output-tab' + (isFirst ? ' udmo-tab' : '') + (state.activeOutputTab === tabIndex ? ' active' : '') + '" onclick="setActiveTab(' + tabIndex + ')">' +
+            '<span class="output-tab-icon">' + (udmoInfo.icon || '📄') + '</span>' + (udmoInfo.name || udmoId) +
+            '<span class="udmo-type-badge">' + (udmoInfo.contentType || 'Text') + '</span>' +
             '</button>';
         });
-
-        // UDMO output tabs - use selected UDMOs (includes docs added via chat)
-        var selectedUDMOs = getSelectedOutputUDMOs(state.selectedContentType);
-        if (selectedUDMOs.length > 0) {
-          selectedUDMOs.forEach(function(udmoId, i) {
-            var udmoInfo = UDMO_CATALOG[udmoId] || {};
-            var tabIndex = dmoTabs.length + i;
-            var isFirst = i === 0;
-            tabsHtml += '<button class="output-tab' + (isFirst ? ' udmo-tab' : '') + (state.activeOutputTab === tabIndex ? ' active' : '') + '" onclick="setActiveTab(' + tabIndex + ')">' +
-              '<span class="output-tab-icon">' + (udmoInfo.icon || '📄') + '</span>' + (udmoInfo.name || udmoId) +
-              '<span class="udmo-type-badge">' + (udmoInfo.contentType || 'Text') + '</span>' +
-              '</button>';
-          });
-        }
       }
 
       var outputBodyHtml = '';
@@ -1978,7 +2179,7 @@
         outputBodyHtml = '<div class="output-placeholder">' +
           '<div class="output-placeholder-icon">✨</div>' +
           '<div class="output-placeholder-text">No content generated yet</div>' +
-          '<div class="output-placeholder-hint">Select a record and click Run to generate</div>' +
+          '<div class="output-placeholder-hint">Click Run in the right panel to generate</div>' +
           '</div>';
       } else if (state.currentView === 'generating') {
         outputBodyHtml = '<div class="output-placeholder">' +
@@ -2258,9 +2459,65 @@
       if (state.activeOutputTab === 0) {
         html += renderVOCPanel(data);
         html += renderAlternativeReplies(data);
+
+        // Add UDMO results section with clickable document cards
+        if (selectedUDMOs.length > 0 && data.__udmo) {
+          html += '<div class="udmo-results-section">';
+          html += '<div class="udmo-results-title">📄 Generated Documents</div>';
+          html += '<div class="udmo-results-grid">';
+
+          selectedUDMOs.forEach(function(udmoId, idx) {
+            var udmoInfo = UDMO_CATALOG[udmoId] || {};
+            var udmoData = data.__udmo[udmoId];
+            var tabIndex = dmoTabCount + idx;
+
+            html += '<div class="udmo-result-card" onclick="setActiveTab(' + tabIndex + ')">';
+            html += '<div class="udmo-result-card-header">';
+            html += '<span class="udmo-result-card-icon">' + (udmoInfo.icon || '📄') + '</span>';
+            html += '<span class="udmo-result-card-name">' + (udmoInfo.name || udmoId) + '</span>';
+            html += '</div>';
+            html += '<div class="udmo-result-card-actions">';
+            html += '<span class="udmo-result-action" onclick="event.stopPropagation();setActiveTab(' + tabIndex + ')">View</span>';
+            html += '<span class="udmo-result-action" onclick="event.stopPropagation();copyUDMOContent(\'' + udmoId + '\', ' + state.currentRecordIndex + ')">Copy</span>';
+            html += '</div>';
+            html += '</div>';
+          });
+
+          html += '</div>'; // close udmo-results-grid
+          html += '</div>'; // close udmo-results-section
+        }
       }
 
       return html;
+    }
+
+    function copyUDMOContent(udmoId, recordIndex) {
+      var outputs = GENERATED_OUTPUTS[state.selectedContentType];
+      if (!outputs || !outputs[recordIndex]) return;
+      var data = outputs[recordIndex];
+      if (!data.__udmo || !data.__udmo[udmoId]) return;
+
+      var udmoData = data.__udmo[udmoId];
+      var text = '';
+
+      // Convert UDMO to text based on type
+      if (udmoId.indexOf('Email') > -1 || udmoId.indexOf('Draft') > -1) {
+        text = 'To: ' + (udmoData.to || '') + '\n';
+        if (udmoData.cc) text += 'Cc: ' + udmoData.cc + '\n';
+        text += 'Subject: ' + (udmoData.subject || '') + '\n\n';
+        text += (udmoData.greeting || '') + '\n\n';
+        text += (udmoData.body || '') + '\n\n';
+        text += (udmoData.closing || '') + '\n';
+        text += (udmoData.signature || '');
+      } else if (udmoId.indexOf('Note') > -1) {
+        text = (udmoData.title || '') + '\n\n' + (udmoData.content || '');
+      } else {
+        text = JSON.stringify(udmoData, null, 2);
+      }
+
+      navigator.clipboard.writeText(text).then(function() {
+        alert('Copied to clipboard!');
+      });
     }
 
     // UDMO Renderers - Type-specific rendering for unstructured content
@@ -3629,119 +3886,141 @@
     function renderRightPanel() {
       var html = '';
       var currentCT = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
-      var allTemplates = Object.assign({}, CONTENT_TYPES, customTemplates);
 
-      // State 0: Template creation mode
+      // Template creation mode - still uses modal
       if (state.templateCreatingInPanel) {
         html += renderTemplateCreationChat();
+        return '<div class="right-panel">' +
+          '<div class="agent-header">' +
+          '<div class="agent-title">✨ New Template</div>' +
+          '<div class="agent-actions">' +
+          '<button class="agent-action-btn" onclick="cancelTemplateCreation()" title="Cancel">✕</button>' +
+          '</div>' +
+          '</div>' +
+          '<div class="agent-body">' + html + '</div>' +
+          '</div>';
       }
-      // State 1: No use case selected - Agentic welcome
-      else if (!currentCT) {
-        html += '<div class="agent-chat-area">';
-        html += '<div class="agent-message">';
-        html += '<div class="agent-avatar">⚡</div>';
-        html += '<div class="agent-bubble">';
-        html += '<strong>Hi! I\'m Agentforce for Content Foundry.</strong><br><br>';
-        html += 'Pick a use case below, or describe what content you\'d like to generate.';
+
+      // Actions Panel - Simple list of options
+      html += '<div class="actions-panel">';
+
+      if (currentCT) {
+        // Primary Action: Run
+        html += '<div class="actions-section">';
+        html += '<div class="action-item primary" onclick="runGeneration()">';
+        html += '<span class="action-item-icon">' + (state.currentView === 'generating' ? '⏳' : '▶') + '</span>';
+        html += '<div class="action-item-text">';
+        html += '<div class="action-item-label">' + (state.currentView === 'generating' ? 'Running...' : 'Run Generation') + '</div>';
+        html += '<div class="action-item-desc">Process all selected records</div>';
         html += '</div>';
         html += '</div>';
         html += '</div>';
 
-        // Use case options
-        html += '<div class="use-case-options">';
-        for (var key in allTemplates) {
-          var ct = allTemplates[key];
-          html += '<div class="use-case-option" onclick="selectUseCaseAgentic(\'' + key + '\')">';
-          html += '<span class="use-case-option-icon">' + ct.icon + '</span>';
-          html += '<div class="use-case-option-info">';
-          html += '<div class="use-case-option-name">' + ct.name + '</div>';
-          html += '<div class="use-case-option-desc">' + ct.desc + '</div>';
-          html += '</div>';
-          html += '<span class="use-case-option-arrow">›</span>';
-          html += '</div>';
-        }
+        html += '<div class="action-divider"></div>';
 
-        // Create new option
-        html += '<div class="use-case-option create-new" onclick="openTemplateBuilder()">';
-        html += '<span class="use-case-option-icon">✨</span>';
-        html += '<div class="use-case-option-info">';
-        html += '<div class="use-case-option-name">Create New Template</div>';
-        html += '<div class="use-case-option-desc">Build a custom use case</div>';
-        html += '</div>';
-        html += '<span class="use-case-option-arrow">›</span>';
+        // Configuration Actions
+        html += '<div class="actions-section">';
+        html += '<div class="actions-section-title">Configuration</div>';
+
+        html += '<div class="action-item" onclick="setLeftPanelTab(\'sources\')">';
+        html += '<span class="action-item-icon">📥</span>';
+        html += '<div class="action-item-text">';
+        html += '<div class="action-item-label">Input Sources</div>';
+        html += '<div class="action-item-desc">Configure data sources</div>';
         html += '</div>';
         html += '</div>';
 
-      } else {
-        // State 2: Use case selected - Conversational config (no card/modal)
+        html += '<div class="action-item" onclick="setLeftPanelTab(\'output\')">';
+        html += '<span class="action-item-icon">📤</span>';
+        html += '<div class="action-item-text">';
+        html += '<div class="action-item-label">Output Settings</div>';
+        html += '<div class="action-item-desc">Fields and documents</div>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div class="action-item" onclick="setLeftPanelTab(\'records\')">';
+        html += '<span class="action-item-icon">📋</span>';
+        html += '<div class="action-item-text">';
+        html += '<div class="action-item-label">Records</div>';
+        html += '<div class="action-item-desc">View input records</div>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '</div>';
+
+        html += '<div class="action-divider"></div>';
+
+        // Other Actions
+        html += '<div class="actions-section">';
+        html += '<div class="actions-section-title">Other</div>';
+
+        html += '<div class="action-item" onclick="resetToWelcome()">';
+        html += '<span class="action-item-icon">🔄</span>';
+        html += '<div class="action-item-text">';
+        html += '<div class="action-item-label">Change Use Case</div>';
+        html += '<div class="action-item-desc">Select different template</div>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div class="action-item" onclick="openTemplateBuilder()">';
+        html += '<span class="action-item-icon">💾</span>';
+        html += '<div class="action-item-text">';
+        html += '<div class="action-item-label">Save as Template</div>';
+        html += '<div class="action-item-desc">Reuse this configuration</div>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '</div>';
+
+        // Config Summary
         var records = SAMPLE_DATA[state.selectedContentType] || [];
         var outputFields = getSelectedOutputFields(state.selectedContentType);
         var udmos = getSelectedOutputUDMOs(state.selectedContentType);
+        var sources = getSourcesForTypeWithDMO(state.selectedContentType);
 
-        html += '<div class="agent-chat-area">';
-
-        // Initial agent message - conversational with config info
-        html += '<div class="agent-message">';
-        html += '<div class="agent-avatar">⚡</div>';
-        html += '<div class="agent-bubble">';
-        html += '<strong>' + currentCT.icon + ' ' + currentCT.name + ' is ready!</strong><br>';
-        html += '<span class="config-inline">' + records.length + ' records • ' + outputFields.length + ' fields • ' + udmos.length + ' docs</span><br><br>';
-        html += 'What would you like to do?';
-        html += '</div>';
+        html += '<div class="config-summary-box">';
+        html += '<div class="config-summary-title">📊 Current Configuration</div>';
+        html += '<div class="config-summary-item"><span class="config-summary-icon">📁</span> Sources: <span class="config-summary-value">' + sources.length + '</span></div>';
+        html += '<div class="config-summary-item"><span class="config-summary-icon">📋</span> Records: <span class="config-summary-value">' + records.length + '</span></div>';
+        html += '<div class="config-summary-item"><span class="config-summary-icon">📝</span> Output Fields: <span class="config-summary-value">' + outputFields.length + '</span></div>';
+        html += '<div class="config-summary-item"><span class="config-summary-icon">📄</span> Documents: <span class="config-summary-value">' + udmos.length + '</span></div>';
         html += '</div>';
 
-        // Show chat history
-        if (state.setupMessages && state.setupMessages.length > 0) {
-          state.setupMessages.forEach(function(msg) {
-            html += '<div class="agent-message ' + msg.role + '">';
-            if (msg.role === 'user') {
-              html += '<div class="user-bubble">' + esc(msg.content) + '</div>';
-            } else {
-              html += '<div class="agent-avatar">⚡</div>';
-              html += '<div class="agent-bubble">' + msg.content + '</div>';
-            }
-            html += '</div>';
-          });
-        }
+      } else {
+        // No use case selected - show quick tips
+        html += '<div class="actions-section">';
+        html += '<div class="actions-section-title">Getting Started</div>';
+        html += '<p style="font-size:13px;color:#706e6b;line-height:1.6;margin-bottom:16px;">';
+        html += 'Select a use case from the center panel to get started. Each use case is pre-configured with:';
+        html += '</p>';
+        html += '<div class="config-summary-item"><span class="config-summary-icon">📥</span> Input sources (CRM data)</div>';
+        html += '<div class="config-summary-item"><span class="config-summary-icon">📤</span> Output fields (structured)</div>';
+        html += '<div class="config-summary-item"><span class="config-summary-icon">📄</span> Documents (emails, articles)</div>';
         html += '</div>';
 
-        // Action chips - all peer level, Run is just another action
-        html += '<div class="quick-suggestions">';
-        html += '<div class="quick-suggestion run-chip" onclick="runGeneration()">' + (state.currentView === 'generating' ? '⏳ Running...' : '▶ Run') + '</div>';
-        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Configure\')">Configure</div>';
-        html += '<div class="quick-suggestion" onclick="openFieldSelectorFromChat()">Add field</div>';
-        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Add document\')">Add document</div>';
-        html += '<div class="quick-suggestion" onclick="applyQuickSuggestion(\'Show config\')">Show config</div>';
-        html += '<div class="quick-suggestion" onclick="resetToWelcome()">Change use case</div>';
+        html += '<div class="action-divider"></div>';
+
+        html += '<div class="actions-section">';
+        html += '<div class="action-item" onclick="openTemplateBuilder()">';
+        html += '<span class="action-item-icon">✨</span>';
+        html += '<div class="action-item-text">';
+        html += '<div class="action-item-label">Create Custom Template</div>';
+        html += '<div class="action-item-desc">Build your own use case</div>';
+        html += '</div>';
+        html += '</div>';
         html += '</div>';
       }
 
-      // Chat input - hide until mode is chosen for template creation
-      var showInput = !state.templateCreatingInPanel || state.templateModeChosen;
-      var placeholder = state.templateCreatingInPanel
-        ? 'Type template name or command...'
-        : (currentCT ? 'Ask me to add fields, change outputs...' : 'Describe what you want to generate...');
-
-      var inputHandler = state.templateCreatingInPanel ? 'sendTemplateMessage()' : 'sendSetupMessage()';
-      var resetAction = state.templateCreatingInPanel ? 'cancelTemplateCreation()' : 'resetToWelcome()';
-
-      var inputHtml = showInput
-        ? '<div class="agent-input"><div class="chat-input-container">' +
-          '<input type="text" class="chat-input-field" id="setupInput" placeholder="' + placeholder + '" onkeydown="if(event.key===\'Enter\')' + inputHandler + '">' +
-          '<button class="chat-send-btn" onclick="' + inputHandler + '">➤</button>' +
-          '</div></div>'
-        : '';
+      html += '</div>'; // close actions-panel
 
       return '<div class="right-panel">' +
         '<div class="agent-header">' +
-        '<div class="agent-title">⚡ Agentforce</div>' +
+        '<div class="agent-title">⚡ Actions</div>' +
         '<div class="agent-actions">' +
-        (state.templateCreatingInPanel && state.templateModeChosen ? '<button class="agent-action-btn" onclick="openTemplateBuilderModal()" title="Switch to Form">📋</button>' : '') +
-        '<button class="agent-action-btn" onclick="' + resetAction + '" title="' + (state.templateCreatingInPanel ? 'Cancel' : 'Start Over') + '">🔄</button>' +
+        (currentCT ? '<button class="agent-action-btn" onclick="resetToWelcome()" title="Start Over">🔄</button>' : '') +
         '</div>' +
         '</div>' +
-        '<div class="agent-body">' + html + '</div>' +
-        inputHtml +
+        '<div class="agent-body" style="padding:0;">' + html + '</div>' +
         '</div>';
     }
 
