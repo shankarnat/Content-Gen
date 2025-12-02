@@ -165,6 +165,66 @@
     .run-all-btn { padding: 8px 20px; background: #0176d3; border: none; color: white; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
     .run-all-btn:hover { background: #014486; }
     .run-all-btn:disabled { background: #d8d8d8; cursor: not-allowed; }
+
+    /* Document Analysis - Upload Zone */
+    .upload-zone { border: 2px dashed #d8d8d8; border-radius: 8px; padding: 24px 16px; text-align: center; cursor: pointer; transition: all 0.15s; margin-bottom: 12px; }
+    .upload-zone:hover { border-color: #0176d3; background: #f8fbfe; }
+    .upload-zone.dragover { border-color: #0176d3; background: #e8f4fc; }
+    .upload-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.6; }
+    .upload-text { font-size: 13px; color: #706e6b; margin-bottom: 4px; }
+    .upload-link { font-size: 13px; color: #0176d3; cursor: pointer; text-decoration: underline; }
+    .upload-link:hover { color: #014486; }
+
+    /* Document Analysis - Analyzer Selects */
+    .analyzer-select-group { margin-bottom: 16px; }
+    .analyzer-label { font-size: 12px; font-weight: 600; color: #3e3e3c; margin-bottom: 6px; display: block; }
+    .analyzer-select { width: 100%; padding: 8px 12px; border: 1px solid #d8d8d8; border-radius: 6px; font-size: 13px; margin-bottom: 8px; background: white; }
+    .analyzer-select:focus { outline: none; border-color: #0176d3; }
+
+    /* Document Analysis - File Items */
+    .file-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f3f3f3; border-radius: 6px; margin-bottom: 8px; }
+    .file-thumbnail { width: 40px; height: 40px; background: white; border: 1px solid #e5e5e5; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 18px; overflow: hidden; }
+    .file-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+    .file-info { flex: 1; min-width: 0; }
+    .file-name { font-size: 13px; color: #3e3e3c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-meta { font-size: 11px; color: #706e6b; }
+
+    /* Document Analysis - Extracted Fields */
+    .extracted-field { padding: 12px; border-bottom: 1px solid #e5e5e5; }
+    .extracted-field:last-child { border-bottom: none; }
+    .extracted-field:hover { background: #f8fbfe; }
+    .field-header { display: flex; align-items: center; gap: 8px; }
+    .field-status { font-size: 12px; width: 14px; }
+    .field-status.high { color: #2e844a; }
+    .field-status.medium { color: #a96404; }
+    .field-status.low { color: #706e6b; }
+    .field-name { flex: 1; font-weight: 500; font-size: 13px; color: #3e3e3c; }
+    .field-page { font-size: 11px; color: #706e6b; background: #e5e5e5; padding: 2px 6px; border-radius: 4px; }
+    .field-confidence { font-size: 12px; color: #706e6b; min-width: 50px; text-align: right; }
+    .field-value { font-size: 14px; color: #3e3e3c; margin-top: 6px; padding-left: 22px; }
+    .confidence-bar { height: 4px; background: #e5e5e5; border-radius: 2px; margin-top: 8px; margin-left: 22px; }
+    .confidence-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+    .confidence-fill.high { background: #2e844a; }
+    .confidence-fill.medium { background: #a96404; }
+    .confidence-fill.low { background: #ea001e; }
+
+    /* Document Analysis - Fields Header */
+    .fields-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f9f9f9; border-bottom: 1px solid #e5e5e5; }
+    .fields-title { font-size: 13px; font-weight: 600; color: #3e3e3c; }
+    .toggle-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #706e6b; }
+    .toggle-checkbox { width: 16px; height: 16px; accent-color: #0176d3; }
+
+    /* Document Analysis - Document Preview */
+    .document-preview { display: flex; flex-direction: column; align-items: center; padding: 20px; }
+    .document-image-container { background: white; border: 1px solid #e5e5e5; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 100%; overflow: hidden; }
+    .document-image { max-width: 100%; max-height: 500px; display: block; }
+    .preview-controls { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 16px; }
+    .preview-btn { padding: 6px 12px; border: 1px solid #d8d8d8; background: white; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    .preview-btn:hover { background: #f3f3f3; }
+    .page-info { font-size: 13px; color: #706e6b; }
+
+    /* Document Analysis - Token Footer */
+    .token-footer { padding: 12px 16px; background: #f9f9f9; border-top: 1px solid #e5e5e5; font-size: 12px; color: #706e6b; text-align: right; }
   </style>
 </head>
 <body>
@@ -217,6 +277,90 @@
         sources: ['Leads', 'Web Activity', 'Email Activity'],
         outputs: ['Score', 'Fit Rating', 'Engagement Level', 'Recommended Actions'],
         udmo: null
+      },
+      'document-analysis': {
+        id: 'document-analysis',
+        name: 'Document Analysis',
+        icon: '📄',
+        desc: 'Extract fields from invoices, receipts, forms & more',
+        sources: ['Uploaded Documents'],
+        outputs: ['Document', 'Fields', 'JSON'],
+        udmo: null,
+        isAnalyzer: true
+      }
+    };
+
+    // Analyzer types for document analysis
+    var ANALYZER_TYPES = {
+      'Procurement': {
+        name: 'Procurement',
+        icon: '📦',
+        subtypes: {
+          'invoice': { name: 'Invoice', fields: ['VendorName', 'InvoiceNumber', 'InvoiceDate', 'DueDate', 'AmountDue', 'BillingAddress', 'BillingAddressRecipient', 'CustomerAddress', 'CountryRegion', 'SubTotal', 'TotalTax', 'BalanceForward'] },
+          'receipt': { name: 'Receipt', fields: ['MerchantName', 'MerchantAddress', 'TransactionDate', 'TransactionTime', 'Items', 'Subtotal', 'Tax', 'Total', 'PaymentMethod'] },
+          'purchase-order': { name: 'Purchase Order', fields: ['PONumber', 'PODate', 'Vendor', 'ShipTo', 'BillTo', 'Items', 'Total'] }
+        }
+      },
+      'Financial': {
+        name: 'Financial',
+        icon: '💰',
+        subtypes: {
+          'bank-statement': { name: 'Bank Statement', fields: ['AccountNumber', 'StatementDate', 'OpeningBalance', 'ClosingBalance', 'Transactions'] },
+          'tax-w2': { name: 'Tax Form W2', fields: ['EmployeeName', 'EmployerName', 'Wages', 'FederalTax', 'StateTax', 'SSN'] }
+        }
+      },
+      'Identity': {
+        name: 'Identity',
+        icon: '🪪',
+        subtypes: {
+          'drivers-license': { name: 'Driver License', fields: ['FullName', 'DateOfBirth', 'Address', 'LicenseNumber', 'ExpirationDate', 'Class'] },
+          'passport': { name: 'Passport', fields: ['FullName', 'DateOfBirth', 'Nationality', 'PassportNumber', 'ExpirationDate', 'PlaceOfBirth'] }
+        }
+      },
+      'General': {
+        name: 'General',
+        icon: '📝',
+        subtypes: {
+          'contract': { name: 'Contract', fields: ['Title', 'Parties', 'EffectiveDate', 'TerminationDate', 'KeyTerms', 'Signatures'] },
+          'form': { name: 'Form', fields: ['FormTitle', 'Fields', 'Signatures', 'Date'] }
+        }
+      }
+    };
+
+    // Sample extracted data for document analysis
+    var SAMPLE_EXTRACTED_DATA = {
+      'invoice': {
+        documentType: 'Invoice',
+        overallConfidence: 0.89,
+        fields: [
+          { name: 'AmountDue', value: '$150.00', confidence: 0.925, page: 1 },
+          { name: 'BalanceForward', value: '$45.00', confidence: 0.672, page: 1 },
+          { name: 'BillingAddress', value: '123 Bill St, Redmond WA, 98052', confidence: 0.604, page: 1 },
+          { name: 'BillingAddressRecipient', value: 'Microsoft Finance', confidence: 0.739, page: 1 },
+          { name: 'CountryRegion', value: 'USA', confidence: 0.85, page: 1 },
+          { name: 'CustomerAddress', value: '123 Other St, Redmond WA, 98052', confidence: 0.722, page: 1 },
+          { name: 'DueDate', value: '11/24/2019', confidence: 0.91, page: 1 },
+          { name: 'InvoiceDate', value: '11/14/2019', confidence: 0.96, page: 1 },
+          { name: 'InvoiceNumber', value: 'INV-100', confidence: 0.98, page: 1 },
+          { name: 'SubTotal', value: '$150.00', confidence: 0.88, page: 1 },
+          { name: 'TotalTax', value: '$9.00', confidence: 0.87, page: 1 },
+          { name: 'VendorName', value: 'CONTOSO LTD.', confidence: 0.95, page: 1 }
+        ],
+        tokenUsage: { context: 1000, input: 850, output: 420 }
+      },
+      'receipt': {
+        documentType: 'Receipt',
+        overallConfidence: 0.91,
+        fields: [
+          { name: 'MerchantName', value: 'Contoso Coffee', confidence: 0.96, page: 1 },
+          { name: 'MerchantAddress', value: '456 Main St, Seattle WA', confidence: 0.82, page: 1 },
+          { name: 'TransactionDate', value: '01/15/2024', confidence: 0.95, page: 1 },
+          { name: 'Subtotal', value: '$12.50', confidence: 0.93, page: 1 },
+          { name: 'Tax', value: '$1.25', confidence: 0.91, page: 1 },
+          { name: 'Total', value: '$13.75', confidence: 0.97, page: 1 },
+          { name: 'PaymentMethod', value: 'Visa *4242', confidence: 0.89, page: 1 }
+        ],
+        tokenUsage: { context: 800, input: 600, output: 320 }
       }
     };
 
@@ -319,7 +463,16 @@
       messages: [],
       isTyping: false,
       generatedData: null,
-      activeOutputTab: 0
+      activeOutputTab: 0,
+      // Document analysis state
+      analyzerMode: {
+        category: 'Procurement',
+        subtype: 'invoice',
+        uploadedFiles: [],
+        extractedFields: [],
+        hideMissingFields: true,
+        autoRun: true
+      }
     };
 
     // ============ HELPER FUNCTIONS ============
@@ -376,6 +529,11 @@
     }
 
     function renderLeftPanel() {
+      // Check if document analysis mode
+      if (state.selectedContentType === 'document-analysis') {
+        return renderAnalyzerLeftPanel();
+      }
+
       var sources = state.selectedContentType ? getSourcesForType(state.selectedContentType) : [];
 
       var sourcesHtml = '';
@@ -410,8 +568,79 @@
         '</div>';
     }
 
+    function renderAnalyzerLeftPanel() {
+      // Build category options
+      var categoryOptions = '<option value="">Select category...</option>';
+      for (var catKey in ANALYZER_TYPES) {
+        var cat = ANALYZER_TYPES[catKey];
+        var selected = state.analyzerMode.category === catKey ? ' selected' : '';
+        categoryOptions += '<option value="' + catKey + '"' + selected + '>' + cat.icon + ' ' + cat.name + '</option>';
+      }
+
+      // Build subtype options if category selected
+      var subtypeOptions = '<option value="">Select type...</option>';
+      if (state.analyzerMode.category && ANALYZER_TYPES[state.analyzerMode.category]) {
+        var subtypes = ANALYZER_TYPES[state.analyzerMode.category].subtypes;
+        for (var subKey in subtypes) {
+          var selected = state.analyzerMode.subtype === subKey ? ' selected' : '';
+          subtypeOptions += '<option value="' + subKey + '"' + selected + '>' + subtypes[subKey].name + '</option>';
+        }
+      }
+
+      // Build uploaded files list
+      var filesHtml = '';
+      state.analyzerMode.uploadedFiles.forEach(function(f, i) {
+        var thumbHtml = f.dataUrl && f.type.indexOf('image') > -1
+          ? '<img src="' + f.dataUrl + '" alt="">'
+          : '📄';
+        filesHtml += '<div class="file-item">' +
+          '<div class="file-thumbnail">' + thumbHtml + '</div>' +
+          '<div class="file-info">' +
+          '<div class="file-name">' + esc(f.name) + '</div>' +
+          '<div class="file-meta">1 page</div>' +
+          '</div>' +
+          '<button class="source-delete" onclick="removeFile(' + i + ')">🗑️</button>' +
+          '</div>';
+      });
+
+      return '<div class="left-panel">' +
+        '<div class="panel-tabs">' +
+        '<button class="panel-tab active">Sources</button>' +
+        '<button class="panel-tab">Configuration</button>' +
+        '</div>' +
+        '<div class="panel-content">' +
+        // Analyzer type selectors
+        '<div class="analyzer-select-group">' +
+        '<label class="analyzer-label">Analyzer Type</label>' +
+        '<select class="analyzer-select" onchange="setAnalyzerCategory(this.value)">' + categoryOptions + '</select>' +
+        (state.analyzerMode.category ? '<select class="analyzer-select" onchange="setAnalyzerSubtype(this.value)">' + subtypeOptions + '</select>' : '') +
+        '</div>' +
+        // Upload section
+        '<div class="sources-header">' +
+        '<span class="sources-title">Upload Document</span>' +
+        '<button class="add-source-btn" onclick="triggerFileInput()">+</button>' +
+        '</div>' +
+        '<div class="upload-zone" id="uploadZone" onclick="triggerFileInput()" ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">' +
+        '<div class="upload-icon">☁️</div>' +
+        '<div class="upload-text">Drag & drop files here or</div>' +
+        '<span class="upload-link">Browse for files</span>' +
+        '</div>' +
+        '<input type="file" id="fileInput" style="display:none" accept=".pdf,.png,.jpg,.jpeg,.tiff,.gif" onchange="handleFileSelect(event)">' +
+        // Uploaded files
+        filesHtml +
+        // Hint
+        '<div class="sources-hint">Supported: PDF, PNG, JPG, TIFF</div>' +
+        '</div>' +
+        '</div>';
+    }
+
     function renderCenterPanel() {
       var contentType = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
+
+      // Check if document analysis mode
+      if (state.selectedContentType === 'document-analysis') {
+        return renderAnalyzerCenterPanel();
+      }
 
       // Build tabs
       var tabsHtml = '';
@@ -464,6 +693,137 @@
         '</div>' +
         '</div>' +
         '</div>';
+    }
+
+    function renderAnalyzerCenterPanel() {
+      var tabs = ['Document', 'Fields', 'JSON'];
+      var icons = { 'Document': '📄', 'Fields': '📋', 'JSON': '{ }' };
+      var tabsHtml = tabs.map(function(tab, i) {
+        return '<button class="output-tab' + (state.activeOutputTab === i ? ' active' : '') + '" onclick="setActiveTab(' + i + ')">' +
+          '<span class="output-tab-icon">' + icons[tab] + '</span>' + tab +
+          '</button>';
+      }).join('');
+
+      var bodyHtml = '';
+      var hasFiles = state.analyzerMode.uploadedFiles.length > 0;
+      var hasResults = state.analyzerMode.extractedFields.length > 0;
+
+      if (state.activeOutputTab === 0) {
+        // Document tab
+        if (!hasFiles) {
+          bodyHtml = '<div class="output-placeholder">' +
+            '<div class="output-placeholder-icon">📄</div>' +
+            '<div class="output-placeholder-text">No document uploaded</div>' +
+            '<div class="output-placeholder-hint">Upload a document to analyze</div>' +
+            '</div>';
+        } else {
+          var file = state.analyzerMode.uploadedFiles[0];
+          bodyHtml = '<div class="document-preview">' +
+            '<div class="document-image-container">' +
+            (file.type.indexOf('image') > -1
+              ? '<img class="document-image" src="' + file.dataUrl + '" alt="Document preview">'
+              : '<div style="padding:40px;text-align:center;"><div style="font-size:64px;margin-bottom:16px;">📄</div><div style="color:#706e6b;">PDF Preview</div><div style="font-size:13px;color:#969492;margin-top:8px;">' + esc(file.name) + '</div></div>') +
+            '</div>' +
+            '<div class="preview-controls">' +
+            '<button class="run-all-btn" onclick="runAnalysis()"' + (state.currentView === 'generating' ? ' disabled' : '') + '>' +
+            (state.currentView === 'generating' ? '<span class="loading-spinner" style="width:14px;height:14px;border-width:2px;margin:0;"></span> Analyzing...' : '🔍 Run Analysis') +
+            '</button>' +
+            '<span class="page-info">1 of 1</span>' +
+            '<button class="preview-btn">🔍+</button>' +
+            '<button class="preview-btn">🔍-</button>' +
+            '</div>' +
+            '</div>';
+        }
+      } else if (state.activeOutputTab === 1) {
+        // Fields tab
+        if (!hasResults) {
+          bodyHtml = '<div class="output-placeholder">' +
+            '<div class="output-placeholder-icon">📋</div>' +
+            '<div class="output-placeholder-text">No fields extracted</div>' +
+            '<div class="output-placeholder-hint">' + (hasFiles ? 'Click "Run Analysis" to extract fields' : 'Upload a document first') + '</div>' +
+            '</div>';
+        } else {
+          bodyHtml = renderExtractedFields();
+        }
+      } else {
+        // JSON tab
+        if (!hasResults) {
+          bodyHtml = '<div class="output-placeholder">' +
+            '<div class="output-placeholder-icon">{ }</div>' +
+            '<div class="output-placeholder-text">No data available</div>' +
+            '<div class="output-placeholder-hint">Run analysis to see JSON output</div>' +
+            '</div>';
+        } else {
+          var jsonData = {
+            documentType: state.analyzerMode.subtype,
+            fields: state.analyzerMode.extractedFields
+          };
+          bodyHtml = '<pre style="background:#f3f3f3;padding:16px;border-radius:6px;font-size:12px;overflow:auto;max-height:100%;">' +
+            esc(JSON.stringify(jsonData, null, 2)) + '</pre>';
+        }
+      }
+
+      // Header with auto-run toggle
+      var headerExtra = '<label class="toggle-row" style="margin-left:auto;">' +
+        '<span>Auto run</span>' +
+        '<input type="checkbox" class="toggle-checkbox"' + (state.analyzerMode.autoRun ? ' checked' : '') + ' onchange="toggleAutoRun()">' +
+        '</label>';
+
+      return '<div class="center-panel">' +
+        '<div class="output-tabs">' + tabsHtml + '</div>' +
+        '<div class="output-content">' +
+        '<div class="output-card">' +
+        '<div class="output-card-header">' +
+        '<div class="output-card-title">Document Analysis</div>' +
+        headerExtra +
+        '</div>' +
+        '<div class="output-card-body" style="padding:0;display:flex;flex-direction:column;">' + bodyHtml + '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderExtractedFields() {
+      var fields = state.analyzerMode.extractedFields;
+      var hideMissing = state.analyzerMode.hideMissingFields;
+
+      // Header with toggle
+      var html = '<div class="fields-header">' +
+        '<span class="fields-title">Extracted Fields</span>' +
+        '<label class="toggle-row">' +
+        '<span>Hide missing</span>' +
+        '<input type="checkbox" class="toggle-checkbox"' + (hideMissing ? ' checked' : '') + ' onchange="toggleHideMissing()">' +
+        '</label>' +
+        '</div>';
+
+      // Fields list
+      html += '<div style="flex:1;overflow-y:auto;">';
+      fields.forEach(function(field) {
+        if (hideMissing && !field.value) return;
+
+        var confClass = field.confidence > 0.8 ? 'high' : (field.confidence > 0.5 ? 'medium' : 'low');
+        var confIcon = field.confidence > 0.8 ? '●' : (field.confidence > 0.5 ? '◐' : '○');
+
+        html += '<div class="extracted-field">' +
+          '<div class="field-header">' +
+          '<span class="field-status ' + confClass + '">' + confIcon + '</span>' +
+          '<span class="field-name">' + esc(field.name) + '</span>' +
+          '<span class="field-page">p.' + field.page + '</span>' +
+          '<span class="field-confidence">' + (field.confidence * 100).toFixed(1) + '%</span>' +
+          '</div>' +
+          '<div class="field-value">' + esc(field.value || '(not found)') + '</div>' +
+          '<div class="confidence-bar">' +
+          '<div class="confidence-fill ' + confClass + '" style="width:' + (field.confidence * 100) + '%;"></div>' +
+          '</div>' +
+          '</div>';
+      });
+      html += '</div>';
+
+      // Token footer
+      var sampleData = SAMPLE_EXTRACTED_DATA[state.analyzerMode.subtype] || SAMPLE_EXTRACTED_DATA['invoice'];
+      html += '<div class="token-footer">Tokens: [Context ' + (sampleData.tokenUsage ? sampleData.tokenUsage.context : 1000) + ']</div>';
+
+      return html;
     }
 
     function renderGeneratedContent() {
@@ -613,11 +973,23 @@
     // ============ EVENT HANDLERS ============
     function selectContentType(typeId) {
       state.selectedContentType = typeId;
-      state.currentView = 'generating';
       state.messages = [];
       state.activeOutputTab = 0;
 
       var ct = CONTENT_TYPES[typeId];
+
+      // Handle document analysis differently
+      if (typeId === 'document-analysis') {
+        state.currentView = 'welcome';
+        state.analyzerMode.uploadedFiles = [];
+        state.analyzerMode.extractedFields = [];
+        addMessage('user', 'Analyze documents');
+        addMessage('agent', 'Great choice! I can extract data from invoices, receipts, forms, and more. Upload a document on the left to get started, or select the analyzer type first.');
+        render();
+        return;
+      }
+
+      state.currentView = 'generating';
       addMessage('user', 'Generate ' + ct.name.toLowerCase());
       render();
 
@@ -646,6 +1018,131 @@
           }, 500);
         }, 1000);
       }, 300);
+    }
+
+    // ============ DOCUMENT ANALYSIS HANDLERS ============
+    function setAnalyzerCategory(value) {
+      state.analyzerMode.category = value || null;
+      state.analyzerMode.subtype = null;
+      // Set default subtype if category selected
+      if (value && ANALYZER_TYPES[value]) {
+        var subtypes = Object.keys(ANALYZER_TYPES[value].subtypes);
+        if (subtypes.length > 0) {
+          state.analyzerMode.subtype = subtypes[0];
+        }
+      }
+      render();
+    }
+
+    function setAnalyzerSubtype(value) {
+      state.analyzerMode.subtype = value || null;
+      render();
+    }
+
+    function triggerFileInput() {
+      document.getElementById('fileInput').click();
+    }
+
+    function handleFileSelect(e) {
+      var files = e.target.files;
+      if (files && files.length > 0) {
+        processFiles(files);
+      }
+      e.target.value = ''; // Reset input
+    }
+
+    function handleFileDrop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var zone = document.getElementById('uploadZone');
+      if (zone) zone.classList.remove('dragover');
+
+      var files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        processFiles(files);
+      }
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var zone = document.getElementById('uploadZone');
+      if (zone) zone.classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var zone = document.getElementById('uploadZone');
+      if (zone) zone.classList.remove('dragover');
+    }
+
+    function processFiles(files) {
+      Array.prototype.forEach.call(files, function(file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          state.analyzerMode.uploadedFiles.push({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            dataUrl: e.target.result
+          });
+          render();
+
+          // Auto-run if enabled
+          if (state.analyzerMode.autoRun && state.analyzerMode.uploadedFiles.length === 1) {
+            setTimeout(function() {
+              runAnalysis();
+            }, 500);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function removeFile(index) {
+      state.analyzerMode.uploadedFiles.splice(index, 1);
+      state.analyzerMode.extractedFields = [];
+      render();
+    }
+
+    function runAnalysis() {
+      if (state.analyzerMode.uploadedFiles.length === 0) return;
+
+      state.currentView = 'generating';
+      addMessage('agent', 'Analyzing your document...');
+      render();
+
+      // Simulate analysis delay
+      setTimeout(function() {
+        var subtype = state.analyzerMode.subtype || 'invoice';
+        var sampleData = SAMPLE_EXTRACTED_DATA[subtype] || SAMPLE_EXTRACTED_DATA['invoice'];
+
+        state.analyzerMode.extractedFields = sampleData.fields.slice(); // Copy fields
+        state.currentView = 'results';
+        state.activeOutputTab = 1; // Switch to Fields tab
+
+        var highConf = sampleData.fields.filter(function(f) { return f.confidence > 0.8; }).length;
+        var needsReview = sampleData.fields.filter(function(f) { return f.confidence <= 0.8 && f.confidence > 0.5; }).length;
+
+        addMessage('agent', '✅ Analysis complete! I found:<br><br>' +
+          '• <strong>' + sampleData.fields.length + ' fields</strong> extracted<br>' +
+          '• <strong>' + highConf + '</strong> high confidence<br>' +
+          '• <strong>' + needsReview + '</strong> need review<br><br>' +
+          'You can view the results in the Fields tab. Would you like to export the data or create a record from it?');
+
+        render();
+      }, 2000);
+    }
+
+    function toggleHideMissing() {
+      state.analyzerMode.hideMissingFields = !state.analyzerMode.hideMissingFields;
+      render();
+    }
+
+    function toggleAutoRun() {
+      state.analyzerMode.autoRun = !state.analyzerMode.autoRun;
+      render();
     }
 
     function addMessage(role, content) {
