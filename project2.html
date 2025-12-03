@@ -225,70 +225,161 @@
 
     /* Document Analysis - Token Footer */
     .token-footer { padding: 12px 16px; background: #f9f9f9; border-top: 1px solid #e5e5e5; font-size: 12px; color: #706e6b; text-align: right; }
+
+    /* Input Type Pills */
+    .input-types { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .input-type-pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background: #f3f3f3; border-radius: 12px; font-size: 11px; color: #706e6b; }
+    .input-type-pill.active { background: #e8f4fc; color: #0176d3; }
+    .input-type-icon { font-size: 10px; }
+
+    /* Function Categories in Welcome */
+    .function-category { margin-bottom: 20px; }
+    .function-category-title { font-size: 11px; font-weight: 600; color: #706e6b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-left: 4px; }
+
+    /* Structured Fields Output */
+    .structured-fields-section { margin-bottom: 20px; }
+    .structured-fields-title { font-size: 12px; font-weight: 600; color: #3e3e3c; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .structured-fields-title .badge { background: #e8f4fc; color: #0176d3; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+    .structured-field-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: #f9f9f9; border-radius: 6px; margin-bottom: 6px; }
+    .structured-field-row:hover { background: #f3f3f3; }
+    .field-type-icon { width: 24px; height: 24px; background: white; border: 1px solid #e5e5e5; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+    .field-type-icon.string { color: #0176d3; }
+    .field-type-icon.number { color: #2e844a; }
+    .field-type-icon.picklist { color: #a96404; }
+    .field-type-icon.date { color: #5c5c5c; }
+    .field-type-icon.percent { color: #0070d2; }
+    .field-type-icon.lookup { color: #9050e9; }
+    .field-label { flex: 1; font-size: 13px; color: #3e3e3c; }
+    .field-value-display { font-size: 13px; color: #706e6b; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .field-map-btn { padding: 4px 10px; background: white; border: 1px solid #d8d8d8; border-radius: 4px; font-size: 11px; color: #0176d3; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .field-map-btn:hover { background: #f8fbfe; border-color: #0176d3; }
+    .field-map-btn.mapped { background: #e8f4fc; border-color: #0176d3; }
+
+    /* Unstructured Content Section */
+    .unstructured-section { border-top: 1px solid #e5e5e5; padding-top: 20px; }
+    .unstructured-title { font-size: 12px; font-weight: 600; color: #3e3e3c; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .unstructured-title .badge { background: #f3e8ff; color: #9050e9; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+    .unstructured-content { background: #f9f9f9; padding: 16px; border-radius: 6px; font-size: 14px; line-height: 1.6; color: #3e3e3c; white-space: pre-wrap; }
   </style>
 </head>
 <body>
   <div id="app"></div>
 
   <script>
-    // ============ DATA (Reused from index.html concepts) ============
-    var CONTENT_TYPES = {
-      'case-summary': {
-        id: 'case-summary',
-        name: 'Case Summaries',
-        icon: '📋',
-        desc: 'Summarize support cases with priority and sentiment',
-        sources: ['Cases', 'Email Messages'],
-        outputs: ['Summary', 'Priority', 'Sentiment', 'Category', 'Action Items'],
-        udmo: 'Internal Note'
+    // ============ DATA (Generation Functions - Abstracted) ============
+    // Each function accepts any input (files, records, text) and produces:
+    // - structuredFields: mappable fields with types
+    // - unstructuredOutput: the main UDMO content
+
+    var GENERATION_FUNCTIONS = {
+      'summarizer': {
+        id: 'summarizer',
+        name: 'Summarizer',
+        icon: '📝',
+        desc: 'Generate concise summaries from any content',
+        category: 'Content Generation',
+        inputTypes: ['records', 'files', 'text'],
+        structuredFields: [
+          { name: 'Title', type: 'string', mappable: true },
+          { name: 'Priority', type: 'picklist', options: ['Critical', 'High', 'Medium', 'Low'], mappable: true },
+          { name: 'Sentiment', type: 'picklist', options: ['Positive', 'Neutral', 'Frustrated', 'Angry'], mappable: true },
+          { name: 'Category', type: 'string', mappable: true },
+          { name: 'WordCount', type: 'number', mappable: true }
+        ],
+        unstructuredOutput: { name: 'Summary', type: 'richtext', label: 'Generated Summary' }
       },
-      'kb-article': {
-        id: 'kb-article',
-        name: 'Knowledge Articles',
+      'key-insights': {
+        id: 'key-insights',
+        name: 'Key Insights Generator',
+        icon: '💡',
+        desc: 'Extract key insights and patterns from data',
+        category: 'Content Generation',
+        inputTypes: ['records', 'files', 'text'],
+        structuredFields: [
+          { name: 'InsightCount', type: 'number', mappable: true },
+          { name: 'ConfidenceScore', type: 'percent', mappable: true },
+          { name: 'PrimaryTheme', type: 'string', mappable: true },
+          { name: 'Urgency', type: 'picklist', options: ['Immediate', 'Soon', 'Standard', 'Low'], mappable: true }
+        ],
+        unstructuredOutput: { name: 'Insights', type: 'richtext', label: 'Key Insights' }
+      },
+      'faq-generator': {
+        id: 'faq-generator',
+        name: 'FAQ Generator',
+        icon: '❓',
+        desc: 'Generate FAQ pairs from content or conversations',
+        category: 'Content Generation',
+        inputTypes: ['records', 'files', 'text'],
+        structuredFields: [
+          { name: 'QuestionCount', type: 'number', mappable: true },
+          { name: 'Category', type: 'string', mappable: true },
+          { name: 'Audience', type: 'picklist', options: ['Customer', 'Internal', 'Partner'], mappable: true },
+          { name: 'Complexity', type: 'picklist', options: ['Basic', 'Intermediate', 'Advanced'], mappable: true }
+        ],
+        unstructuredOutput: { name: 'FAQContent', type: 'richtext', label: 'FAQ List' }
+      },
+      'article-generator': {
+        id: 'article-generator',
+        name: 'Article Generator',
         icon: '📚',
-        desc: 'Generate KB articles from resolved cases',
-        sources: ['Resolved Cases'],
-        outputs: ['Title', 'Problem', 'Solution', 'Category'],
-        udmo: 'Knowledge Article'
+        desc: 'Create knowledge articles and documentation',
+        category: 'Content Generation',
+        inputTypes: ['records', 'files', 'text'],
+        structuredFields: [
+          { name: 'Title', type: 'string', mappable: true },
+          { name: 'ArticleType', type: 'picklist', options: ['How-To', 'Troubleshooting', 'Reference', 'Overview'], mappable: true },
+          { name: 'Category', type: 'string', mappable: true },
+          { name: 'Keywords', type: 'string', mappable: true },
+          { name: 'ReadTime', type: 'number', mappable: true }
+        ],
+        unstructuredOutput: { name: 'ArticleBody', type: 'richtext', label: 'Article Content' }
+      },
+      'notes-generator': {
+        id: 'notes-generator',
+        name: 'Notes Generator',
+        icon: '📋',
+        desc: 'Generate structured notes and action items',
+        category: 'Content Generation',
+        inputTypes: ['records', 'files', 'text'],
+        structuredFields: [
+          { name: 'Subject', type: 'string', mappable: true },
+          { name: 'ActionItemCount', type: 'number', mappable: true },
+          { name: 'Priority', type: 'picklist', options: ['High', 'Medium', 'Low'], mappable: true },
+          { name: 'DueDate', type: 'date', mappable: true },
+          { name: 'AssignedTo', type: 'lookup', mappable: true }
+        ],
+        unstructuredOutput: { name: 'Notes', type: 'richtext', label: 'Meeting Notes' }
       },
       'email-response': {
         id: 'email-response',
-        name: 'Email Responses',
+        name: 'Email Response Generator',
         icon: '✉️',
         desc: 'Draft personalized email responses',
-        sources: ['Cases', 'Email Messages', 'Contacts'],
-        outputs: ['Subject', 'Greeting', 'Body', 'Closing', 'Tone'],
-        udmo: 'Draft Response'
+        category: 'Content Generation',
+        inputTypes: ['records', 'files', 'text'],
+        structuredFields: [
+          { name: 'Subject', type: 'string', mappable: true },
+          { name: 'Tone', type: 'picklist', options: ['Professional', 'Friendly', 'Formal', 'Empathetic'], mappable: true },
+          { name: 'Sentiment', type: 'picklist', options: ['Positive', 'Neutral', 'Concerned'], mappable: true },
+          { name: 'ResponseType', type: 'picklist', options: ['Resolution', 'Follow-up', 'Acknowledgment', 'Escalation'], mappable: true }
+        ],
+        unstructuredOutput: { name: 'EmailBody', type: 'richtext', label: 'Email Response' }
       },
-      'call-summary': {
-        id: 'call-summary',
-        name: 'Call Summaries',
-        icon: '📞',
-        desc: 'Summarize sales and support calls',
-        sources: ['Voice Calls', 'Contacts', 'Opportunities'],
-        outputs: ['Summary', 'Key Points', 'Action Items', 'Next Steps', 'Sentiment'],
-        udmo: 'Call Summary'
-      },
-      'lead-enrichment': {
-        id: 'lead-enrichment',
-        name: 'Lead Enrichment',
-        icon: '🎯',
-        desc: 'Score and enrich leads with insights',
-        sources: ['Leads', 'Web Activity', 'Email Activity'],
-        outputs: ['Score', 'Fit Rating', 'Engagement Level', 'Recommended Actions'],
-        udmo: null
-      },
-      'document-analysis': {
-        id: 'document-analysis',
-        name: 'Document Analysis',
+      'document-analyzer': {
+        id: 'document-analyzer',
+        name: 'Document Analyzer',
         icon: '📄',
         desc: 'Extract fields from invoices, receipts, forms & more',
-        sources: ['Uploaded Documents'],
-        outputs: ['Document', 'Fields', 'JSON'],
-        udmo: null,
+        category: 'Field Extraction',
+        inputTypes: ['files'],
+        structuredFields: [], // Dynamic based on analyzer type
+        unstructuredOutput: null,
         isAnalyzer: true
       }
     };
+
+    // Legacy alias for backward compatibility
+    var CONTENT_TYPES = GENERATION_FUNCTIONS;
 
     // Analyzer types for document analysis
     var ANALYZER_TYPES = {
@@ -364,93 +455,167 @@
       }
     };
 
-    // Sample records for each content type
+    // Sample records for each generation function
     var SAMPLE_DATA = {
-      'case-summary': [
+      'summarizer': [
         { id: 'CASE-001', title: 'Cannot login to dashboard', customer: 'John Smith', company: 'Acme Corp', priority: 'High', created: '2024-01-18', body: 'User reports being unable to access the dashboard after password reset. Error code E-5502 appears when attempting to login. This is blocking their quarterly report.' },
         { id: 'CASE-002', title: 'Feature request: Dark mode', customer: 'Sarah Jones', company: 'TechStart Inc', priority: 'Low', created: '2024-01-19', body: 'Customer requesting dark mode for the application. They mention it would help reduce eye strain during long work sessions.' },
         { id: 'CASE-003', title: 'Billing discrepancy - URGENT', customer: 'Michael Chen', company: 'Global Finance', priority: 'Critical', created: '2024-01-20', body: 'Customer charged $499 instead of $299 on invoice INV-2024-0892. This is the second time this has happened. Customer is threatening to dispute with bank.' },
         { id: 'CASE-004', title: 'API rate limits question', customer: 'Dev Team', company: 'StartupCo', priority: 'Medium', created: '2024-01-17', body: 'Planning to integrate API into mobile app. Need clarification on rate limits for Pro plan, burst capacity, and webhook support.' }
       ],
-      'kb-article': [
+      'key-insights': [
+        { id: 'DATA-001', source: 'Customer Feedback Q4', records: 1250, dateRange: 'Oct-Dec 2024' },
+        { id: 'DATA-002', source: 'Support Tickets', records: 890, dateRange: 'Last 30 days' },
+        { id: 'DATA-003', source: 'Sales Calls', records: 156, dateRange: 'This quarter' }
+      ],
+      'faq-generator': [
+        { id: 'FAQ-001', source: 'Product Documentation', type: 'Technical', pages: 45 },
+        { id: 'FAQ-002', source: 'Support Tickets', type: 'Customer Issues', records: 234 },
+        { id: 'FAQ-003', source: 'Training Materials', type: 'Onboarding', pages: 28 }
+      ],
+      'article-generator': [
         { id: 'RC-001', title: 'OAuth token expired - API connection failed', resolution: 'Regenerate OAuth token in Connected Apps settings', category: 'Technical', satisfaction: 5 },
         { id: 'RC-002', title: 'Reports showing wrong timezone', resolution: 'Update timezone in Settings > Time & Language', category: 'Configuration', satisfaction: 4 },
         { id: 'RC-003', title: 'CSV import failing silently', resolution: 'Convert file to UTF-8 without BOM encoding', category: 'Technical', satisfaction: 5 }
+      ],
+      'notes-generator': [
+        { id: 'CALL-001', contact: 'John Smith, VP Engineering', company: 'Acme Corp', duration: '32:15', type: 'Discovery', transcript: 'Discussed pricing, competitor comparison, and implementation timeline.' },
+        { id: 'CALL-002', contact: 'Sarah Jones, CTO', company: 'TechStart Inc', duration: '18:45', type: 'Follow-up', transcript: 'Customer loves the API flexibility, ready for procurement discussion.' }
       ],
       'email-response': [
         { id: 'EMAIL-001', subject: 'Error uploading files', from: 'john.smith@acmecorp.com', body: 'I keep getting error code E-5502 when uploading files larger than 25MB.', tone: 'Frustrated' },
         { id: 'EMAIL-002', subject: 'Love your product!', from: 'sarah@happycustomer.com', body: 'Just wanted to say your new dashboard is amazing! Could you add PDF export?', tone: 'Positive' },
         { id: 'EMAIL-003', subject: 'Billing discrepancy - URGENT', from: 'mark.johnson@globaltech.io', body: 'I was charged $499 instead of $299. Please issue a refund immediately.', tone: 'Angry' }
-      ],
-      'call-summary': [
-        { id: 'CALL-001', contact: 'John Smith, VP Engineering', company: 'Acme Corp', duration: '32:15', type: 'Discovery', transcript: 'Discussed pricing, competitor comparison, and implementation timeline.' },
-        { id: 'CALL-002', contact: 'Sarah Jones, CTO', company: 'TechStart Inc', duration: '18:45', type: 'Follow-up', transcript: 'Customer loves the API flexibility, ready for procurement discussion.' }
-      ],
-      'lead-enrichment': [
-        { id: 'LEAD-001', name: 'David Wilson', company: 'New Prospect Inc', title: 'Director of IT', source: 'Web', status: 'Working' },
-        { id: 'LEAD-002', name: 'Emily Davis', company: 'Startup Co', title: 'CEO', source: 'Referral', status: 'New' }
       ]
     };
 
-    // Generated output samples
+    // Generated output samples - structured fields + unstructured content
     var GENERATED_OUTPUTS = {
-      'case-summary': [
+      'summarizer': [
         {
-          Summary: 'Customer John Smith from Acme Corp is experiencing a critical login issue after a password reset. Error code E-5502 is preventing dashboard access, which is blocking their quarterly report preparation.',
-          Priority: 'High',
-          Sentiment: 'Frustrated',
-          Category: 'Technical - Authentication',
-          ActionItems: '1. Check password reset logs\n2. Verify account status\n3. Test E-5502 error reproduction\n4. Escalate if auth service issue',
-          DraftNote: 'Login issue post password reset. Error E-5502 blocking quarterly report. Customer frustrated - needs urgent resolution. Check auth service logs and account status.'
+          structuredFields: {
+            Title: 'Login Issue - Error E-5502',
+            Priority: 'High',
+            Sentiment: 'Frustrated',
+            Category: 'Technical - Authentication',
+            WordCount: 45
+          },
+          unstructuredContent: 'Customer John Smith from Acme Corp is experiencing a critical login issue after a password reset. Error code E-5502 is preventing dashboard access, which is blocking their quarterly report preparation. Immediate action required to restore access and investigate root cause.'
         },
         {
-          Summary: 'Feature request from Sarah Jones at TechStart Inc for dark mode functionality. Non-urgent enhancement request to reduce eye strain.',
-          Priority: 'Low',
-          Sentiment: 'Positive',
-          Category: 'Feature Request - UI',
-          ActionItems: '1. Log feature request\n2. Add to product backlog\n3. Send acknowledgment to customer',
-          DraftNote: 'Dark mode feature request. Customer cites eye strain during long sessions. Add to Q2 backlog for consideration.'
+          structuredFields: {
+            Title: 'Dark Mode Feature Request',
+            Priority: 'Low',
+            Sentiment: 'Positive',
+            Category: 'Feature Request - UI',
+            WordCount: 28
+          },
+          unstructuredContent: 'Feature request from Sarah Jones at TechStart Inc for dark mode functionality. Non-urgent enhancement request to reduce eye strain during extended use sessions.'
         },
         {
-          Summary: 'URGENT: Michael Chen from Global Finance was overcharged $200 (charged $499 vs $299). This is a repeat billing issue. Customer threatening bank dispute.',
-          Priority: 'Critical',
-          Sentiment: 'Angry',
-          Category: 'Billing - Overcharge',
-          ActionItems: '1. Immediately verify invoice\n2. Process refund for $200\n3. Investigate recurring billing bug\n4. Call customer personally',
-          DraftNote: 'CRITICAL: Repeat overcharge issue. Customer threatening chargeback. Immediate refund required. Escalate billing bug to engineering.'
+          structuredFields: {
+            Title: 'Billing Overcharge - URGENT',
+            Priority: 'Critical',
+            Sentiment: 'Angry',
+            Category: 'Billing - Overcharge',
+            WordCount: 38
+          },
+          unstructuredContent: 'URGENT: Michael Chen from Global Finance was overcharged $200 (charged $499 vs $299). This is a repeat billing issue. Customer threatening bank dispute. Immediate refund and escalation required.'
         },
         {
-          Summary: 'Technical inquiry from StartupCo dev team about API integration. Need clarification on Pro plan rate limits, burst capacity, and webhook callbacks.',
-          Priority: 'Medium',
-          Sentiment: 'Neutral',
-          Category: 'Pre-Sales - Technical',
-          ActionItems: '1. Send API documentation link\n2. Clarify Pro plan limits (1000 req/min)\n3. Confirm webhook support\n4. Schedule technical call if needed',
-          DraftNote: 'API integration questions for mobile app. Send rate limit docs and webhook specs. Potential upsell opportunity if needs exceed Pro limits.'
+          structuredFields: {
+            Title: 'API Rate Limits Inquiry',
+            Priority: 'Medium',
+            Sentiment: 'Neutral',
+            Category: 'Pre-Sales - Technical',
+            WordCount: 32
+          },
+          unstructuredContent: 'Technical inquiry from StartupCo dev team about API integration for mobile app. Need clarification on Pro plan rate limits, burst capacity, and webhook callback support.'
         }
       ],
-      'kb-article': [
+      'key-insights': [
         {
-          Title: 'How to Fix OAuth Token Expired Error (API Connection Failed)',
-          Problem: 'When connecting to the API, you receive an error message indicating that the OAuth token has expired and the connection has failed.',
-          Solution: '1. Navigate to Setup > Connected Apps\n2. Find your application in the list\n3. Click "Manage" and then "Edit Policies"\n4. Under OAuth Policies, click "Regenerate Token"\n5. Copy the new token and update your application credentials\n6. Test the connection to verify it works',
-          Category: 'API & Integration',
-          RelatedArticles: 'API Authentication Guide, OAuth 2.0 Setup, Troubleshooting Connection Issues'
+          structuredFields: {
+            InsightCount: 5,
+            ConfidenceScore: 0.87,
+            PrimaryTheme: 'Product Usability',
+            Urgency: 'Soon'
+          },
+          unstructuredContent: '**Key Insights from Customer Feedback Q4:**\n\n1. **Dashboard Performance** - 34% of feedback mentions slow loading times, especially during peak hours\n2. **Mobile Experience** - Growing demand for mobile app (mentioned in 28% of feedback)\n3. **Feature Discovery** - Users struggling to find advanced features, suggest better onboarding\n4. **Integration Requests** - Slack and Teams integrations most requested (45 mentions)\n5. **Pricing Clarity** - Some confusion about tier differences, need clearer comparison'
+        }
+      ],
+      'faq-generator': [
+        {
+          structuredFields: {
+            QuestionCount: 8,
+            Category: 'Product Setup',
+            Audience: 'Customer',
+            Complexity: 'Basic'
+          },
+          unstructuredContent: '**Frequently Asked Questions**\n\n**Q: How do I reset my password?**\nA: Click "Forgot Password" on the login page, enter your email, and follow the reset link sent to your inbox.\n\n**Q: What file formats are supported for upload?**\nA: We support PDF, PNG, JPG, TIFF, and GIF files up to 25MB each.\n\n**Q: How do I export my data?**\nA: Go to Settings > Data Management > Export, select your date range and format, then click Export.\n\n**Q: Can I integrate with my CRM?**\nA: Yes, we offer native integrations with Salesforce, HubSpot, and Zoho. See our Integration Guide for setup steps.'
+        }
+      ],
+      'article-generator': [
+        {
+          structuredFields: {
+            Title: 'How to Fix OAuth Token Expired Error (API Connection Failed)',
+            ArticleType: 'Troubleshooting',
+            Category: 'API & Integration',
+            Keywords: 'OAuth, API, token, authentication, connection',
+            ReadTime: 3
+          },
+          unstructuredContent: '## Problem\nWhen connecting to the API, you receive an error message indicating that the OAuth token has expired and the connection has failed.\n\n## Solution\n1. Navigate to Setup > Connected Apps\n2. Find your application in the list\n3. Click "Manage" and then "Edit Policies"\n4. Under OAuth Policies, click "Regenerate Token"\n5. Copy the new token and update your application credentials\n6. Test the connection to verify it works\n\n## Related Articles\n- API Authentication Guide\n- OAuth 2.0 Setup\n- Troubleshooting Connection Issues'
         },
         {
-          Title: 'Reports Showing Wrong Timezone - How to Fix',
-          Problem: 'Reports and dashboards are displaying times in the wrong timezone, causing confusion with scheduled events and data analysis.',
-          Solution: '1. Click your profile icon in the top right\n2. Select "Settings"\n3. Navigate to "Time & Language"\n4. Select your correct timezone from the dropdown\n5. Click "Save"\n6. Refresh your reports to see the updated times',
-          Category: 'Reports & Analytics',
-          RelatedArticles: 'Report Configuration Guide, Dashboard Setup, Time Zone Best Practices'
+          structuredFields: {
+            Title: 'Reports Showing Wrong Timezone - How to Fix',
+            ArticleType: 'Troubleshooting',
+            Category: 'Reports & Analytics',
+            Keywords: 'timezone, reports, time, settings, configuration',
+            ReadTime: 2
+          },
+          unstructuredContent: '## Problem\nReports and dashboards are displaying times in the wrong timezone, causing confusion with scheduled events and data analysis.\n\n## Solution\n1. Click your profile icon in the top right\n2. Select "Settings"\n3. Navigate to "Time & Language"\n4. Select your correct timezone from the dropdown\n5. Click "Save"\n6. Refresh your reports to see the updated times\n\n## Related Articles\n- Report Configuration Guide\n- Dashboard Setup'
+        }
+      ],
+      'notes-generator': [
+        {
+          structuredFields: {
+            Subject: 'Discovery Call - Acme Corp',
+            ActionItemCount: 4,
+            Priority: 'High',
+            DueDate: '2024-01-25',
+            AssignedTo: 'Sales Team'
+          },
+          unstructuredContent: '**Meeting Notes: Discovery Call with Acme Corp**\n\n**Attendees:** John Smith (VP Engineering), Our Sales Team\n**Duration:** 32 minutes\n\n**Discussion Points:**\n- Reviewed current challenges with their legacy system\n- Discussed pricing tiers and enterprise features\n- Competitor comparison (vs. CompetitorX)\n- Implementation timeline requirements\n\n**Action Items:**\n1. Send detailed pricing proposal by Friday\n2. Schedule technical demo with their dev team\n3. Prepare ROI analysis document\n4. Follow up on security compliance questions\n\n**Next Steps:** Technical demo scheduled for next Tuesday'
         }
       ],
       'email-response': [
         {
-          Subject: 'Re: Error uploading files - Solution Found',
-          Greeting: 'Hi John,',
-          Body: 'Thank you for reaching out about the file upload issue you\'re experiencing.\n\nI\'ve looked into error code E-5502, and this typically occurs when files exceed our current upload limit. Here\'s how to resolve this:\n\n1. For files over 25MB, please use our bulk upload tool at app.company.com/bulk-upload\n2. Alternatively, you can compress files before uploading\n3. If you need to upload larger files regularly, I can enable the Enterprise file limit for your account\n\nI understand this is blocking your quarterly report, so I\'ve prioritized your ticket. Would you like me to enable the higher limit for your account?',
-          Closing: 'Best regards,\nSupport Team',
-          Tone: 'Professional, Helpful'
+          structuredFields: {
+            Subject: 'Re: Error uploading files - Solution Found',
+            Tone: 'Professional',
+            Sentiment: 'Positive',
+            ResponseType: 'Resolution'
+          },
+          unstructuredContent: 'Hi John,\n\nThank you for reaching out about the file upload issue you\'re experiencing.\n\nI\'ve looked into error code E-5502, and this typically occurs when files exceed our current upload limit. Here\'s how to resolve this:\n\n1. For files over 25MB, please use our bulk upload tool at app.company.com/bulk-upload\n2. Alternatively, you can compress files before uploading\n3. If you need to upload larger files regularly, I can enable the Enterprise file limit for your account\n\nI understand this is blocking your work, so I\'ve prioritized your ticket. Would you like me to enable the higher limit for your account?\n\nBest regards,\nSupport Team'
+        },
+        {
+          structuredFields: {
+            Subject: 'Re: Love your product! - Thanks & PDF Export Update',
+            Tone: 'Friendly',
+            Sentiment: 'Positive',
+            ResponseType: 'Acknowledgment'
+          },
+          unstructuredContent: 'Hi Sarah,\n\nThank you so much for the kind words! We\'re thrilled to hear you\'re enjoying the new dashboard.\n\nGreat news about PDF export - this feature is actually on our roadmap for Q2! I\'ve added your request to our feature voting system, which helps prioritize development.\n\nIn the meantime, you can export to CSV and use a tool like Google Sheets to convert to PDF if needed.\n\nThanks again for being a valued customer!\n\nWarm regards,\nThe Product Team'
+        },
+        {
+          structuredFields: {
+            Subject: 'Re: Billing discrepancy - URGENT - Immediate Resolution',
+            Tone: 'Empathetic',
+            Sentiment: 'Concerned',
+            ResponseType: 'Resolution'
+          },
+          unstructuredContent: 'Dear Mark,\n\nI sincerely apologize for this billing error. You are absolutely right, and I\'ve already initiated the refund process.\n\nHere\'s what I\'ve done:\n✓ Processed a $200 refund to your original payment method (3-5 business days)\n✓ Applied a $50 account credit for the inconvenience\n✓ Escalated this to our billing team to prevent future occurrences\n\nI understand how frustrating this must be, especially as a repeat issue. I\'ve personally flagged your account for review to ensure this doesn\'t happen again.\n\nPlease don\'t hesitate to reach out directly if you have any concerns.\n\nSincerely,\nCustomer Success Team'
         }
       ]
     };
@@ -481,14 +646,41 @@
       return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    function getSourcesForType(typeId) {
-      var type = CONTENT_TYPES[typeId];
-      if (!type) return [];
-      return type.sources.map(function(s, i) {
-        var counts = { 'Cases': 156, 'Email Messages': 89, 'Resolved Cases': 234, 'Voice Calls': 45, 'Contacts': 1250, 'Opportunities': 78, 'Leads': 312, 'Web Activity': 5420, 'Email Activity': 890 };
-        var icons = { 'Cases': '📁', 'Email Messages': '📧', 'Resolved Cases': '✅', 'Voice Calls': '📞', 'Contacts': '👤', 'Opportunities': '💰', 'Leads': '🎯', 'Web Activity': '🌐', 'Email Activity': '📩' };
-        return { name: s, count: counts[s] || 100, icon: icons[s] || '📊' };
+    // Get input types for a generation function
+    function getInputTypesForFunction(funcId) {
+      var func = GENERATION_FUNCTIONS[funcId];
+      if (!func || !func.inputTypes) return [];
+      var inputTypeInfo = {
+        'records': { icon: '📁', label: 'Records', desc: 'CRM objects, database records' },
+        'files': { icon: '📄', label: 'Files', desc: 'Documents, PDFs, images' },
+        'text': { icon: '📝', label: 'Text', desc: 'Paste or type content' }
+      };
+      return func.inputTypes.map(function(t) {
+        return inputTypeInfo[t] || { icon: '📊', label: t, desc: '' };
       });
+    }
+
+    // Get sample sources based on input type (for demo)
+    function getSourcesForType(typeId) {
+      var func = GENERATION_FUNCTIONS[typeId];
+      if (!func) return [];
+
+      // For document analyzer, return empty (uses upload)
+      if (func.isAnalyzer) return [];
+
+      // Return sample sources based on input types
+      var sources = [];
+      if (func.inputTypes.indexOf('records') > -1) {
+        sources.push({ name: 'CRM Records', count: 156, icon: '📁' });
+        sources.push({ name: 'Email Messages', count: 89, icon: '📧' });
+      }
+      if (func.inputTypes.indexOf('files') > -1) {
+        sources.push({ name: 'Documents', count: 45, icon: '📄' });
+      }
+      if (func.inputTypes.indexOf('text') > -1) {
+        sources.push({ name: 'Text Input', count: 1, icon: '📝' });
+      }
+      return sources;
     }
 
     // ============ RENDER FUNCTIONS ============
@@ -530,11 +722,28 @@
 
     function renderLeftPanel() {
       // Check if document analysis mode
-      if (state.selectedContentType === 'document-analysis') {
+      if (state.selectedContentType === 'document-analyzer') {
         return renderAnalyzerLeftPanel();
       }
 
+      var func = state.selectedContentType ? GENERATION_FUNCTIONS[state.selectedContentType] : null;
+      var inputTypes = state.selectedContentType ? getInputTypesForFunction(state.selectedContentType) : [];
       var sources = state.selectedContentType ? getSourcesForType(state.selectedContentType) : [];
+
+      // Render input types section
+      var inputTypesHtml = '';
+      if (inputTypes.length > 0) {
+        inputTypesHtml = '<div class="sources-header" style="margin-bottom:12px;">' +
+          '<span class="sources-title">Accepts Input From</span>' +
+          '</div>' +
+          '<div class="input-types" style="margin-bottom:20px;">';
+        inputTypes.forEach(function(t) {
+          inputTypesHtml += '<span class="input-type-pill active">' +
+            '<span class="input-type-icon">' + t.icon + '</span>' + t.label +
+            '</span>';
+        });
+        inputTypesHtml += '</div>';
+      }
 
       var sourcesHtml = '';
       if (sources.length > 0) {
@@ -548,8 +757,36 @@
             '<button class="source-delete">🗑️</button>' +
             '</div>';
         });
-      } else {
-        sourcesHtml = '<div class="sources-hint">Select a content type to see available data sources.</div>';
+      } else if (!func) {
+        sourcesHtml = '<div class="sources-hint">Select a generation function to see input options.</div>';
+      }
+
+      // Output fields preview
+      var outputFieldsHtml = '';
+      if (func && func.structuredFields && func.structuredFields.length > 0) {
+        outputFieldsHtml = '<div style="margin-top:20px;border-top:1px solid #e5e5e5;padding-top:16px;">' +
+          '<div class="sources-header">' +
+          '<span class="sources-title">Output Fields</span>' +
+          '<span class="sources-count">(' + func.structuredFields.length + ' mappable)</span>' +
+          '</div>' +
+          '<div style="margin-top:8px;">';
+        func.structuredFields.slice(0, 4).forEach(function(f) {
+          var typeIcon = { 'string': 'Aa', 'number': '#', 'picklist': '▼', 'date': '📅', 'percent': '%', 'lookup': '🔗' };
+          outputFieldsHtml += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12px;color:#706e6b;">' +
+            '<span style="width:20px;text-align:center;">' + (typeIcon[f.type] || '·') + '</span>' +
+            '<span>' + f.name + '</span>' +
+            '</div>';
+        });
+        if (func.structuredFields.length > 4) {
+          outputFieldsHtml += '<div style="font-size:11px;color:#0176d3;padding-left:28px;">+' + (func.structuredFields.length - 4) + ' more fields</div>';
+        }
+        outputFieldsHtml += '</div>';
+        if (func.unstructuredOutput) {
+          outputFieldsHtml += '<div style="margin-top:12px;padding:8px;background:#f3e8ff;border-radius:6px;font-size:12px;color:#9050e9;">' +
+            '📄 ' + func.unstructuredOutput.label + ' (Rich Text)' +
+            '</div>';
+        }
+        outputFieldsHtml += '</div>';
       }
 
       return '<div class="left-panel">' +
@@ -558,12 +795,14 @@
         '<button class="panel-tab">Configuration</button>' +
         '</div>' +
         '<div class="panel-content">' +
+        inputTypesHtml +
         '<div class="sources-header">' +
         '<div><span class="sources-title">Data Sources</span> <span class="sources-count">(' + sources.length + ')</span></div>' +
         '<button class="add-source-btn">+</button>' +
         '</div>' +
         sourcesHtml +
-        (sources.length > 0 ? '<div class="sources-hint" style="margin-top:20px;">These data sources will be used to generate your content. The assistant automatically selects the right data.</div>' : '') +
+        (sources.length > 0 ? '<div class="sources-hint" style="margin-top:20px;">These data sources will be used to generate your content.</div>' : '') +
+        outputFieldsHtml +
         '</div>' +
         '</div>';
     }
@@ -635,22 +874,24 @@
     }
 
     function renderCenterPanel() {
-      var contentType = state.selectedContentType ? CONTENT_TYPES[state.selectedContentType] : null;
+      var func = state.selectedContentType ? GENERATION_FUNCTIONS[state.selectedContentType] : null;
 
-      // Check if document analysis mode
-      if (state.selectedContentType === 'document-analysis') {
+      // Check if document analyzer mode
+      if (state.selectedContentType === 'document-analyzer') {
         return renderAnalyzerCenterPanel();
       }
 
-      // Build tabs
+      // Build tabs - unified tabs for all generation functions
       var tabsHtml = '';
-      if (contentType) {
-        var tabs = contentType.outputs.slice(0, 3);
-        if (contentType.udmo) tabs.push(contentType.udmo);
+      if (func) {
+        var tabs = [
+          { name: 'Fields', icon: '📋' },
+          { name: func.unstructuredOutput ? func.unstructuredOutput.label : 'Content', icon: '📝' },
+          { name: 'JSON', icon: '{ }' }
+        ];
         tabs.forEach(function(tab, i) {
-          var icons = { 'Summary': '📝', 'Priority': '🎯', 'Sentiment': '💭', 'Draft Response': '✉️', 'Knowledge Article': '📚', 'Internal Note': '📋', 'Call Summary': '📞' };
           tabsHtml += '<button class="output-tab' + (state.activeOutputTab === i ? ' active' : '') + '" onclick="setActiveTab(' + i + ')">' +
-            '<span class="output-tab-icon">' + (icons[tab] || '📄') + '</span>' + tab +
+            '<span class="output-tab-icon">' + tab.icon + '</span>' + tab.name +
             '</button>';
         });
       }
@@ -673,12 +914,15 @@
       }
 
       var records = state.selectedContentType ? (SAMPLE_DATA[state.selectedContentType] || []) : [];
-      var paginationHtml = state.currentView === 'results' ?
+      var outputs = state.selectedContentType ? (GENERATED_OUTPUTS[state.selectedContentType] || []) : [];
+      var recordCount = Math.max(records.length, outputs.length);
+
+      var paginationHtml = state.currentView === 'results' && recordCount > 0 ?
         '<div class="output-pagination">' +
         '<input type="text" class="page-input" value="' + (state.currentRecordIndex + 1) + '" onchange="goToRecord(this.value)">' +
-        '<span class="page-total">/ ' + records.length + '</span>' +
+        '<span class="page-total">/ ' + recordCount + '</span>' +
         '<button class="page-btn" onclick="prevRecord()"' + (state.currentRecordIndex === 0 ? ' disabled' : '') + '>▲</button>' +
-        '<button class="page-btn" onclick="nextRecord()"' + (state.currentRecordIndex >= records.length - 1 ? ' disabled' : '') + '>▼</button>' +
+        '<button class="page-btn" onclick="nextRecord()"' + (state.currentRecordIndex >= recordCount - 1 ? ' disabled' : '') + '>▼</button>' +
         '</div>' : '';
 
       return '<div class="center-panel">' +
@@ -686,7 +930,7 @@
         '<div class="output-content">' +
         '<div class="output-card">' +
         '<div class="output-card-header">' +
-        '<div class="output-card-title">' + (contentType ? contentType.name : 'Generated Content') + '</div>' +
+        '<div class="output-card-title">' + (func ? func.name : 'Generated Content') + '</div>' +
         paginationHtml +
         '</div>' +
         '<div class="output-card-body">' + bodyHtml + '</div>' +
@@ -827,79 +1071,81 @@
     }
 
     function renderGeneratedContent() {
-      var contentType = CONTENT_TYPES[state.selectedContentType];
+      var func = GENERATION_FUNCTIONS[state.selectedContentType];
       var outputs = GENERATED_OUTPUTS[state.selectedContentType];
       if (!outputs || !outputs[state.currentRecordIndex]) return '<div class="output-placeholder"><div class="output-placeholder-text">No data available</div></div>';
 
       var data = outputs[state.currentRecordIndex];
       var html = '';
 
-      // Different layouts based on active tab
+      // Tab 0: Structured Fields view
       if (state.activeOutputTab === 0) {
-        // Summary/Main view
-        html += '<div class="generated-section">';
-        html += '<div class="generated-label">Summary</div>';
-        html += '<div class="generated-value large">' + esc(data.Summary || data.Title || data.Subject || '') + '</div>';
-        html += '</div>';
+        // Structured fields section
+        if (data.structuredFields) {
+          html += '<div class="structured-fields-section">';
+          html += '<div class="structured-fields-title">Structured Fields <span class="badge">Mappable</span></div>';
 
-        // Field grid for metadata
-        html += '<div class="field-grid">';
-        if (data.Priority) {
-          html += '<div class="field-item"><div class="generated-label">Priority</div>';
-          html += '<span class="field-badge ' + data.Priority.toLowerCase() + '">' + data.Priority + '</span></div>';
-        }
-        if (data.Sentiment) {
-          var sentimentClass = data.Sentiment.toLowerCase().indexOf('positive') > -1 ? 'positive' : (data.Sentiment.toLowerCase().indexOf('negative') > -1 || data.Sentiment.toLowerCase().indexOf('angry') > -1 || data.Sentiment.toLowerCase().indexOf('frustrated') > -1 ? 'negative' : 'neutral');
-          html += '<div class="field-item"><div class="generated-label">Sentiment</div>';
-          html += '<span class="field-badge ' + sentimentClass + '">' + data.Sentiment + '</span></div>';
-        }
-        if (data.Category) {
-          html += '<div class="field-item"><div class="generated-label">Category</div>';
-          html += '<div class="generated-value">' + esc(data.Category) + '</div></div>';
-        }
-        if (data.Tone) {
-          html += '<div class="field-item"><div class="generated-label">Tone</div>';
-          html += '<div class="generated-value">' + esc(data.Tone) + '</div></div>';
-        }
-        html += '</div>';
+          var typeIcons = { 'string': 'Aa', 'number': '#', 'picklist': '▼', 'date': '📅', 'percent': '%', 'lookup': '🔗' };
 
-        // Action items if present
-        if (data.ActionItems) {
-          html += '<div class="generated-section" style="margin-top:20px;">';
-          html += '<div class="generated-label">Action Items</div>';
-          html += '<div class="generated-value large">' + esc(data.ActionItems) + '</div>';
+          for (var fieldName in data.structuredFields) {
+            var value = data.structuredFields[fieldName];
+            var fieldDef = func && func.structuredFields ? func.structuredFields.find(function(f) { return f.name === fieldName; }) : null;
+            var fieldType = fieldDef ? fieldDef.type : 'string';
+
+            // Format value based on type
+            var displayValue = value;
+            if (fieldType === 'percent' && typeof value === 'number') {
+              displayValue = (value * 100).toFixed(0) + '%';
+            } else if (fieldType === 'number' && typeof value === 'number') {
+              displayValue = value.toLocaleString();
+            }
+
+            // Determine badge class for certain values
+            var badgeClass = '';
+            if (fieldName === 'Priority') {
+              badgeClass = String(value).toLowerCase();
+            } else if (fieldName === 'Sentiment') {
+              badgeClass = String(value).toLowerCase().indexOf('positive') > -1 ? 'positive' :
+                (String(value).toLowerCase().indexOf('angry') > -1 || String(value).toLowerCase().indexOf('frustrated') > -1 ? 'negative' : 'neutral');
+            }
+
+            html += '<div class="structured-field-row">';
+            html += '<div class="field-type-icon ' + fieldType + '">' + (typeIcons[fieldType] || '·') + '</div>';
+            html += '<span class="field-label">' + fieldName + '</span>';
+            if (badgeClass) {
+              html += '<span class="field-badge ' + badgeClass + '">' + esc(displayValue) + '</span>';
+            } else {
+              html += '<span class="field-value-display">' + esc(displayValue) + '</span>';
+            }
+            html += '<button class="field-map-btn" onclick="event.stopPropagation()">⚡ Map</button>';
+            html += '</div>';
+          }
           html += '</div>';
         }
-      } else if (state.activeOutputTab === 3 || (contentType && contentType.udmo && state.activeOutputTab === contentType.outputs.slice(0,3).length)) {
-        // UDMO content (Draft Response, KB Article, etc.)
-        if (data.DraftNote) {
+
+        // Unstructured content section
+        if (data.unstructuredContent && func && func.unstructuredOutput) {
+          html += '<div class="unstructured-section">';
+          html += '<div class="unstructured-title">' + func.unstructuredOutput.label + ' <span class="badge">Rich Text</span></div>';
+          html += '<div class="unstructured-content">' + esc(data.unstructuredContent) + '</div>';
+          html += '</div>';
+        }
+      } else if (state.activeOutputTab === 1) {
+        // Unstructured content only view
+        if (data.unstructuredContent) {
           html += '<div class="generated-section">';
-          html += '<div class="generated-label">Internal Note</div>';
-          html += '<div class="generated-value large">' + esc(data.DraftNote) + '</div>';
+          html += '<div class="generated-label">' + (func && func.unstructuredOutput ? func.unstructuredOutput.label : 'Content') + '</div>';
+          html += '<div class="generated-value large">' + esc(data.unstructuredContent) + '</div>';
           html += '</div>';
         }
-        if (data.Body) {
-          html += '<div class="generated-section">';
-          html += '<div class="generated-label">' + (data.Subject ? 'Email Body' : 'Content') + '</div>';
-          html += '<div class="generated-value large">' + esc(data.Body) + '</div>';
-          html += '</div>';
-        }
-        if (data.Solution) {
-          html += '<div class="generated-section">';
-          html += '<div class="generated-label">Solution</div>';
-          html += '<div class="generated-value large">' + esc(data.Solution) + '</div>';
-          html += '</div>';
-        }
-      } else {
-        // Individual field view
-        var tabs = contentType.outputs.slice(0, 3);
-        var fieldName = tabs[state.activeOutputTab];
-        if (fieldName && data[fieldName]) {
-          html += '<div class="generated-section">';
-          html += '<div class="generated-label">' + fieldName + '</div>';
-          html += '<div class="generated-value large">' + esc(data[fieldName]) + '</div>';
-          html += '</div>';
-        }
+      } else if (state.activeOutputTab === 2) {
+        // JSON view
+        var jsonData = {
+          structuredFields: data.structuredFields || {},
+          unstructuredContent: data.unstructuredContent || ''
+        };
+        html += '<pre style="background:#f3f3f3;padding:16px;border-radius:6px;font-size:12px;overflow:auto;max-height:100%;">' +
+          esc(JSON.stringify(jsonData, null, 2)) + '</pre>';
       }
 
       return html;
@@ -909,24 +1155,44 @@
       var messagesHtml = '';
 
       if (state.currentView === 'welcome') {
-        // Welcome view with quick options
+        // Welcome view with quick options - grouped by category
         messagesHtml = '<div class="agent-welcome">' +
           '<div class="agent-avatar-placeholder">🤖</div>' +
           '<div class="agent-greeting">Hi there!</div>' +
-          '<div class="agent-intro">I\'m your Content Foundry assistant. Tell me what content you\'d like to create, or pick from the options below.</div>' +
-          '</div>' +
-          '<div class="quick-options">';
+          '<div class="agent-intro">I\'m your Content Foundry assistant. Select a generation function below, or describe what you\'d like to create.</div>' +
+          '</div>';
 
-        for (var key in CONTENT_TYPES) {
-          var ct = CONTENT_TYPES[key];
-          messagesHtml += '<div class="quick-option" onclick="selectContentType(\'' + key + '\')">' +
-            '<span class="quick-option-icon">' + ct.icon + '</span>' +
-            '<div class="quick-option-text">' +
-            '<div class="quick-option-title">' + ct.name + '</div>' +
-            '<div class="quick-option-desc">' + ct.desc + '</div>' +
-            '</div>' +
-            '<span class="quick-option-arrow">›</span>' +
-            '</div>';
+        // Group functions by category
+        var categories = {};
+        for (var key in GENERATION_FUNCTIONS) {
+          var func = GENERATION_FUNCTIONS[key];
+          var cat = func.category || 'Other';
+          if (!categories[cat]) categories[cat] = [];
+          categories[cat].push({ key: key, func: func });
+        }
+
+        // Render each category
+        messagesHtml += '<div class="quick-options">';
+        for (var catName in categories) {
+          messagesHtml += '<div class="function-category">' +
+            '<div class="function-category-title">' + catName + '</div>';
+
+          categories[catName].forEach(function(item) {
+            var inputIcons = item.func.inputTypes ? item.func.inputTypes.map(function(t) {
+              return t === 'records' ? '📁' : (t === 'files' ? '📄' : '📝');
+            }).join('') : '';
+
+            messagesHtml += '<div class="quick-option" onclick="selectContentType(\'' + item.key + '\')">' +
+              '<span class="quick-option-icon">' + item.func.icon + '</span>' +
+              '<div class="quick-option-text">' +
+              '<div class="quick-option-title">' + item.func.name + '</div>' +
+              '<div class="quick-option-desc">' + item.func.desc + '</div>' +
+              '</div>' +
+              '<span class="quick-option-arrow">›</span>' +
+              '</div>';
+          });
+
+          messagesHtml += '</div>';
         }
         messagesHtml += '</div>';
       } else {
@@ -944,8 +1210,9 @@
 
         // Suggested actions based on state
         if (state.currentView === 'results') {
+          var recordCount = getRecordCount();
           messagesHtml += '<div class="suggested-prompt" onclick="sendMessage(\'Generate for all records\')">' +
-            '<span class="suggested-prompt-text">"Run for all ' + (SAMPLE_DATA[state.selectedContentType] || []).length + ' records"</span>' +
+            '<span class="suggested-prompt-text">"Process all ' + recordCount + ' record(s)"</span>' +
             '<span class="suggested-prompt-arrow">›</span>' +
             '</div>';
         }
@@ -976,10 +1243,10 @@
       state.messages = [];
       state.activeOutputTab = 0;
 
-      var ct = CONTENT_TYPES[typeId];
+      var func = GENERATION_FUNCTIONS[typeId];
 
-      // Handle document analysis differently
-      if (typeId === 'document-analysis') {
+      // Handle document analyzer differently
+      if (typeId === 'document-analyzer') {
         state.currentView = 'welcome';
         state.analyzerMode.uploadedFiles = [];
         state.analyzerMode.extractedFields = [];
@@ -990,8 +1257,13 @@
       }
 
       state.currentView = 'generating';
-      addMessage('user', 'Generate ' + ct.name.toLowerCase());
+      addMessage('user', 'Use ' + func.name);
       render();
+
+      // Build input types text
+      var inputTypesText = func.inputTypes.map(function(t) {
+        return t === 'records' ? 'CRM records' : (t === 'files' ? 'documents' : 'text');
+      }).join(', ');
 
       // Simulate agent response
       setTimeout(function() {
@@ -1000,7 +1272,7 @@
 
         setTimeout(function() {
           state.isTyping = false;
-          addMessage('agent', 'I\'ll create ' + ct.name.toLowerCase() + ' for you. I\'m using data from <strong>' + ct.sources.join('</strong> and <strong>') + '</strong>.');
+          addMessage('agent', 'I\'ll run the <strong>' + func.name + '</strong> for you. This function accepts ' + inputTypesText + ' as input.');
           render();
 
           setTimeout(function() {
@@ -1012,7 +1284,14 @@
               state.currentView = 'results';
               state.generatedData = GENERATED_OUTPUTS[typeId];
               state.currentRecordIndex = 0;
-              addMessage('agent', '✅ Done! I\'ve generated ' + ct.name.toLowerCase() + ' for <strong>' + (SAMPLE_DATA[typeId] || []).length + ' records</strong>. You can browse through them using the pagination above, or ask me to refine the output.');
+
+              var outputs = GENERATED_OUTPUTS[typeId] || [];
+              var fieldCount = func.structuredFields ? func.structuredFields.length : 0;
+
+              addMessage('agent', '✅ Done! Generated output for <strong>' + outputs.length + ' record(s)</strong>.<br><br>' +
+                '• <strong>' + fieldCount + ' structured fields</strong> extracted (mappable)<br>' +
+                (func.unstructuredOutput ? '• <strong>1 ' + func.unstructuredOutput.label + '</strong> generated' : '') +
+                '<br><br>Browse results using the pagination, or ask me to refine the output.');
               render();
             }, 1500);
           }, 500);
@@ -1154,9 +1433,15 @@
       render();
     }
 
-    function nextRecord() {
+    function getRecordCount() {
       var records = SAMPLE_DATA[state.selectedContentType] || [];
-      if (state.currentRecordIndex < records.length - 1) {
+      var outputs = GENERATED_OUTPUTS[state.selectedContentType] || [];
+      return Math.max(records.length, outputs.length);
+    }
+
+    function nextRecord() {
+      var count = getRecordCount();
+      if (state.currentRecordIndex < count - 1) {
         state.currentRecordIndex++;
         render();
       }
@@ -1170,9 +1455,9 @@
     }
 
     function goToRecord(value) {
-      var records = SAMPLE_DATA[state.selectedContentType] || [];
+      var count = getRecordCount();
       var idx = parseInt(value, 10) - 1;
-      if (idx >= 0 && idx < records.length) {
+      if (idx >= 0 && idx < count) {
         state.currentRecordIndex = idx;
         render();
       }
