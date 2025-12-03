@@ -272,6 +272,54 @@
     .field-config-input:focus { outline: none; border-color: #0176d3; }
     .field-config-value { font-size: 11px; color: #2e844a; background: #e8f4e8; padding: 2px 6px; border-radius: 4px; max-width: 60px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+    /* Modal Styles */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-content { background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); width: 400px; max-width: 90%; max-height: 80vh; overflow-y: auto; }
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: space-between; }
+    .modal-title { font-size: 16px; font-weight: 600; color: #3e3e3c; }
+    .modal-close { background: none; border: none; font-size: 20px; color: #706e6b; cursor: pointer; padding: 4px; }
+    .modal-close:hover { color: #3e3e3c; }
+    .modal-body { padding: 20px; }
+    .modal-footer { padding: 16px 20px; border-top: 1px solid #e5e5e5; display: flex; justify-content: flex-end; gap: 8px; }
+    .modal-btn { padding: 8px 16px; border-radius: 4px; font-size: 13px; cursor: pointer; }
+    .modal-btn-secondary { background: white; border: 1px solid #d8d8d8; color: #3e3e3c; }
+    .modal-btn-secondary:hover { background: #f3f3f3; }
+    .modal-btn-primary { background: #0176d3; border: none; color: white; }
+    .modal-btn-primary:hover { background: #014486; }
+
+    /* Form Fields in Modal */
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 12px; font-weight: 600; color: #3e3e3c; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 8px 12px; border: 1px solid #d8d8d8; border-radius: 4px; font-size: 13px; }
+    .form-input:focus { outline: none; border-color: #0176d3; box-shadow: 0 0 0 2px rgba(1,118,211,0.2); }
+    .form-select { width: 100%; padding: 8px 12px; border: 1px solid #d8d8d8; border-radius: 4px; font-size: 13px; background: white; }
+    .form-select:focus { outline: none; border-color: #0176d3; }
+    .form-checkbox-group { display: flex; align-items: center; gap: 8px; }
+    .form-hint { font-size: 11px; color: #706e6b; margin-top: 4px; }
+
+    /* DMO Configuration Styles */
+    .dmo-section { margin-bottom: 16px; padding: 12px; background: #f9f9f9; border-radius: 6px; border: 1px solid #e5e5e5; }
+    .dmo-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .dmo-section-title { font-size: 11px; font-weight: 600; color: #706e6b; text-transform: uppercase; letter-spacing: 0.5px; }
+    .dmo-badge { padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 500; }
+    .dmo-badge.standard { background: #e8f4fc; color: #0176d3; }
+    .dmo-badge.custom { background: #f3e8ff; color: #9050e9; }
+    .dmo-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #e5e5e5; border-radius: 4px; margin-bottom: 6px; font-size: 12px; cursor: pointer; }
+    .dmo-item:hover { border-color: #0176d3; background: #f8fbfe; }
+    .dmo-item.selected { border-color: #0176d3; background: #e8f4fc; }
+    .dmo-item-icon { font-size: 14px; }
+    .dmo-item-name { flex: 1; color: #3e3e3c; }
+    .dmo-item-type { font-size: 10px; color: #706e6b; }
+
+    /* File Upload for Generic */
+    .file-upload-section { margin-bottom: 16px; }
+    .file-upload-zone { border: 2px dashed #d8d8d8; border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s; }
+    .file-upload-zone:hover { border-color: #0176d3; background: #f8fbfe; }
+    .file-upload-zone.has-file { border-style: solid; border-color: #2e844a; background: #e8f4e8; }
+    .file-upload-icon { font-size: 24px; margin-bottom: 4px; }
+    .file-upload-text { font-size: 12px; color: #706e6b; }
+    .file-upload-name { font-size: 12px; color: #2e844a; font-weight: 500; margin-top: 4px; }
+
     /* Function Categories in Welcome */
     .function-category { margin-bottom: 20px; }
     .function-category-title { font-size: 11px; font-weight: 600; color: #706e6b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-left: 4px; }
@@ -540,6 +588,68 @@
           'contract': { name: 'Contract', fields: ['Title', 'Parties', 'EffectiveDate', 'TerminationDate', 'KeyTerms', 'Signatures'] },
           'form': { name: 'Form', fields: ['FormTitle', 'Fields', 'Signatures', 'Date'] }
         }
+      }
+    };
+
+    // Standard Salesforce DMOs
+    var STANDARD_DMOS = {
+      'Case': {
+        name: 'Case',
+        icon: '📋',
+        apiName: 'Case',
+        fields: ['Subject', 'Description', 'Priority', 'Status', 'Category__c', 'Sentiment__c', 'OwnerId', 'Resolution__c']
+      },
+      'Knowledge__kav': {
+        name: 'Knowledge Article',
+        icon: '📚',
+        apiName: 'Knowledge__kav',
+        fields: ['Title', 'Body__c', 'ArticleType', 'Keywords__c', 'Visibility__c']
+      },
+      'EmailMessage': {
+        name: 'Email Message',
+        icon: '✉️',
+        apiName: 'EmailMessage',
+        fields: ['Subject', 'HtmlBody', 'TextBody', 'FromAddress', 'ToAddress']
+      },
+      'Opportunity': {
+        name: 'Opportunity',
+        icon: '💰',
+        apiName: 'Opportunity',
+        fields: ['Name', 'Amount', 'StageName', 'Probability', 'CloseDate', 'AI_Insights__c']
+      },
+      'Account': {
+        name: 'Account',
+        icon: '🏢',
+        apiName: 'Account',
+        fields: ['Name', 'Industry', 'Tier__c', 'AnnualRevenue', 'BillingAddress']
+      },
+      'Contact': {
+        name: 'Contact',
+        icon: '👤',
+        apiName: 'Contact',
+        fields: ['FirstName', 'LastName', 'Email', 'Phone', 'Title']
+      }
+    };
+
+    // UDMO (Unstructured Data Model Object) options for Generic use cases
+    var UDMO_OPTIONS = {
+      'ContentVersion': {
+        name: 'Content Document',
+        icon: '📄',
+        apiName: 'ContentVersion',
+        desc: 'Store as Salesforce file'
+      },
+      'Custom_UDMO': {
+        name: 'Custom UDMO',
+        icon: '🗃️',
+        apiName: null,
+        desc: 'Create custom unstructured DMO'
+      },
+      'External_Storage': {
+        name: 'External Storage',
+        icon: '☁️',
+        apiName: null,
+        desc: 'S3, Azure Blob, or GCS'
       }
     };
 
@@ -845,6 +955,19 @@
       inputFieldValues: {}, // { fieldName: value }
       outputFieldMappings: {}, // { fieldName: targetObject }
       editingField: null, // { type: 'input'|'output', name: string }
+      // DMO/UDMO configuration
+      selectedInputDMO: null, // For Salesforce: standard DMO
+      selectedOutputDMO: null, // For output mapping
+      selectedUDMO: null, // For Generic: UDMO target
+      customDMOName: '', // For custom DMO creation
+      // File input for Generic use cases
+      uploadedInputFile: null, // { name, size, type, dataUrl }
+      // Modal state
+      modal: {
+        isOpen: false,
+        type: null, // 'addInputField', 'addOutputField', 'selectDMO', 'selectUDMO'
+        data: {}
+      },
       // Document analysis state
       analyzerMode: {
         category: 'Procurement',
@@ -920,7 +1043,191 @@
     // ============ RENDER FUNCTIONS ============
     function render() {
       var app = document.getElementById('app');
-      app.innerHTML = renderHeader() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + '</div>';
+      app.innerHTML = renderHeader() + renderToolbar() + '<div class="main-container">' + renderLeftPanel() + renderCenterPanel() + '</div>' + renderModal();
+    }
+
+    function renderModal() {
+      if (!state.modal.isOpen) return '';
+
+      var modalContent = '';
+
+      if (state.modal.type === 'addInputField') {
+        modalContent = renderAddInputFieldModal();
+      } else if (state.modal.type === 'addOutputField') {
+        modalContent = renderAddOutputFieldModal();
+      } else if (state.modal.type === 'selectDMO') {
+        modalContent = renderSelectDMOModal();
+      } else if (state.modal.type === 'selectUDMO') {
+        modalContent = renderSelectUDMOModal();
+      }
+
+      return '<div class="modal-overlay" onclick="closeModal(event)">' + modalContent + '</div>';
+    }
+
+    function renderAddInputFieldModal() {
+      var func = GENERATION_FUNCTIONS[state.selectedContentType];
+      var isGeneric = func && func.category === 'Generic';
+
+      return '<div class="modal-content" onclick="event.stopPropagation()">' +
+        '<div class="modal-header">' +
+        '<span class="modal-title">Add Input Field</span>' +
+        '<button class="modal-close" onclick="closeModal()">×</button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<div class="form-group">' +
+        '<label class="form-label">Field Name *</label>' +
+        '<input type="text" class="form-input" id="newFieldName" placeholder="e.g., CustomerName">' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label class="form-label">Field Type</label>' +
+        '<select class="form-select" id="newFieldType">' +
+        '<option value="string">Text (String)</option>' +
+        '<option value="text">Long Text</option>' +
+        '<option value="number">Number</option>' +
+        '<option value="currency">Currency</option>' +
+        '<option value="date">Date</option>' +
+        '<option value="picklist">Picklist</option>' +
+        '<option value="file">File Upload</option>' +
+        '</select>' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label class="form-label">Source Mapping</label>' +
+        '<input type="text" class="form-input" id="newFieldSource" placeholder="' + (isGeneric ? 'user_input or config' : 'e.g., Case.Subject') + '">' +
+        '<div class="form-hint">' + (isGeneric ? 'Use "user_input" for manual entry or "file" for file upload' : 'Salesforce object.field path') + '</div>' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label class="form-checkbox-group">' +
+        '<input type="checkbox" id="newFieldRequired">' +
+        '<span>Required field</span>' +
+        '</label>' +
+        '</div>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>' +
+        '<button class="modal-btn modal-btn-primary" onclick="saveNewInputField()">Add Field</button>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderAddOutputFieldModal() {
+      var func = GENERATION_FUNCTIONS[state.selectedContentType];
+      var isGeneric = func && func.category === 'Generic';
+
+      // For Salesforce, show standard DMO targets
+      var targetOptions = '';
+      if (!isGeneric) {
+        targetOptions = '<div class="form-group">' +
+          '<label class="form-label">Target DMO</label>' +
+          '<select class="form-select" id="newFieldTargetDMO">' +
+          '<option value="">Select target object...</option>';
+        for (var dmoKey in STANDARD_DMOS) {
+          targetOptions += '<option value="' + dmoKey + '">' + STANDARD_DMOS[dmoKey].icon + ' ' + STANDARD_DMOS[dmoKey].name + '</option>';
+        }
+        targetOptions += '</select></div>' +
+          '<div class="form-group">' +
+          '<label class="form-label">Target Field</label>' +
+          '<input type="text" class="form-input" id="newFieldTargetField" placeholder="e.g., Priority">' +
+          '</div>';
+      } else {
+        targetOptions = '<div class="form-group">' +
+          '<label class="form-label">Target Mapping (optional)</label>' +
+          '<input type="text" class="form-input" id="newFieldTarget" placeholder="Custom DMO field or leave blank">' +
+          '</div>';
+      }
+
+      return '<div class="modal-content" onclick="event.stopPropagation()">' +
+        '<div class="modal-header">' +
+        '<span class="modal-title">Add Output Field</span>' +
+        '<button class="modal-close" onclick="closeModal()">×</button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<div class="form-group">' +
+        '<label class="form-label">Field Name *</label>' +
+        '<input type="text" class="form-input" id="newOutputFieldName" placeholder="e.g., Priority">' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label class="form-label">Field Type</label>' +
+        '<select class="form-select" id="newOutputFieldType">' +
+        '<option value="string">Text (String)</option>' +
+        '<option value="text">Long Text</option>' +
+        '<option value="number">Number</option>' +
+        '<option value="percent">Percent</option>' +
+        '<option value="currency">Currency</option>' +
+        '<option value="date">Date</option>' +
+        '<option value="picklist">Picklist</option>' +
+        '<option value="lookup">Lookup</option>' +
+        '</select>' +
+        '</div>' +
+        targetOptions +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>' +
+        '<button class="modal-btn modal-btn-primary" onclick="saveNewOutputField()">Add Field</button>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderSelectDMOModal() {
+      var dmoListHtml = '';
+      for (var dmoKey in STANDARD_DMOS) {
+        var dmo = STANDARD_DMOS[dmoKey];
+        var isSelected = state.selectedInputDMO === dmoKey;
+        dmoListHtml += '<div class="dmo-item' + (isSelected ? ' selected' : '') + '" onclick="selectInputDMO(\'' + dmoKey + '\')">' +
+          '<span class="dmo-item-icon">' + dmo.icon + '</span>' +
+          '<span class="dmo-item-name">' + dmo.name + '</span>' +
+          '<span class="dmo-item-type">' + dmo.apiName + '</span>' +
+          '</div>';
+      }
+
+      return '<div class="modal-content" onclick="event.stopPropagation()">' +
+        '<div class="modal-header">' +
+        '<span class="modal-title">Select Input DMO</span>' +
+        '<button class="modal-close" onclick="closeModal()">×</button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<div class="form-hint" style="margin-bottom:12px;">Select a standard Salesforce DMO as the input source for this function.</div>' +
+        dmoListHtml +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>' +
+        '<button class="modal-btn modal-btn-primary" onclick="confirmDMOSelection()">Confirm</button>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderSelectUDMOModal() {
+      var udmoListHtml = '';
+      for (var udmoKey in UDMO_OPTIONS) {
+        var udmo = UDMO_OPTIONS[udmoKey];
+        var isSelected = state.selectedUDMO === udmoKey;
+        udmoListHtml += '<div class="dmo-item' + (isSelected ? ' selected' : '') + '" onclick="selectUDMO(\'' + udmoKey + '\')">' +
+          '<span class="dmo-item-icon">' + udmo.icon + '</span>' +
+          '<span class="dmo-item-name">' + udmo.name + '</span>' +
+          '<span class="dmo-item-type">' + udmo.desc + '</span>' +
+          '</div>';
+      }
+
+      var customNameInput = state.selectedUDMO === 'Custom_UDMO' ?
+        '<div class="form-group" style="margin-top:12px;">' +
+        '<label class="form-label">Custom UDMO Name</label>' +
+        '<input type="text" class="form-input" id="customUDMOName" value="' + esc(state.customDMOName) + '" placeholder="e.g., MyContent__c">' +
+        '</div>' : '';
+
+      return '<div class="modal-content" onclick="event.stopPropagation()">' +
+        '<div class="modal-header">' +
+        '<span class="modal-title">Select Output Target (UDMO)</span>' +
+        '<button class="modal-close" onclick="closeModal()">×</button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<div class="form-hint" style="margin-bottom:12px;">Select where to store the unstructured output content.</div>' +
+        udmoListHtml +
+        customNameInput +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>' +
+        '<button class="modal-btn modal-btn-primary" onclick="confirmUDMOSelection()">Confirm</button>' +
+        '</div>' +
+        '</div>';
     }
 
     function renderHeader() {
@@ -965,6 +1272,10 @@
       var sources = state.selectedContentType ? getSourcesForType(state.selectedContentType) : [];
       var typeIcons = { 'string': 'Aa', 'number': '#', 'picklist': '▼', 'date': '📅', 'percent': '%', 'lookup': '🔗', 'text': '¶', 'currency': '$', 'file': '📎' };
 
+      // Determine if Salesforce or Generic
+      var isGeneric = func && func.category === 'Generic';
+      var isSalesforce = func && func.category === 'Salesforce';
+
       // Sources tab content
       var sourcesTabHtml = '';
       if (state.leftPanelTab === 'sources') {
@@ -983,8 +1294,57 @@
           inputTypesHtml += '</div>';
         }
 
+        // DMO/UDMO Configuration based on category
+        var dmoConfigHtml = '';
+        if (isSalesforce) {
+          // Salesforce: Show Standard DMO selection
+          var selectedDMO = state.selectedInputDMO ? STANDARD_DMOS[state.selectedInputDMO] : null;
+          dmoConfigHtml = '<div class="dmo-section">' +
+            '<div class="dmo-section-header">' +
+            '<span class="dmo-section-title">Input Source (DMO)</span>' +
+            '<span class="dmo-badge standard">Standard</span>' +
+            '</div>' +
+            (selectedDMO ?
+              '<div class="dmo-item selected" onclick="openModal(\'selectDMO\')">' +
+              '<span class="dmo-item-icon">' + selectedDMO.icon + '</span>' +
+              '<span class="dmo-item-name">' + selectedDMO.name + '</span>' +
+              '<span class="dmo-item-type">' + selectedDMO.apiName + '</span>' +
+              '</div>' :
+              '<button class="field-map-btn" style="width:100%;justify-content:center;" onclick="openModal(\'selectDMO\')">📋 Select Input DMO</button>'
+            ) +
+            '</div>';
+        } else if (isGeneric) {
+          // Generic: Show File Upload + UDMO selection
+          var hasFile = state.uploadedInputFile;
+          dmoConfigHtml = '<div class="file-upload-section">' +
+            '<div class="sources-header" style="margin-bottom:8px;">' +
+            '<span class="sources-title">File Input</span>' +
+            '</div>' +
+            '<div class="file-upload-zone' + (hasFile ? ' has-file' : '') + '" onclick="triggerGenericFileInput()">' +
+            '<div class="file-upload-icon">' + (hasFile ? '✅' : '📎') + '</div>' +
+            '<div class="file-upload-text">' + (hasFile ? 'File uploaded' : 'Drop file or click to upload') + '</div>' +
+            (hasFile ? '<div class="file-upload-name">' + esc(state.uploadedInputFile.name) + '</div>' : '') +
+            '</div>' +
+            '<input type="file" id="genericFileInput" style="display:none" onchange="handleGenericFileUpload(event)">' +
+            '</div>' +
+            '<div class="dmo-section">' +
+            '<div class="dmo-section-header">' +
+            '<span class="dmo-section-title">Output Target (UDMO)</span>' +
+            '<span class="dmo-badge custom">Custom</span>' +
+            '</div>' +
+            (state.selectedUDMO ?
+              '<div class="dmo-item selected" onclick="openModal(\'selectUDMO\')">' +
+              '<span class="dmo-item-icon">' + UDMO_OPTIONS[state.selectedUDMO].icon + '</span>' +
+              '<span class="dmo-item-name">' + UDMO_OPTIONS[state.selectedUDMO].name + '</span>' +
+              '<span class="dmo-item-type">' + (state.selectedUDMO === 'Custom_UDMO' && state.customDMOName ? state.customDMOName : UDMO_OPTIONS[state.selectedUDMO].desc) + '</span>' +
+              '</div>' :
+              '<button class="field-map-btn" style="width:100%;justify-content:center;" onclick="openModal(\'selectUDMO\')">🗃️ Select UDMO Target</button>'
+            ) +
+            '</div>';
+        }
+
         var sourcesListHtml = '';
-        if (sources.length > 0) {
+        if (sources.length > 0 && !isGeneric) {
           sources.forEach(function(s) {
             sourcesListHtml += '<div class="source-item">' +
               '<span class="source-icon">' + s.icon + '</span>' +
@@ -999,13 +1359,13 @@
           sourcesListHtml = '<div class="sources-hint">Select a generation function to see input options.</div>';
         }
 
-        sourcesTabHtml = inputTypesHtml +
-          '<div class="sources-header">' +
+        sourcesTabHtml = inputTypesHtml + dmoConfigHtml +
+          (sourcesListHtml && !isGeneric ? '<div class="sources-header" style="margin-top:16px;">' +
           '<div><span class="sources-title">Data Sources</span> <span class="sources-count">(' + sources.length + ')</span></div>' +
           '<button class="add-source-btn">+</button>' +
           '</div>' +
-          sourcesListHtml +
-          (sources.length > 0 ? '<div class="sources-hint" style="margin-top:20px;">These data sources will be used to generate your content.</div>' : '');
+          sourcesListHtml : '') +
+          (func ? '<div class="sources-hint" style="margin-top:20px;">' + (isGeneric ? 'Upload a file or configure text input in the Fields tab.' : 'Select a standard DMO or configure field sources.') + '</div>' : '');
       }
 
       // Config tab content - Input and Output fields
@@ -1527,6 +1887,13 @@
       state.inputFieldValues = {};
       state.outputFieldMappings = {};
       state.editingField = null;
+      // Reset DMO/UDMO state
+      state.selectedInputDMO = null;
+      state.selectedOutputDMO = null;
+      state.selectedUDMO = null;
+      state.customDMOName = '';
+      state.uploadedInputFile = null;
+      state.modal = { isOpen: false, type: null, data: {} };
 
       // Handle document analyzer differently
       if (typeId === 'document-analyzer') {
@@ -1536,7 +1903,7 @@
         state.leftPanelTab = 'sources';
       } else {
         state.currentView = 'welcome';
-        state.leftPanelTab = 'config'; // Switch to fields tab for configuration
+        state.leftPanelTab = 'sources'; // Start with sources to show DMO/file config
       }
 
       render();
@@ -1551,6 +1918,13 @@
       state.inputFieldValues = {};
       state.outputFieldMappings = {};
       state.editingField = null;
+      state.selectedInputDMO = null;
+      state.selectedOutputDMO = null;
+      state.selectedUDMO = null;
+      state.customDMOName = '';
+      state.uploadedInputFile = null;
+      state.modal = { isOpen: false, type: null, data: {} };
+      state.leftPanelTab = 'sources';
       render();
     }
 
@@ -1605,40 +1979,11 @@
     }
 
     function addInputField() {
-      var fieldName = prompt('Enter input field name:');
-      if (fieldName && fieldName.trim()) {
-        var func = GENERATION_FUNCTIONS[state.selectedContentType];
-        if (func) {
-          if (!func.inputFields) func.inputFields = [];
-          func.inputFields.push({
-            name: fieldName.trim(),
-            type: 'string',
-            source: 'user_input',
-            required: false
-          });
-          // Update prompt template to include the new field
-          if (func.promptTemplate) {
-            func.promptTemplate += '\n' + fieldName.trim() + ': {{' + fieldName.trim() + '}}';
-          }
-          render();
-        }
-      }
+      openModal('addInputField');
     }
 
     function addOutputField() {
-      var fieldName = prompt('Enter output field name:');
-      if (fieldName && fieldName.trim()) {
-        var func = GENERATION_FUNCTIONS[state.selectedContentType];
-        if (func) {
-          if (!func.structuredFields) func.structuredFields = [];
-          func.structuredFields.push({
-            name: fieldName.trim(),
-            type: 'string',
-            mappable: true
-          });
-          render();
-        }
-      }
+      openModal('addOutputField');
     }
 
     function editOutputMapping(fieldName) {
@@ -1662,6 +2007,135 @@
     function resetPromptToTemplate() {
       state.promptText = '';
       render();
+    }
+
+    // ============ MODAL HANDLERS ============
+    function openModal(type, data) {
+      state.modal = {
+        isOpen: true,
+        type: type,
+        data: data || {}
+      };
+      render();
+    }
+
+    function closeModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      state.modal = { isOpen: false, type: null, data: {} };
+      render();
+    }
+
+    function saveNewInputField() {
+      var name = document.getElementById('newFieldName');
+      var type = document.getElementById('newFieldType');
+      var source = document.getElementById('newFieldSource');
+      var required = document.getElementById('newFieldRequired');
+
+      if (!name || !name.value.trim()) {
+        alert('Please enter a field name');
+        return;
+      }
+
+      var func = GENERATION_FUNCTIONS[state.selectedContentType];
+      if (func) {
+        if (!func.inputFields) func.inputFields = [];
+        func.inputFields.push({
+          name: name.value.trim(),
+          type: type ? type.value : 'string',
+          source: source ? source.value.trim() : 'user_input',
+          required: required ? required.checked : false
+        });
+        // Update prompt template
+        if (func.promptTemplate) {
+          func.promptTemplate += '\n' + name.value.trim() + ': {{' + name.value.trim() + '}}';
+        }
+        state.promptText = ''; // Reset to regenerate
+      }
+      closeModal();
+    }
+
+    function saveNewOutputField() {
+      var name = document.getElementById('newOutputFieldName');
+      var type = document.getElementById('newOutputFieldType');
+      var targetDMO = document.getElementById('newFieldTargetDMO');
+      var targetField = document.getElementById('newFieldTargetField');
+      var target = document.getElementById('newFieldTarget');
+
+      if (!name || !name.value.trim()) {
+        alert('Please enter a field name');
+        return;
+      }
+
+      var func = GENERATION_FUNCTIONS[state.selectedContentType];
+      if (func) {
+        if (!func.structuredFields) func.structuredFields = [];
+
+        var fieldTarget = '';
+        if (targetDMO && targetField && targetDMO.value && targetField.value) {
+          fieldTarget = targetDMO.value + '.' + targetField.value.trim();
+        } else if (target && target.value) {
+          fieldTarget = target.value.trim();
+        }
+
+        func.structuredFields.push({
+          name: name.value.trim(),
+          type: type ? type.value : 'string',
+          mappable: true,
+          target: fieldTarget || undefined
+        });
+      }
+      closeModal();
+    }
+
+    // ============ DMO/UDMO HANDLERS ============
+    function selectInputDMO(dmoKey) {
+      state.selectedInputDMO = dmoKey;
+      render();
+    }
+
+    function confirmDMOSelection() {
+      closeModal();
+    }
+
+    function selectUDMO(udmoKey) {
+      state.selectedUDMO = udmoKey;
+      render();
+    }
+
+    function confirmUDMOSelection() {
+      if (state.selectedUDMO === 'Custom_UDMO') {
+        var input = document.getElementById('customUDMOName');
+        if (input) {
+          state.customDMOName = input.value.trim();
+        }
+      }
+      closeModal();
+    }
+
+    // ============ GENERIC FILE UPLOAD HANDLERS ============
+    function triggerGenericFileInput() {
+      document.getElementById('genericFileInput').click();
+    }
+
+    function handleGenericFileUpload(event) {
+      var files = event.target.files;
+      if (files && files.length > 0) {
+        var file = files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          state.uploadedInputFile = {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            dataUrl: e.target.result
+          };
+          // Add file content to input field values
+          state.inputFieldValues['FileContent'] = '[File: ' + file.name + ']';
+          render();
+        };
+        reader.readAsDataURL(file);
+      }
+      event.target.value = '';
     }
 
     function runGeneration() {
