@@ -252,6 +252,26 @@
     .input-type-pill.active { background: #e8f4fc; color: #0176d3; }
     .input-type-icon { font-size: 10px; }
 
+    /* Field Configuration Styles */
+    .field-config-section { margin-bottom: 20px; border-top: 1px solid #e5e5e5; padding-top: 16px; }
+    .field-config-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .field-config-title { font-size: 12px; font-weight: 600; color: #3e3e3c; display: flex; align-items: center; gap: 6px; }
+    .field-config-title .badge { background: #e8f4fc; color: #0176d3; padding: 2px 6px; border-radius: 8px; font-size: 10px; font-weight: 500; }
+    .field-config-add { width: 20px; height: 20px; border-radius: 50%; background: #0176d3; color: white; border: none; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+    .field-config-add:hover { background: #014486; }
+    .field-config-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #f9f9f9; border-radius: 6px; margin-bottom: 6px; font-size: 12px; }
+    .field-config-item:hover { background: #f3f3f3; }
+    .field-config-icon { width: 20px; height: 20px; background: white; border: 1px solid #e5e5e5; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #706e6b; }
+    .field-config-icon.required { border-color: #ea001e; color: #ea001e; }
+    .field-config-name { flex: 1; color: #3e3e3c; font-weight: 500; }
+    .field-config-source { font-size: 10px; color: #706e6b; max-width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .field-config-target { font-size: 10px; color: #0176d3; background: #e8f4fc; padding: 2px 6px; border-radius: 4px; max-width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .field-config-edit { background: none; border: none; color: #706e6b; cursor: pointer; font-size: 12px; padding: 2px 4px; }
+    .field-config-edit:hover { color: #0176d3; }
+    .field-config-input { flex: 1; padding: 4px 8px; border: 1px solid #d8d8d8; border-radius: 4px; font-size: 12px; min-width: 0; }
+    .field-config-input:focus { outline: none; border-color: #0176d3; }
+    .field-config-value { font-size: 11px; color: #2e844a; background: #e8f4e8; padding: 2px 6px; border-radius: 4px; max-width: 60px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
     /* Function Categories in Welcome */
     .function-category { margin-bottom: 20px; }
     .function-category-title { font-size: 11px; font-weight: 600; color: #706e6b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-left: 4px; }
@@ -292,109 +312,194 @@
     // - unstructuredOutput: the main UDMO content
 
     var GENERATION_FUNCTIONS = {
+      // ========== SALESFORCE USE CASES ==========
+      'case-triage': {
+        id: 'case-triage',
+        name: 'Case Triage',
+        icon: '🎯',
+        desc: 'Auto-classify and prioritize support cases',
+        category: 'Salesforce',
+        inputTypes: ['records'],
+        inputFields: [
+          { name: 'Subject', type: 'string', source: 'Case.Subject', required: true },
+          { name: 'Description', type: 'text', source: 'Case.Description', required: true },
+          { name: 'CustomerTier', type: 'picklist', source: 'Account.Tier__c', required: false },
+          { name: 'ProductArea', type: 'string', source: 'Case.Product__c', required: false }
+        ],
+        structuredFields: [
+          { name: 'Priority', type: 'picklist', options: ['Critical', 'High', 'Medium', 'Low'], mappable: true, target: 'Case.Priority' },
+          { name: 'Category', type: 'string', mappable: true, target: 'Case.Category__c' },
+          { name: 'Sentiment', type: 'picklist', options: ['Positive', 'Neutral', 'Frustrated', 'Angry'], mappable: true, target: 'Case.Sentiment__c' },
+          { name: 'SuggestedQueue', type: 'lookup', mappable: true, target: 'Case.OwnerId' },
+          { name: 'EstimatedResolutionTime', type: 'number', mappable: true, target: 'Case.Est_Resolution_Hours__c' }
+        ],
+        unstructuredOutput: { name: 'TriageSummary', type: 'richtext', label: 'Triage Summary', target: 'Case.Internal_Notes__c' },
+        promptTemplate: 'Analyze this support case and provide triage recommendations:\n\nSubject: {{Subject}}\nDescription: {{Description}}\nCustomer Tier: {{CustomerTier}}\nProduct Area: {{ProductArea}}\n\nDetermine the appropriate priority, category, customer sentiment, suggested queue assignment, and estimated resolution time.'
+      },
+      'kb-generator': {
+        id: 'kb-generator',
+        name: 'Knowledge Article Generator',
+        icon: '📚',
+        desc: 'Generate KB articles from resolved cases',
+        category: 'Salesforce',
+        inputTypes: ['records'],
+        inputFields: [
+          { name: 'CaseSubject', type: 'string', source: 'Case.Subject', required: true },
+          { name: 'Problem', type: 'text', source: 'Case.Description', required: true },
+          { name: 'Resolution', type: 'text', source: 'Case.Resolution__c', required: true },
+          { name: 'ProductArea', type: 'string', source: 'Case.Product__c', required: false }
+        ],
+        structuredFields: [
+          { name: 'Title', type: 'string', mappable: true, target: 'Knowledge__kav.Title' },
+          { name: 'ArticleType', type: 'picklist', options: ['How-To', 'Troubleshooting', 'FAQ', 'Reference'], mappable: true, target: 'Knowledge__kav.ArticleType' },
+          { name: 'Keywords', type: 'string', mappable: true, target: 'Knowledge__kav.Keywords__c' },
+          { name: 'Visibility', type: 'picklist', options: ['Internal', 'Partner', 'Public'], mappable: true, target: 'Knowledge__kav.Visibility__c' }
+        ],
+        unstructuredOutput: { name: 'ArticleBody', type: 'richtext', label: 'Article Content', target: 'Knowledge__kav.Body__c' },
+        promptTemplate: 'Create a knowledge article from this resolved case:\n\nOriginal Issue: {{CaseSubject}}\nProblem Description: {{Problem}}\nResolution Steps: {{Resolution}}\nProduct Area: {{ProductArea}}\n\nGenerate a clear, searchable knowledge article with problem description and step-by-step solution.'
+      },
+      'email-response': {
+        id: 'email-response',
+        name: 'Email Response Generator',
+        icon: '✉️',
+        desc: 'Draft personalized customer email responses',
+        category: 'Salesforce',
+        inputTypes: ['records'],
+        inputFields: [
+          { name: 'CustomerName', type: 'string', source: 'Contact.Name', required: true },
+          { name: 'CaseSubject', type: 'string', source: 'Case.Subject', required: true },
+          { name: 'CustomerMessage', type: 'text', source: 'EmailMessage.TextBody', required: true },
+          { name: 'CaseHistory', type: 'text', source: 'Case.Description', required: false },
+          { name: 'CustomerTier', type: 'picklist', source: 'Account.Tier__c', required: false }
+        ],
+        structuredFields: [
+          { name: 'Subject', type: 'string', mappable: true, target: 'EmailMessage.Subject' },
+          { name: 'Tone', type: 'picklist', options: ['Professional', 'Friendly', 'Formal', 'Empathetic'], mappable: true },
+          { name: 'ResponseType', type: 'picklist', options: ['Resolution', 'Follow-up', 'Acknowledgment', 'Escalation'], mappable: true }
+        ],
+        unstructuredOutput: { name: 'EmailBody', type: 'richtext', label: 'Email Response', target: 'EmailMessage.HtmlBody' },
+        promptTemplate: 'Draft a professional email response:\n\nCustomer: {{CustomerName}}\nSubject: {{CaseSubject}}\nCustomer Message: {{CustomerMessage}}\nCase History: {{CaseHistory}}\nCustomer Tier: {{CustomerTier}}\n\nWrite a helpful, empathetic response that addresses their concerns.'
+      },
+      'opportunity-insights': {
+        id: 'opportunity-insights',
+        name: 'Opportunity Insights',
+        icon: '💰',
+        desc: 'Generate deal insights and next steps',
+        category: 'Salesforce',
+        inputTypes: ['records'],
+        inputFields: [
+          { name: 'OpportunityName', type: 'string', source: 'Opportunity.Name', required: true },
+          { name: 'Amount', type: 'currency', source: 'Opportunity.Amount', required: true },
+          { name: 'Stage', type: 'picklist', source: 'Opportunity.StageName', required: true },
+          { name: 'ActivityHistory', type: 'text', source: 'Opportunity.Description', required: false },
+          { name: 'CompetitorInfo', type: 'text', source: 'Opportunity.Competitors__c', required: false }
+        ],
+        structuredFields: [
+          { name: 'WinProbability', type: 'percent', mappable: true, target: 'Opportunity.Win_Probability__c' },
+          { name: 'RiskLevel', type: 'picklist', options: ['Low', 'Medium', 'High'], mappable: true, target: 'Opportunity.Risk_Level__c' },
+          { name: 'DaysToClose', type: 'number', mappable: true, target: 'Opportunity.Days_to_Close__c' }
+        ],
+        unstructuredOutput: { name: 'DealInsights', type: 'richtext', label: 'Deal Insights & Next Steps', target: 'Opportunity.AI_Insights__c' },
+        promptTemplate: 'Analyze this sales opportunity:\n\nOpportunity: {{OpportunityName}}\nDeal Size: {{Amount}}\nCurrent Stage: {{Stage}}\nActivity History: {{ActivityHistory}}\nCompetitor Info: {{CompetitorInfo}}\n\nProvide win probability, risk assessment, and recommended next steps.'
+      },
+
+      // ========== GENERIC USE CASES ==========
       'summarizer': {
         id: 'summarizer',
         name: 'Summarizer',
         icon: '📝',
         desc: 'Generate concise summaries from any content',
-        category: 'Content Generation',
+        category: 'Generic',
         inputTypes: ['records', 'files', 'text'],
+        inputFields: [
+          { name: 'Content', type: 'text', source: 'user_input', required: true },
+          { name: 'MaxLength', type: 'number', source: 'config', required: false, default: 200 },
+          { name: 'Style', type: 'picklist', source: 'config', required: false, options: ['Brief', 'Detailed', 'Bullet Points'] }
+        ],
         structuredFields: [
           { name: 'Title', type: 'string', mappable: true },
-          { name: 'Priority', type: 'picklist', options: ['Critical', 'High', 'Medium', 'Low'], mappable: true },
-          { name: 'Sentiment', type: 'picklist', options: ['Positive', 'Neutral', 'Frustrated', 'Angry'], mappable: true },
-          { name: 'Category', type: 'string', mappable: true },
-          { name: 'WordCount', type: 'number', mappable: true }
+          { name: 'WordCount', type: 'number', mappable: true },
+          { name: 'KeyTopics', type: 'string', mappable: true }
         ],
-        unstructuredOutput: { name: 'Summary', type: 'richtext', label: 'Generated Summary' }
+        unstructuredOutput: { name: 'Summary', type: 'richtext', label: 'Generated Summary' },
+        promptTemplate: 'Summarize the following content:\n\n{{Content}}\n\nStyle: {{Style}}\nMax Length: {{MaxLength}} words\n\nProvide a clear, concise summary highlighting the main points.'
       },
       'key-insights': {
         id: 'key-insights',
         name: 'Key Insights Generator',
         icon: '💡',
         desc: 'Extract key insights and patterns from data',
-        category: 'Content Generation',
+        category: 'Generic',
         inputTypes: ['records', 'files', 'text'],
+        inputFields: [
+          { name: 'Content', type: 'text', source: 'user_input', required: true },
+          { name: 'FocusArea', type: 'string', source: 'config', required: false },
+          { name: 'InsightCount', type: 'number', source: 'config', required: false, default: 5 }
+        ],
         structuredFields: [
           { name: 'InsightCount', type: 'number', mappable: true },
           { name: 'ConfidenceScore', type: 'percent', mappable: true },
           { name: 'PrimaryTheme', type: 'string', mappable: true },
           { name: 'Urgency', type: 'picklist', options: ['Immediate', 'Soon', 'Standard', 'Low'], mappable: true }
         ],
-        unstructuredOutput: { name: 'Insights', type: 'richtext', label: 'Key Insights' }
+        unstructuredOutput: { name: 'Insights', type: 'richtext', label: 'Key Insights' },
+        promptTemplate: 'Analyze the following and extract key insights:\n\n{{Content}}\n\nFocus Area: {{FocusArea}}\nNumber of Insights: {{InsightCount}}\n\nIdentify patterns, trends, and actionable insights.'
+      },
+      'meeting-notes': {
+        id: 'meeting-notes',
+        name: 'Meeting Notes Generator',
+        icon: '📋',
+        desc: 'Generate structured meeting notes and action items',
+        category: 'Generic',
+        inputTypes: ['files', 'text'],
+        inputFields: [
+          { name: 'Transcript', type: 'text', source: 'user_input', required: true },
+          { name: 'MeetingTitle', type: 'string', source: 'config', required: false },
+          { name: 'Attendees', type: 'string', source: 'config', required: false }
+        ],
+        structuredFields: [
+          { name: 'Subject', type: 'string', mappable: true },
+          { name: 'ActionItemCount', type: 'number', mappable: true },
+          { name: 'DecisionCount', type: 'number', mappable: true },
+          { name: 'Duration', type: 'string', mappable: true }
+        ],
+        unstructuredOutput: { name: 'Notes', type: 'richtext', label: 'Meeting Notes' },
+        promptTemplate: 'Generate meeting notes from this transcript:\n\nMeeting: {{MeetingTitle}}\nAttendees: {{Attendees}}\n\nTranscript:\n{{Transcript}}\n\nExtract key discussion points, decisions made, and action items with owners.'
       },
       'faq-generator': {
         id: 'faq-generator',
         name: 'FAQ Generator',
         icon: '❓',
         desc: 'Generate FAQ pairs from content or conversations',
-        category: 'Content Generation',
+        category: 'Generic',
         inputTypes: ['records', 'files', 'text'],
+        inputFields: [
+          { name: 'SourceContent', type: 'text', source: 'user_input', required: true },
+          { name: 'TargetAudience', type: 'picklist', source: 'config', required: false, options: ['Customer', 'Internal', 'Partner'] },
+          { name: 'QuestionCount', type: 'number', source: 'config', required: false, default: 10 }
+        ],
         structuredFields: [
           { name: 'QuestionCount', type: 'number', mappable: true },
           { name: 'Category', type: 'string', mappable: true },
-          { name: 'Audience', type: 'picklist', options: ['Customer', 'Internal', 'Partner'], mappable: true },
           { name: 'Complexity', type: 'picklist', options: ['Basic', 'Intermediate', 'Advanced'], mappable: true }
         ],
-        unstructuredOutput: { name: 'FAQContent', type: 'richtext', label: 'FAQ List' }
-      },
-      'article-generator': {
-        id: 'article-generator',
-        name: 'Article Generator',
-        icon: '📚',
-        desc: 'Create knowledge articles and documentation',
-        category: 'Content Generation',
-        inputTypes: ['records', 'files', 'text'],
-        structuredFields: [
-          { name: 'Title', type: 'string', mappable: true },
-          { name: 'ArticleType', type: 'picklist', options: ['How-To', 'Troubleshooting', 'Reference', 'Overview'], mappable: true },
-          { name: 'Category', type: 'string', mappable: true },
-          { name: 'Keywords', type: 'string', mappable: true },
-          { name: 'ReadTime', type: 'number', mappable: true }
-        ],
-        unstructuredOutput: { name: 'ArticleBody', type: 'richtext', label: 'Article Content' }
-      },
-      'notes-generator': {
-        id: 'notes-generator',
-        name: 'Notes Generator',
-        icon: '📋',
-        desc: 'Generate structured notes and action items',
-        category: 'Content Generation',
-        inputTypes: ['records', 'files', 'text'],
-        structuredFields: [
-          { name: 'Subject', type: 'string', mappable: true },
-          { name: 'ActionItemCount', type: 'number', mappable: true },
-          { name: 'Priority', type: 'picklist', options: ['High', 'Medium', 'Low'], mappable: true },
-          { name: 'DueDate', type: 'date', mappable: true },
-          { name: 'AssignedTo', type: 'lookup', mappable: true }
-        ],
-        unstructuredOutput: { name: 'Notes', type: 'richtext', label: 'Meeting Notes' }
-      },
-      'email-response': {
-        id: 'email-response',
-        name: 'Email Response Generator',
-        icon: '✉️',
-        desc: 'Draft personalized email responses',
-        category: 'Content Generation',
-        inputTypes: ['records', 'files', 'text'],
-        structuredFields: [
-          { name: 'Subject', type: 'string', mappable: true },
-          { name: 'Tone', type: 'picklist', options: ['Professional', 'Friendly', 'Formal', 'Empathetic'], mappable: true },
-          { name: 'Sentiment', type: 'picklist', options: ['Positive', 'Neutral', 'Concerned'], mappable: true },
-          { name: 'ResponseType', type: 'picklist', options: ['Resolution', 'Follow-up', 'Acknowledgment', 'Escalation'], mappable: true }
-        ],
-        unstructuredOutput: { name: 'EmailBody', type: 'richtext', label: 'Email Response' }
+        unstructuredOutput: { name: 'FAQContent', type: 'richtext', label: 'FAQ List' },
+        promptTemplate: 'Generate FAQs from this content:\n\n{{SourceContent}}\n\nTarget Audience: {{TargetAudience}}\nNumber of Q&As: {{QuestionCount}}\n\nCreate clear questions and comprehensive answers.'
       },
       'document-analyzer': {
         id: 'document-analyzer',
         name: 'Document Analyzer',
         icon: '📄',
         desc: 'Extract fields from invoices, receipts, forms & more',
-        category: 'Field Extraction',
+        category: 'Generic',
         inputTypes: ['files'],
+        inputFields: [
+          { name: 'Document', type: 'file', source: 'upload', required: true }
+        ],
         structuredFields: [], // Dynamic based on analyzer type
         unstructuredOutput: null,
-        isAnalyzer: true
+        isAnalyzer: true,
+        promptTemplate: 'Analyze the uploaded document and extract all relevant fields based on the document type.'
       }
     };
 
@@ -477,6 +582,21 @@
 
     // Sample records for each generation function
     var SAMPLE_DATA = {
+      // Salesforce Use Cases
+      'case-triage': [
+        { id: 'CASE-001', subject: 'Cannot login to dashboard', description: 'User reports being unable to access the dashboard after password reset. Error code E-5502 appears when attempting to login. This is blocking their quarterly report.', customerTier: 'Enterprise', product: 'Dashboard' },
+        { id: 'CASE-002', subject: 'Feature request: Dark mode', description: 'Customer requesting dark mode for the application. They mention it would help reduce eye strain during long work sessions.', customerTier: 'Pro', product: 'UI' },
+        { id: 'CASE-003', subject: 'Billing discrepancy - URGENT', description: 'Customer charged $499 instead of $299 on invoice INV-2024-0892. This is the second time this has happened. Customer is threatening to dispute with bank.', customerTier: 'Enterprise', product: 'Billing' }
+      ],
+      'kb-generator': [
+        { id: 'RC-001', subject: 'OAuth token expired - API connection failed', problem: 'Customer unable to connect to API after token expiration', resolution: 'Regenerate OAuth token in Connected Apps settings', product: 'API' },
+        { id: 'RC-002', subject: 'Reports showing wrong timezone', problem: 'Reports display incorrect timezone', resolution: 'Update timezone in Settings > Time & Language', product: 'Reports' }
+      ],
+      'opportunity-insights': [
+        { id: 'OPP-001', name: 'Acme Corp Enterprise Deal', amount: 150000, stage: 'Negotiation', competitors: 'CompetitorX, CompetitorY' },
+        { id: 'OPP-002', name: 'TechStart Growth Package', amount: 45000, stage: 'Proposal', competitors: 'None identified' }
+      ],
+      // Generic Use Cases
       'summarizer': [
         { id: 'CASE-001', title: 'Cannot login to dashboard', customer: 'John Smith', company: 'Acme Corp', priority: 'High', created: '2024-01-18', body: 'User reports being unable to access the dashboard after password reset. Error code E-5502 appears when attempting to login. This is blocking their quarterly report.' },
         { id: 'CASE-002', title: 'Feature request: Dark mode', customer: 'Sarah Jones', company: 'TechStart Inc', priority: 'Low', created: '2024-01-19', body: 'Customer requesting dark mode for the application. They mention it would help reduce eye strain during long work sessions.' },
@@ -511,6 +631,78 @@
 
     // Generated output samples - structured fields + unstructured content
     var GENERATED_OUTPUTS = {
+      // Salesforce Use Cases
+      'case-triage': [
+        {
+          structuredFields: {
+            Priority: 'High',
+            Category: 'Technical - Authentication',
+            Sentiment: 'Frustrated',
+            SuggestedQueue: 'Technical Support - Tier 2',
+            EstimatedResolutionTime: 4
+          },
+          unstructuredContent: '**Triage Summary:**\n\nThis is a high-priority case affecting an Enterprise customer\'s ability to access critical business functionality. The E-5502 error code indicates an authentication token issue post-password reset.\n\n**Recommended Actions:**\n1. Verify OAuth token regeneration process\n2. Check for any recent security policy changes\n3. Escalate to Tier 2 if token regeneration doesn\'t resolve\n\n**Business Impact:** Customer blocked from quarterly report generation - time sensitive.'
+        },
+        {
+          structuredFields: {
+            Priority: 'Low',
+            Category: 'Feature Request - UI/UX',
+            Sentiment: 'Positive',
+            SuggestedQueue: 'Product Feedback',
+            EstimatedResolutionTime: 0
+          },
+          unstructuredContent: '**Triage Summary:**\n\nLow-priority feature request from a Pro tier customer for dark mode functionality. No immediate action required.\n\n**Recommendation:** Route to Product Feedback queue for roadmap consideration. Customer sentiment is positive - acknowledge the request and provide any existing workarounds.'
+        },
+        {
+          structuredFields: {
+            Priority: 'Critical',
+            Category: 'Billing - Overcharge',
+            Sentiment: 'Angry',
+            SuggestedQueue: 'Billing Escalations',
+            EstimatedResolutionTime: 2
+          },
+          unstructuredContent: '**Triage Summary:**\n\n⚠️ URGENT: Repeat billing error for Enterprise customer. Customer threatening bank dispute which could affect payment processing.\n\n**Immediate Actions Required:**\n1. Process $200 refund immediately\n2. Apply courtesy credit ($50 suggested)\n3. Escalate to billing team lead for root cause analysis\n4. Flag account for billing review\n\n**Risk Assessment:** High churn risk if not resolved within 24 hours.'
+        }
+      ],
+      'kb-generator': [
+        {
+          structuredFields: {
+            Title: 'How to Fix OAuth Token Expired Error (API Connection Failed)',
+            ArticleType: 'Troubleshooting',
+            Keywords: 'OAuth, API, token, authentication, connection, expired',
+            Visibility: 'Public'
+          },
+          unstructuredContent: '## Problem\nWhen connecting to the API, you receive an error message indicating that the OAuth token has expired and the connection has failed.\n\n## Solution\n1. Navigate to **Setup > Connected Apps**\n2. Find your application in the list\n3. Click "Manage" and then "Edit Policies"\n4. Under OAuth Policies, click **"Regenerate Token"**\n5. Copy the new token and update your application credentials\n6. Test the connection to verify it works\n\n## Prevention\n- Set up token refresh automation\n- Monitor token expiration dates\n- Configure alerts for upcoming expirations\n\n## Related Articles\n- API Authentication Guide\n- OAuth 2.0 Setup\n- Troubleshooting Connection Issues'
+        },
+        {
+          structuredFields: {
+            Title: 'Reports Showing Wrong Timezone - How to Fix',
+            ArticleType: 'How-To',
+            Keywords: 'timezone, reports, time, settings, configuration',
+            Visibility: 'Public'
+          },
+          unstructuredContent: '## Problem\nReports and dashboards are displaying times in the wrong timezone, causing confusion with scheduled events and data analysis.\n\n## Solution\n1. Click your profile icon in the top right\n2. Select **"Settings"**\n3. Navigate to **"Time & Language"**\n4. Select your correct timezone from the dropdown\n5. Click **"Save"**\n6. Refresh your reports to see the updated times\n\n## Note\nTimezone changes only affect your personal view. Organization-wide timezone settings must be updated by an administrator.'
+        }
+      ],
+      'opportunity-insights': [
+        {
+          structuredFields: {
+            WinProbability: 0.72,
+            RiskLevel: 'Medium',
+            DaysToClose: 21
+          },
+          unstructuredContent: '**Deal Insights: Acme Corp Enterprise Deal**\n\n**Win Probability: 72%**\nStrong engagement indicators with active stakeholder participation. Competitive pressure from CompetitorX and CompetitorY presents moderate risk.\n\n**Key Factors:**\n✅ Strong: Executive sponsor identified, technical validation completed\n⚠️ Risk: Competitor pricing may be lower, decision timeline pressure\n\n**Recommended Next Steps:**\n1. Schedule executive alignment call within 5 days\n2. Prepare competitive differentiation deck focusing on integration capabilities\n3. Offer pilot program to accelerate decision\n4. Confirm budget approval status\n\n**Forecast Confidence:** Medium-High'
+        },
+        {
+          structuredFields: {
+            WinProbability: 0.85,
+            RiskLevel: 'Low',
+            DaysToClose: 14
+          },
+          unstructuredContent: '**Deal Insights: TechStart Growth Package**\n\n**Win Probability: 85%**\nExcellent positioning with no identified competition. Customer has expressed strong buying signals.\n\n**Key Factors:**\n✅ Strong: No competition, budget confirmed, timeline urgent\n✅ Strong: Technical requirements fully aligned\n\n**Recommended Next Steps:**\n1. Send final proposal with implementation timeline\n2. Confirm contract terms and sign-off authority\n3. Schedule kickoff call for post-close transition\n\n**Forecast Confidence:** High'
+        }
+      ],
+      // Generic Use Cases
       'summarizer': [
         {
           structuredFields: {
@@ -648,6 +840,11 @@
       promptText: '',
       generatedData: null,
       activeOutputTab: 0,
+      leftPanelTab: 'sources', // 'sources' or 'config'
+      // Input/Output field configuration
+      inputFieldValues: {}, // { fieldName: value }
+      outputFieldMappings: {}, // { fieldName: targetObject }
+      editingField: null, // { type: 'input'|'output', name: string }
       // Document analysis state
       analyzerMode: {
         category: 'Procurement',
@@ -702,6 +899,24 @@
       return sources;
     }
 
+    // Generate prompt from template with field values substituted
+    function generatePromptFromTemplate(func) {
+      if (!func || !func.promptTemplate) return '';
+
+      var prompt = func.promptTemplate;
+
+      // Replace {{fieldName}} placeholders with actual values
+      if (func.inputFields) {
+        func.inputFields.forEach(function(field) {
+          var value = state.inputFieldValues[field.name] || field.default || '{{' + field.name + '}}';
+          var placeholder = '{{' + field.name + '}}';
+          prompt = prompt.split(placeholder).join(value);
+        });
+      }
+
+      return prompt;
+    }
+
     // ============ RENDER FUNCTIONS ============
     function render() {
       var app = document.getElementById('app');
@@ -748,80 +963,132 @@
       var func = state.selectedContentType ? GENERATION_FUNCTIONS[state.selectedContentType] : null;
       var inputTypes = state.selectedContentType ? getInputTypesForFunction(state.selectedContentType) : [];
       var sources = state.selectedContentType ? getSourcesForType(state.selectedContentType) : [];
+      var typeIcons = { 'string': 'Aa', 'number': '#', 'picklist': '▼', 'date': '📅', 'percent': '%', 'lookup': '🔗', 'text': '¶', 'currency': '$', 'file': '📎' };
 
-      // Render input types section
-      var inputTypesHtml = '';
-      if (inputTypes.length > 0) {
-        inputTypesHtml = '<div class="sources-header" style="margin-bottom:12px;">' +
-          '<span class="sources-title">Accepts Input From</span>' +
-          '</div>' +
-          '<div class="input-types" style="margin-bottom:20px;">';
-        inputTypes.forEach(function(t) {
-          inputTypesHtml += '<span class="input-type-pill active">' +
-            '<span class="input-type-icon">' + t.icon + '</span>' + t.label +
-            '</span>';
-        });
-        inputTypesHtml += '</div>';
-      }
-
-      var sourcesHtml = '';
-      if (sources.length > 0) {
-        sources.forEach(function(s) {
-          sourcesHtml += '<div class="source-item">' +
-            '<span class="source-icon">' + s.icon + '</span>' +
-            '<div class="source-info">' +
-            '<div class="source-name">' + s.name + '</div>' +
-            '<div class="source-meta">' + s.count.toLocaleString() + ' records</div>' +
+      // Sources tab content
+      var sourcesTabHtml = '';
+      if (state.leftPanelTab === 'sources') {
+        // Render input types section
+        var inputTypesHtml = '';
+        if (inputTypes.length > 0) {
+          inputTypesHtml = '<div class="sources-header" style="margin-bottom:12px;">' +
+            '<span class="sources-title">Accepts Input From</span>' +
             '</div>' +
-            '<button class="source-delete">🗑️</button>' +
-            '</div>';
-        });
-      } else if (!func) {
-        sourcesHtml = '<div class="sources-hint">Select a generation function to see input options.</div>';
+            '<div class="input-types" style="margin-bottom:20px;">';
+          inputTypes.forEach(function(t) {
+            inputTypesHtml += '<span class="input-type-pill active">' +
+              '<span class="input-type-icon">' + t.icon + '</span>' + t.label +
+              '</span>';
+          });
+          inputTypesHtml += '</div>';
+        }
+
+        var sourcesListHtml = '';
+        if (sources.length > 0) {
+          sources.forEach(function(s) {
+            sourcesListHtml += '<div class="source-item">' +
+              '<span class="source-icon">' + s.icon + '</span>' +
+              '<div class="source-info">' +
+              '<div class="source-name">' + s.name + '</div>' +
+              '<div class="source-meta">' + s.count.toLocaleString() + ' records</div>' +
+              '</div>' +
+              '<button class="source-delete">🗑️</button>' +
+              '</div>';
+          });
+        } else if (!func) {
+          sourcesListHtml = '<div class="sources-hint">Select a generation function to see input options.</div>';
+        }
+
+        sourcesTabHtml = inputTypesHtml +
+          '<div class="sources-header">' +
+          '<div><span class="sources-title">Data Sources</span> <span class="sources-count">(' + sources.length + ')</span></div>' +
+          '<button class="add-source-btn">+</button>' +
+          '</div>' +
+          sourcesListHtml +
+          (sources.length > 0 ? '<div class="sources-hint" style="margin-top:20px;">These data sources will be used to generate your content.</div>' : '');
       }
 
-      // Output fields preview
-      var outputFieldsHtml = '';
-      if (func && func.structuredFields && func.structuredFields.length > 0) {
-        outputFieldsHtml = '<div style="margin-top:20px;border-top:1px solid #e5e5e5;padding-top:16px;">' +
-          '<div class="sources-header">' +
-          '<span class="sources-title">Output Fields</span>' +
-          '<span class="sources-count">(' + func.structuredFields.length + ' mappable)</span>' +
-          '</div>' +
-          '<div style="margin-top:8px;">';
-        func.structuredFields.slice(0, 4).forEach(function(f) {
-          var typeIcon = { 'string': 'Aa', 'number': '#', 'picklist': '▼', 'date': '📅', 'percent': '%', 'lookup': '🔗' };
-          outputFieldsHtml += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12px;color:#706e6b;">' +
-            '<span style="width:20px;text-align:center;">' + (typeIcon[f.type] || '·') + '</span>' +
-            '<span>' + f.name + '</span>' +
-            '</div>';
-        });
-        if (func.structuredFields.length > 4) {
-          outputFieldsHtml += '<div style="font-size:11px;color:#0176d3;padding-left:28px;">+' + (func.structuredFields.length - 4) + ' more fields</div>';
+      // Config tab content - Input and Output fields
+      var configTabHtml = '';
+      if (state.leftPanelTab === 'config' && func) {
+        // Input Fields Section
+        var inputFieldsHtml = '<div class="field-config-section" style="border-top:none;padding-top:0;">' +
+          '<div class="field-config-header">' +
+          '<div class="field-config-title">Input Fields <span class="badge">' + (func.inputFields ? func.inputFields.length : 0) + '</span></div>' +
+          '<button class="field-config-add" onclick="addInputField()" title="Add input field">+</button>' +
+          '</div>';
+
+        if (func.inputFields && func.inputFields.length > 0) {
+          func.inputFields.forEach(function(f) {
+            var isEditing = state.editingField && state.editingField.type === 'input' && state.editingField.name === f.name;
+            var fieldValue = state.inputFieldValues[f.name] || f.default || '';
+
+            if (isEditing) {
+              inputFieldsHtml += '<div class="field-config-item">' +
+                '<div class="field-config-icon' + (f.required ? ' required' : '') + '">' + (typeIcons[f.type] || '·') + '</div>' +
+                '<input type="text" class="field-config-input" id="edit-input-' + f.name + '" value="' + esc(fieldValue) + '" placeholder="Enter value..." onkeydown="handleFieldKeydown(event, \'input\', \'' + f.name + '\')">' +
+                '<button class="field-config-edit" onclick="saveFieldEdit(\'input\', \'' + f.name + '\')" title="Save">✓</button>' +
+                '<button class="field-config-edit" onclick="cancelFieldEdit()" title="Cancel">✕</button>' +
+                '</div>';
+            } else {
+              inputFieldsHtml += '<div class="field-config-item">' +
+                '<div class="field-config-icon' + (f.required ? ' required' : '') + '">' + (typeIcons[f.type] || '·') + '</div>' +
+                '<span class="field-config-name">' + f.name + (f.required ? ' *' : '') + '</span>' +
+                (fieldValue ? '<span class="field-config-value" title="' + esc(fieldValue) + '">' + esc(fieldValue) + '</span>' : '') +
+                '<span class="field-config-source" title="' + (f.source || '') + '">' + (f.source || 'manual') + '</span>' +
+                '<button class="field-config-edit" onclick="startFieldEdit(\'input\', \'' + f.name + '\')" title="Edit">✎</button>' +
+                '</div>';
+            }
+          });
+        } else {
+          inputFieldsHtml += '<div class="sources-hint">No input fields configured.</div>';
         }
-        outputFieldsHtml += '</div>';
+        inputFieldsHtml += '</div>';
+
+        // Output Fields Section
+        var outputFieldsHtml = '<div class="field-config-section">' +
+          '<div class="field-config-header">' +
+          '<div class="field-config-title">Output Fields <span class="badge">' + (func.structuredFields ? func.structuredFields.length : 0) + '</span></div>' +
+          '<button class="field-config-add" onclick="addOutputField()" title="Add output field">+</button>' +
+          '</div>';
+
+        if (func.structuredFields && func.structuredFields.length > 0) {
+          func.structuredFields.forEach(function(f) {
+            var targetMapping = state.outputFieldMappings[f.name] || f.target || '';
+            outputFieldsHtml += '<div class="field-config-item">' +
+              '<div class="field-config-icon">' + (typeIcons[f.type] || '·') + '</div>' +
+              '<span class="field-config-name">' + f.name + '</span>' +
+              (targetMapping ? '<span class="field-config-target" title="' + esc(targetMapping) + '">' + esc(targetMapping.split('.').pop()) + '</span>' : '') +
+              '<button class="field-config-edit" onclick="editOutputMapping(\'' + f.name + '\')" title="Map">⚡</button>' +
+              '</div>';
+          });
+        } else {
+          outputFieldsHtml += '<div class="sources-hint">No output fields configured.</div>';
+        }
+
+        // Unstructured output
         if (func.unstructuredOutput) {
-          outputFieldsHtml += '<div style="margin-top:12px;padding:8px;background:#f3e8ff;border-radius:6px;font-size:12px;color:#9050e9;">' +
-            '📄 ' + func.unstructuredOutput.label + ' (Rich Text)' +
+          outputFieldsHtml += '<div class="field-config-item" style="margin-top:8px;background:#f3e8ff;">' +
+            '<div class="field-config-icon" style="border-color:#9050e9;color:#9050e9;">¶</div>' +
+            '<span class="field-config-name" style="color:#9050e9;">' + func.unstructuredOutput.label + '</span>' +
+            (func.unstructuredOutput.target ? '<span class="field-config-target">' + func.unstructuredOutput.target.split('.').pop() + '</span>' : '') +
+            '<button class="field-config-edit" onclick="editOutputMapping(\'' + func.unstructuredOutput.name + '\')" title="Map">⚡</button>' +
             '</div>';
         }
         outputFieldsHtml += '</div>';
+
+        configTabHtml = inputFieldsHtml + outputFieldsHtml;
+      } else if (state.leftPanelTab === 'config' && !func) {
+        configTabHtml = '<div class="sources-hint">Select a generation function to configure fields.</div>';
       }
 
       return '<div class="left-panel">' +
         '<div class="panel-tabs">' +
-        '<button class="panel-tab active">Sources</button>' +
-        '<button class="panel-tab">Configuration</button>' +
+        '<button class="panel-tab' + (state.leftPanelTab === 'sources' ? ' active' : '') + '" onclick="setLeftPanelTab(\'sources\')">Sources</button>' +
+        '<button class="panel-tab' + (state.leftPanelTab === 'config' ? ' active' : '') + '" onclick="setLeftPanelTab(\'config\')">Fields</button>' +
         '</div>' +
         '<div class="panel-content">' +
-        inputTypesHtml +
-        '<div class="sources-header">' +
-        '<div><span class="sources-title">Data Sources</span> <span class="sources-count">(' + sources.length + ')</span></div>' +
-        '<button class="add-source-btn">+</button>' +
-        '</div>' +
-        sourcesHtml +
-        (sources.length > 0 ? '<div class="sources-hint" style="margin-top:20px;">These data sources will be used to generate your content.</div>' : '') +
-        outputFieldsHtml +
+        (state.leftPanelTab === 'sources' ? sourcesTabHtml : configTabHtml) +
         '</div>' +
         '</div>';
     }
@@ -955,6 +1222,10 @@
     }
 
     function renderFunctionView(func) {
+      // Generate pre-filled prompt from template
+      var generatedPrompt = generatePromptFromTemplate(func);
+      var displayPrompt = state.promptText || generatedPrompt;
+
       // Prompt section
       var promptHtml = '<div class="prompt-section">' +
         '<div class="prompt-header">' +
@@ -965,8 +1236,12 @@
         '<span class="selected-function-badge">' + func.icon + ' ' + func.name +
         '<span class="close-btn" onclick="clearSelection()">×</span></span>' +
         '</div>' +
+        '<div style="margin-bottom:8px;display:flex;gap:8px;align-items:center;">' +
+        '<button class="' + (state.promptText === '' ? 'field-map-btn mapped' : 'field-map-btn') + '" onclick="resetPromptToTemplate()" style="font-size:11px;">🔄 Reset to Template</button>' +
+        '<span style="font-size:11px;color:#706e6b;">Configure fields in the Fields tab to auto-populate</span>' +
+        '</div>' +
         '<div class="prompt-input-area">' +
-        '<textarea class="prompt-textarea" id="promptInput" placeholder="Enter your prompt or instructions (optional)...">' + (state.promptText || '') + '</textarea>' +
+        '<textarea class="prompt-textarea" id="promptInput" placeholder="Enter your prompt or instructions..." style="min-height:100px;">' + esc(displayPrompt) + '</textarea>' +
         '<button class="prompt-run-btn" onclick="runGeneration()"' + (state.currentView === 'generating' ? ' disabled' : '') + '>' +
         (state.currentView === 'generating' ? '<span class="loading-spinner" style="width:16px;height:16px;border-width:2px;margin:0;"></span> Generating...' : '▶ Run') +
         '</button>' +
@@ -1249,14 +1524,19 @@
       state.currentRecordIndex = 0;
       state.generatedData = null;
       state.promptText = '';
+      state.inputFieldValues = {};
+      state.outputFieldMappings = {};
+      state.editingField = null;
 
       // Handle document analyzer differently
       if (typeId === 'document-analyzer') {
         state.currentView = 'welcome';
         state.analyzerMode.uploadedFiles = [];
         state.analyzerMode.extractedFields = [];
+        state.leftPanelTab = 'sources';
       } else {
         state.currentView = 'welcome';
+        state.leftPanelTab = 'config'; // Switch to fields tab for configuration
       }
 
       render();
@@ -1268,6 +1548,119 @@
       state.generatedData = null;
       state.promptText = '';
       state.activeOutputTab = 0;
+      state.inputFieldValues = {};
+      state.outputFieldMappings = {};
+      state.editingField = null;
+      render();
+    }
+
+    // ============ FIELD CONFIGURATION HANDLERS ============
+    function setLeftPanelTab(tab) {
+      state.leftPanelTab = tab;
+      state.editingField = null;
+      render();
+    }
+
+    function startFieldEdit(type, name) {
+      state.editingField = { type: type, name: name };
+      render();
+      // Focus the input after render
+      setTimeout(function() {
+        var input = document.getElementById('edit-input-' + name);
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }, 50);
+    }
+
+    function saveFieldEdit(type, name) {
+      var input = document.getElementById('edit-input-' + name);
+      if (input) {
+        if (type === 'input') {
+          state.inputFieldValues[name] = input.value;
+        } else if (type === 'output') {
+          state.outputFieldMappings[name] = input.value;
+        }
+      }
+      state.editingField = null;
+      // Reset prompt to regenerate with new values
+      state.promptText = '';
+      render();
+    }
+
+    function cancelFieldEdit() {
+      state.editingField = null;
+      render();
+    }
+
+    function handleFieldKeydown(event, type, name) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        saveFieldEdit(type, name);
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        cancelFieldEdit();
+      }
+    }
+
+    function addInputField() {
+      var fieldName = prompt('Enter input field name:');
+      if (fieldName && fieldName.trim()) {
+        var func = GENERATION_FUNCTIONS[state.selectedContentType];
+        if (func) {
+          if (!func.inputFields) func.inputFields = [];
+          func.inputFields.push({
+            name: fieldName.trim(),
+            type: 'string',
+            source: 'user_input',
+            required: false
+          });
+          // Update prompt template to include the new field
+          if (func.promptTemplate) {
+            func.promptTemplate += '\n' + fieldName.trim() + ': {{' + fieldName.trim() + '}}';
+          }
+          render();
+        }
+      }
+    }
+
+    function addOutputField() {
+      var fieldName = prompt('Enter output field name:');
+      if (fieldName && fieldName.trim()) {
+        var func = GENERATION_FUNCTIONS[state.selectedContentType];
+        if (func) {
+          if (!func.structuredFields) func.structuredFields = [];
+          func.structuredFields.push({
+            name: fieldName.trim(),
+            type: 'string',
+            mappable: true
+          });
+          render();
+        }
+      }
+    }
+
+    function editOutputMapping(fieldName) {
+      var currentMapping = state.outputFieldMappings[fieldName] || '';
+      var func = GENERATION_FUNCTIONS[state.selectedContentType];
+      if (func) {
+        // Check if there's a default target mapping
+        var fieldDef = func.structuredFields ? func.structuredFields.find(function(f) { return f.name === fieldName; }) : null;
+        if (!currentMapping && fieldDef && fieldDef.target) {
+          currentMapping = fieldDef.target;
+        }
+      }
+
+      var newMapping = prompt('Enter target field mapping (e.g., Case.Priority):', currentMapping);
+      if (newMapping !== null) {
+        state.outputFieldMappings[fieldName] = newMapping;
+        render();
+      }
+    }
+
+    function resetPromptToTemplate() {
+      state.promptText = '';
       render();
     }
 
